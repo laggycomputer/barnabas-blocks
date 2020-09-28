@@ -4,6 +4,7 @@ Thumbs.db
 Desktop.ini
 .env
 .vscode
+.idea
 
 # Project files
 ino_project
