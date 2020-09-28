@@ -78,11 +78,11 @@ parser.add_option("--board", dest="board", help="Board definition to use", metav
 parser.add_option("--command", dest="cmd", help="Arduino command name", metavar="CMD")
 
 
-class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler, object):
     def do_HEAD(self):
         """Send response headers"""
         if self.path != "/":
-            return SimpleHTTPServer.SimpleHTTPRequestHandler.do_HEAD(self)
+            return super(Handler, self).do_HEAD()
         self.send_response(200)
         self.send_header("content-type", "text/html;charset=utf-8")
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -91,7 +91,7 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         """Send page text"""
         if self.path != "/":
-            return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            return super(Handler, self).do_GET()
         else:
             self.send_response(302)
             self.send_header("Location", "/blockly/apps/blocklyduino/index.html")
@@ -100,7 +100,10 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         """Save new page text and display it"""
         if self.path != "/":
-            return SimpleHTTPServer.SimpleHTTPRequestHandler.do_POST(self)
+            self.send_response(301)
+            self.send_header("Location", "/")
+            self.end_headers()
+            return
 
         options, args = parser.parse_args()
 
