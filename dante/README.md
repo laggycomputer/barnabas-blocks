@@ -1,0 +1,1 @@
+This directory contains a basic web serial demo - have the repl.ino file running on an Arduino, then fire up the HTML file. The textbox and submit button are new additions - when you submit, the arduino will blink the built-in LED at the interval in milliseconds specified by the textbox.
