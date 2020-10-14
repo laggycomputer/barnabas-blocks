@@ -2,8 +2,8 @@
 ._*
 Thumbs.db
 Desktop.ini
-.env
 .vscode
+.idea
 
 # Project files
 ino_project
@@ -17,3 +17,6 @@ launch.json
 # Python byte-compiled / optimized
 __pycache__/
 *.py[cod]
+
+# Python virtual environments
+venv
