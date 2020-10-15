@@ -12940,11 +12940,18 @@ Connection.prototype._sniffPort = function(callback) {
  */
 Connection.prototype._setDTR = function(bool, timeout, callback) {
   var _this = this;
+
+  //- 20201014
   var props = {
-    rts: false,
-    dtr: bool
+    //rts: false,
+    //dtr: bool
+
+    requestToSend: false,
+    dataTerminalReady: bool
+
   };
 
+  
   _this.serialPort.set(props, function(error) {
     if (error) { return callback(error); }
 
@@ -13110,7 +13117,9 @@ class SerialPort extends EventEmitter {
       .then(serialPort => {
         this.port = serialPort;
         if (this.isOpen) return;
-        return this.port.open({ baudrate: this.baudrate || 57600 });
+        //- 20201014 - attribute changed from baudrate to baudRate
+        //return this.port.open({ baudrate: this.baudrate || 57600 });
+        return this.port.open({ baudRate: this.baudrate || 57600 });
       })
       .then(() => this.writer = this.port.writable.getWriter())
       .then(() => this.reader = this.port.readable.getReader())
@@ -13148,7 +13157,9 @@ class SerialPort extends EventEmitter {
 
   async set(props, callback) {
     try {
+    
       await this.port.setSignals(props);
+
     } catch (error) {
       if (callback) return callback(error);
       throw error;
@@ -13652,6 +13663,7 @@ util.inherits(Stk500v1, Protocol);
  * @param {function} callback - function to run upon completion/error
  */
 Stk500v1.prototype._upload = function(file, callback) {
+  
   var _this = this;
 
   this.serialPort = this.connection.serialPort;
@@ -13664,6 +13676,7 @@ Stk500v1.prototype._upload = function(file, callback) {
 
   // open connection
   _this.serialPort.open(function(error) {
+   
     if (error) { return callback(error); }
 
     _this.debug('connected');
@@ -16189,8 +16202,11 @@ stk500.prototype.reset = function(delay1, delay2, done){
 
   async.series([
     function(cbdone) {
-    	//console.log("asserting");
-      self.serialPort.set({rts:true, dtr:true}, function(result){
+      //console.log("asserting");
+
+      //-20201014
+      //self.serialPort.set({rts:true, dtr:true}, function(result){
+        self.serialPort.set({requestToSend:true, dataTerminalReady:true}, function(result){
       	//console.log("asserted");
       	if(result) cbdone(result);
       	else cbdone();
@@ -16202,7 +16218,11 @@ stk500.prototype.reset = function(delay1, delay2, done){
     },
     function(cbdone) {
     	//console.log("clearing");
-      self.serialPort.set({rts:false, dtr:false}, function(result){
+      
+      //-20201014
+      self.serialPort.set({requestToSend:false, dataTerminalReady:false}, function(result){
+      //self.serialPort.set({rts:false, dtr:false}, function(result){
+
       	//console.log("clear");
       	if(result) cbdone(result);
       	else cbdone();
