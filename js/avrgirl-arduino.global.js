@@ -12942,12 +12942,15 @@ Connection.prototype._setDTR = function(bool, timeout, callback) {
   var _this = this;
 
   //- 20201014
+  //- 20201015 - added rts and dtr back in to be backward compatible
   var props = {
-    //rts: false,
-    //dtr: bool
+    rts: false,
+    dtr: bool,
 
     requestToSend: false,
     dataTerminalReady: bool
+
+    
 
   };
 
@@ -13118,8 +13121,9 @@ class SerialPort extends EventEmitter {
         this.port = serialPort;
         if (this.isOpen) return;
         //- 20201014 - attribute changed from baudrate to baudRate
+        //- 20201020 - added back baudrate attribute
         //return this.port.open({ baudrate: this.baudrate || 57600 });
-        return this.port.open({ baudRate: this.baudrate || 57600 });
+        return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600 });
       })
       .then(() => this.writer = this.port.writable.getWriter())
       .then(() => this.reader = this.port.readable.getReader())
@@ -16205,8 +16209,9 @@ stk500.prototype.reset = function(delay1, delay2, done){
       //console.log("asserting");
 
       //-20201014
+      //-20201015 - added rts,dtr attribute back in 
       //self.serialPort.set({rts:true, dtr:true}, function(result){
-        self.serialPort.set({requestToSend:true, dataTerminalReady:true}, function(result){
+        self.serialPort.set({requestToSend:true, dataTerminalReady:true, rts:true, dtr:true}, function(result){
       	//console.log("asserted");
       	if(result) cbdone(result);
       	else cbdone();
@@ -16220,7 +16225,8 @@ stk500.prototype.reset = function(delay1, delay2, done){
     	//console.log("clearing");
       
       //-20201014
-      self.serialPort.set({requestToSend:false, dataTerminalReady:false}, function(result){
+      //-20201015 - added rts,dtr attribute back in
+      self.serialPort.set({requestToSend:false, dataTerminalReady:false, rts:false, dtr:false}, function(result){
       //self.serialPort.set({rts:false, dtr:false}, function(result){
 
       	//console.log("clear");
