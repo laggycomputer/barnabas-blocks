@@ -13153,8 +13153,14 @@ class SerialPort extends EventEmitter {
 
   async close(callback) {
     try {
-      await this.reader.releaseLock();
       await this.writer.releaseLock();
+
+      //await this.reader.releaseLock();
+      /*cancel the reader instead of try to release the lock.  releaseLock was throwing an exception of 
+      "Cannot release a readable stream reader when it still has outstanding read() calls that have not yet settled" */
+
+      await this.reader.cancel() 
+      
       await this.port.close();
       this.isOpen = false;
     } catch (error) {
@@ -13714,14 +13720,23 @@ Stk500v1.prototype._upload = function(file, callback) {
 Stk500v1.prototype._reset = function(callback) {
   var _this = this;
 
-  _this.connection._setDTR(false, 250, function(error) {
+  /** 
+   * A reset is cause by the DTR signal going from false to true
+   */
+
+  //_this.connection._setDTR(false, 250, function(error) {
+    //-20201017 - hold the reset down for 5000 ms instead of 250 ms to make sure that reset is triggered
+    _this.connection._setDTR(false, 1000, function(error) {
     if (error) { return callback(error); }
 
-    _this.connection._setDTR(true, 50, function(error) {
+    //_this.connection._setDTR(true, 50, function(error) {
+      //-20201017 - wait only 1 ms instead of 50 ms before starting to upload to make sure that board doesn't go back into boot up mode
+      _this.connection._setDTR(true, 1, function(error) {
       _this.debug('reset complete.');
       return callback(error);
     });
   });
+  
 };
 
 module.exports = Stk500v1;
