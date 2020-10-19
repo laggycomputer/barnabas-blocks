@@ -33,18 +33,12 @@ const pins_reversed = pins.reverse()
 
 document.addEventListener('DOMContentLoaded', () => {
   butConnect.addEventListener('click', clickConnect);
-  document.getElementById('delay-submit').addEventListener('click', sendDelay);
 
   // CODELAB: Add feature detection here.
   const notSupported = document.getElementById('notSupported');
   notSupported.classList.toggle('hidden', 'serial' in navigator);
 });
 
-
-async function sendDelay() {
-  let delay_val = document.getElementById('delay').value;
-  await writeToStream(delay_val);
-}
 
 /**
  * @name connect
@@ -56,7 +50,7 @@ async function connect() {
   // - Request a port and open a connection.
   port = await navigator.serial.requestPort();
   // - Wait for the port to open.
-  await port.open({ baudrate: 9600 });
+  await port.open({ baudrate: 19200 });
   // CODELAB: Add code setup the output stream here.
   const encoder = new TextEncoderStream();
   outputDone = encoder.readable.pipeTo(port.writable);
@@ -123,18 +117,38 @@ async function readLoop() {
   // CODELAB: Add read loop here.
   while (true) {
     const { value, done } = await reader.read();
-    let bits_out = parseInt(value) >>> 0;
-    function updateDisplay(pin, index) {
-      let pin_state = (bits_out >> index) & 1;
-      let src;
-      if (pin_state) {
-        src = "assets/on.svg"
-      } else {
-        src = "assets/off.svg"
+
+    let bit_chunks = value.trim().split(" ");
+//    console.log(bit_chunks);
+
+    function updateDisplay(bit_chunk, index) {
+      let chunk_bits = parseInt(bit_chunk);
+//      console.log(bit_chunk);
+      let first_pin = (chunk_bits & (-1 << 10)) >> 10;
+      let second_pin = chunk_bits - (first_pin << 10);
+
+      let pins_being_read = [pins_reversed[index * 2], pins_reversed[index * 2 + 1]];
+      console.log(pins_being_read);
+      function updatePin(pin, state) {
+        let src;
+        if (state) {
+          src = "assets/on.svg";
+        } else {
+          src = "assets/off.svg";
+        }
+        if (state > 1023) {
+          state = 1023;
+        } else if (state < 0) {
+          state = 0;
+        }
+        state = (state + 1) / 1024 * 5;
+        document.getElementById("bool" + pin.toString()).src = src;
+        document.getElementById(pin.toString()).innerHTML = state.toString();
       }
-      document.getElementById(pin).src = src
+      updatePin(pins_being_read[0], first_pin);
+      updatePin(pins_being_read[1], second_pin);
     }
-    pins.forEach(updateDisplay)
+    bit_chunks.forEach(updateDisplay);
     if (done) {
       console.log('[readLoop] DONE', done);
       reader.releaseLock();
@@ -172,7 +186,7 @@ class LineBreakTransformer {
   transform(chunk, controller) {
     // CODELAB: Handle incoming chunk
     this.container += chunk;
-    const lines = this.container.split('\r');
+    const lines = this.container.split('\n');
     this.container = lines.pop();
     lines.forEach(line => controller.enqueue(line));
   }
