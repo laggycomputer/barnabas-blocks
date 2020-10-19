@@ -13,10 +13,10 @@
   <script src="./js/arduino_compressed.js"></script>
   <script src="./js/typedVarModal.js"></script>
   <script src="./blocks/custom/arduino.js"></script>
-  <link rel='icon' href='favicon.ico' type='image/x-icon'>
+  <link rel='icon' href='favcon.ico' type='image/x-icon'>
 </head>
 <body>
-
+  
   <table width="100%" height="100%">
     <tr id="titleRow">
       <td class="pageTitle">
@@ -27,6 +27,7 @@
       <td class="farSide">
         <select id="languageMenu" class="dropdown"></select>
         <img src="./images/logo_built_on_knockout.svg" alt="built on blockly" height="36"/>
+        Ver: 1.0.3
       </td>
     </tr>
     <tr id="buttonRow">
@@ -108,7 +109,7 @@
   </table>
   <div id="content_blocks" class="content"></div>
   <textarea id="content_arduino" class="content" readonly></textarea>
-  <textarea id="content_xml" class="content" wrap="soft"></textarea>
+  <textarea id="content_xml" class="content" wrap="off"></textarea>
   <pre id="content_monitor" class="content prettyprint lang-cpp"></pre>
   <div id="content_editor" class="content"></div>
 
@@ -332,7 +333,6 @@
           </block>
         </value>
       </block>
-      <block>
         <value name="DELAY_TIME">
           <block type="math_number">
             <field name="NUM">1000</field>
@@ -419,7 +419,7 @@
       </div>
     </div>
   </div>
-
+  
   <script src="./js/avrgirl-arduino.global.js"></script>
   <script src="./js/FileSaver.min.js"></script>
   <script src="./js/file_handling.js"></script>

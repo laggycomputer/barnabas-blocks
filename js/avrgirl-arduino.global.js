@@ -12317,7 +12317,9 @@ module.exports = AvrgirlArduino(boards, Connection, protocols);
     signature: Buffer.from([0x1e, 0x95, 0x0f]),
     pageSize: 128,
     numPages: 256,
-    timeout: 400,
+    //timeout: 400,
+    //- 20201016 changed timeout from 400 ms
+    timeout: 1200, 
     productId: ['0x0043', '0x7523', '0x0001', '0xea60', '0x6015'],
     productPage: 'https://store.arduino.cc/arduino-uno-rev3',
     protocol: 'stk500v1'
@@ -12384,7 +12386,9 @@ module.exports = AvrgirlArduino(boards, Connection, protocols);
     signature: Buffer.from([0x1e, 0x95, 0x0f]),
     pageSize: 128,
     numPages: 256,
-    timeout: 400,
+    //timeout: 400,
+    //- 20201016 changed timeout
+    timeout: 1200,
     productId: ['0x6001', '0x7523'],
     productPage: 'https://web.archive.org/web/20150813095112/https://www.arduino.cc/en/Main/ArduinoBoardNano',
     protocol: 'stk500v1'
@@ -12395,7 +12399,8 @@ module.exports = AvrgirlArduino(boards, Connection, protocols);
     signature: Buffer.from([0x1e, 0x95, 0x0f]),
     pageSize: 128,
     numPages: 256,
-    timeout: 400,
+    //- 20201016 changed timeout
+    timeout: 1200,
     productId: ['0x6001', '0x7523'],
     productPage: 'https://store.arduino.cc/arduino-nano',
     protocol: 'stk500v1'
@@ -12940,11 +12945,21 @@ Connection.prototype._sniffPort = function(callback) {
  */
 Connection.prototype._setDTR = function(bool, timeout, callback) {
   var _this = this;
+
+  //- 20201014
+  //- 20201015 - added rts and dtr back in to be backward compatible
   var props = {
     rts: false,
-    dtr: bool
+    dtr: bool,
+
+    requestToSend: false,
+    dataTerminalReady: bool
+
+    
+
   };
 
+  
   _this.serialPort.set(props, function(error) {
     if (error) { return callback(error); }
 
@@ -13110,7 +13125,10 @@ class SerialPort extends EventEmitter {
       .then(serialPort => {
         this.port = serialPort;
         if (this.isOpen) return;
-        return this.port.open({ baudrate: this.baudrate || 57600 });
+        //- 20201014 - attribute changed from baudrate to baudRate
+        //- 20201020 - added back baudrate attribute
+        //return this.port.open({ baudrate: this.baudrate || 57600 });
+        return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600 });
       })
       .then(() => this.writer = this.port.writable.getWriter())
       .then(() => this.reader = this.port.readable.getReader())
@@ -13135,8 +13153,14 @@ class SerialPort extends EventEmitter {
 
   async close(callback) {
     try {
-      await this.reader.releaseLock();
       await this.writer.releaseLock();
+
+      //await this.reader.releaseLock();
+      /*cancel the reader instead of try to release the lock.  releaseLock was throwing an exception of 
+      "Cannot release a readable stream reader when it still has outstanding read() calls that have not yet settled" */
+
+      await this.reader.cancel() 
+      
       await this.port.close();
       this.isOpen = false;
     } catch (error) {
@@ -13148,7 +13172,9 @@ class SerialPort extends EventEmitter {
 
   async set(props, callback) {
     try {
+    
       await this.port.setSignals(props);
+
     } catch (error) {
       if (callback) return callback(error);
       throw error;
@@ -13652,6 +13678,7 @@ util.inherits(Stk500v1, Protocol);
  * @param {function} callback - function to run upon completion/error
  */
 Stk500v1.prototype._upload = function(file, callback) {
+  
   var _this = this;
 
   this.serialPort = this.connection.serialPort;
@@ -13664,6 +13691,7 @@ Stk500v1.prototype._upload = function(file, callback) {
 
   // open connection
   _this.serialPort.open(function(error) {
+   
     if (error) { return callback(error); }
 
     _this.debug('connected');
@@ -13692,14 +13720,23 @@ Stk500v1.prototype._upload = function(file, callback) {
 Stk500v1.prototype._reset = function(callback) {
   var _this = this;
 
-  _this.connection._setDTR(false, 250, function(error) {
+  /** 
+   * A reset is cause by the DTR signal going from false to true
+   */
+
+  //_this.connection._setDTR(false, 250, function(error) {
+    //-20201017 - hold the reset down for 5000 ms instead of 250 ms to make sure that reset is triggered
+    _this.connection._setDTR(false, 1000, function(error) {
     if (error) { return callback(error); }
 
-    _this.connection._setDTR(true, 50, function(error) {
+    //_this.connection._setDTR(true, 50, function(error) {
+      //-20201017 - wait only 1 ms instead of 50 ms before starting to upload to make sure that board doesn't go back into boot up mode
+      _this.connection._setDTR(true, 1, function(error) {
       _this.debug('reset complete.');
       return callback(error);
     });
   });
+  
 };
 
 module.exports = Stk500v1;
@@ -15288,6 +15325,7 @@ module.exports = function (stream, timeout, responseLength, callback) {
     stream.removeListener('data', handleChunk);
     callback(err, buffer);
   };
+  //-202016 timeout error seen by Sal Castro Chromebooks when working with nanos
   if (timeout && timeout > 0) {
     timeoutId = setTimeout(function () {
       timeoutId = null;
@@ -16189,8 +16227,12 @@ stk500.prototype.reset = function(delay1, delay2, done){
 
   async.series([
     function(cbdone) {
-    	//console.log("asserting");
-      self.serialPort.set({rts:true, dtr:true}, function(result){
+      //console.log("asserting");
+
+      //-20201014
+      //-20201015 - added rts,dtr attribute back in 
+      //self.serialPort.set({rts:true, dtr:true}, function(result){
+        self.serialPort.set({requestToSend:true, dataTerminalReady:true, rts:true, dtr:true}, function(result){
       	//console.log("asserted");
       	if(result) cbdone(result);
       	else cbdone();
@@ -16202,7 +16244,12 @@ stk500.prototype.reset = function(delay1, delay2, done){
     },
     function(cbdone) {
     	//console.log("clearing");
-      self.serialPort.set({rts:false, dtr:false}, function(result){
+      
+      //-20201014
+      //-20201015 - added rts,dtr attribute back in
+      self.serialPort.set({requestToSend:false, dataTerminalReady:false, rts:false, dtr:false}, function(result){
+      //self.serialPort.set({rts:false, dtr:false}, function(result){
+
       	//console.log("clear");
       	if(result) cbdone(result);
       	else cbdone();
