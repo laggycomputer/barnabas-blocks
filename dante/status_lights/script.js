@@ -50,7 +50,7 @@ async function connect() {
   // - Request a port and open a connection.
   port = await navigator.serial.requestPort();
   // - Wait for the port to open.
-  await port.open({ baudrate: 19200 });
+  await port.open({baudRate: 19200, dataBits: 7, parity: "none", stopBits: 1});
   // CODELAB: Add code setup the output stream here.
   const encoder = new TextEncoderStream();
   outputDone = encoder.readable.pipeTo(port.writable);
@@ -61,6 +61,7 @@ async function connect() {
     .pipeThrough(new TransformStream(new LineBreakTransformer()));
   inputDone = port.readable.pipeTo(decoder.writable);
   reader = inputStream.getReader();
+  flashCode();
   readLoop();
   // The codelab wants us to decode via JSON as well, though that isn't needed here
   // .pipeThrough(new TransformStream(new JSONTransformer()));
@@ -88,6 +89,70 @@ async function disconnect() {
   // CODELAB: Close the port.
   await port.close();
   port = null;
+}
+
+function flashCode() {
+//  let avrgirl = new AvrgirlArduino({
+//    board: "arduino:avr:uno",
+//    debug: true
+//  });
+//  var result = null;
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.open("GET", "repl/repl.ino", false);
+//  xmlhttp.send();
+//  if (xmlhttp.status == 200) {
+//    result = xmlhttp.responseText;
+//  }
+// fetch("https://compile.barnabasrobotics.com/compile", {
+//    method: 'POST',
+//    headers: {
+//      'Content-Type': 'application/json'
+//    },
+//    body: JSON.stringify(result)
+//  }).then(response => response.json())
+//  .then(data => {
+//      return atob(data.hex);
+//  })   .then(hex => {
+//          if (hex && flash) {
+//            try {
+//              let avrgirl = new AvrgirlArduino({
+//                board: board,
+//                debug: true
+//              });
+//
+//              avrgirl.flash(str2ab(hex.data), (error) => {
+//                // gear.classList.remove('spinning');
+//                // progress.textContent = "done!";
+//                if (error) {
+//                  console.error("Flash ERROR:", error);
+//                  //typicall wrong board
+//                  // avrgirl.connection.serialPort.close();
+//                  upload_result(error + '\n' + hex.msg, false);
+//                } else {
+//                  console.info('done correctly.');
+//                  upload_result(hex.msg)
+//                }
+//              });
+//            } catch (error) {
+//              console.error("AVR ERROR:", error);
+//              upload_result(error, false);
+//            }
+//
+//          } else {
+//            console.log("HEX:", hex);
+//            upload_result(hex.msg);
+//          }
+//        })
+//        .catch(e => {
+//          console.error("Fetch Error:", e);
+//        }).then(hex => {
+//          if (hex) {
+//            let avrgirl = new AvrgirlArduino({
+//              board: board,
+//              debug: true
+//            });
+//
+//            avrgirl.flash(str2ab(hex.data), (error) => {});
 }
 
 
@@ -128,7 +193,7 @@ async function readLoop() {
       let second_pin = chunk_bits - (first_pin << 10);
 
       let pins_being_read = [pins_reversed[index * 2], pins_reversed[index * 2 + 1]];
-      console.log(pins_being_read);
+//      console.log(pins_being_read);
       function updatePin(pin, state) {
         let src;
         if (state) {
@@ -143,7 +208,7 @@ async function readLoop() {
         }
         state = (state + 1) / 1024 * 5;
         document.getElementById("bool" + pin.toString()).src = src;
-        document.getElementById(pin.toString()).innerHTML = state.toString();
+        document.getElementById(pin.toString()).innerHTML = state.toFixed(2).toString();
       }
       updatePin(pins_being_read[0], first_pin);
       updatePin(pins_being_read[1], second_pin);
