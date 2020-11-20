@@ -34,11 +34,18 @@ const btnMonitor = document.getElementById('monitorButton');
  * output stream.
  */
 async function connect() {
+
+  const filters = [
+    { usbVendorId: 0x1A86, usbProductId: 0x7523 },
+  ];
+
   // CODELAB: Add code to request & open port here.
   // - Request a port and open a connection.
-  port = await navigator.serial.requestPort();
+  port = await navigator.serial.requestPort({ filters });
   // - Wait for the port to open.
   await port.open({ baudrate: 9600, baudRate: 9600});
+
+  var { usbProductId, usbVendorId, manufacturer} = port.getInfo();
 
   // CODELAB: Add code setup the output stream here.
   const encoder = new TextEncoderStream();
