@@ -61,7 +61,7 @@ async function connect() {
     .pipeThrough(new TransformStream(new LineBreakTransformer()));
   inputDone = port.readable.pipeTo(decoder.writable);
   reader = inputStream.getReader();
-  flashCode();
+//  flashCode();
   readLoop();
   // The codelab wants us to decode via JSON as well, though that isn't needed here
   // .pipeThrough(new TransformStream(new JSONTransformer()));
@@ -92,67 +92,60 @@ async function disconnect() {
 }
 
 function flashCode() {
-//  let avrgirl = new AvrgirlArduino({
-//    board: "arduino:avr:uno",
-//    debug: true
-//  });
-//  var result = null;
-//  var xmlhttp = new XMLHttpRequest();
-//  xmlhttp.open("GET", "repl/repl.ino", false);
-//  xmlhttp.send();
-//  if (xmlhttp.status == 200) {
-//    result = xmlhttp.responseText;
-//  }
-// fetch("https://compile.barnabasrobotics.com/compile", {
-//    method: 'POST',
-//    headers: {
-//      'Content-Type': 'application/json'
-//    },
-//    body: JSON.stringify(result)
-//  }).then(response => response.json())
-//  .then(data => {
-//      return atob(data.hex);
-//  })   .then(hex => {
-//          if (hex && flash) {
-//            try {
-//              let avrgirl = new AvrgirlArduino({
-//                board: board,
-//                debug: true
-//              });
-//
-//              avrgirl.flash(str2ab(hex.data), (error) => {
-//                // gear.classList.remove('spinning');
-//                // progress.textContent = "done!";
-//                if (error) {
-//                  console.error("Flash ERROR:", error);
-//                  //typicall wrong board
-//                  // avrgirl.connection.serialPort.close();
-//                  upload_result(error + '\n' + hex.msg, false);
-//                } else {
-//                  console.info('done correctly.');
-//                  upload_result(hex.msg)
-//                }
-//              });
-//            } catch (error) {
-//              console.error("AVR ERROR:", error);
-//              upload_result(error, false);
-//            }
-//
-//          } else {
-//            console.log("HEX:", hex);
-//            upload_result(hex.msg);
-//          }
-//        })
-//        .catch(e => {
-//          console.error("Fetch Error:", e);
-//        }).then(hex => {
-//          if (hex) {
-//            let avrgirl = new AvrgirlArduino({
-//              board: board,
-//              debug: true
-//            });
-//
-//            avrgirl.flash(str2ab(hex.data), (error) => {});
+  let avrgirl = new AvrgirlArduino({
+    board: "arduino:avr:uno",
+    debug: true
+  });
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", "repl/repl.ino", false);
+  xmlhttp.send();
+  if (xmlhttp.status == 200) {
+    result = xmlhttp.responseText;
+  }
+  fetch(
+    "https://compile.barnabasrobotics.com/compile", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(result)
+     }
+  ).then(response => response.json()).then(data => {return atob(data.hex);}).then(hex => {
+    if (hex && flash) {
+      try {
+        let avrgirl = new AvrgirlArduino({
+          board: board,
+          debug: true
+        });
+
+        avrgirl.flash(str2ab(hex.data), (error) => {
+          // gear.classList.remove('spinning');
+          // progress.textContent = "done!";
+          if (error) {
+            console.error("Flash ERROR:", error);
+            //typicall wrong board
+            // avrgirl.connection.serialPort.close();
+            upload_result(error + '\n' + hex.msg, false);
+          } else {
+            console.info('done correctly.');
+            upload_result(hex.msg)
+          }
+        });
+      } catch (error) {
+        console.error("AVR ERROR:", error);
+        upload_result(error, false);
+      }
+    } else {
+      console.log("HEX:", hex);
+      upload_result(hex.msg);
+    }
+  }).catch(e => {console.error("Fetch Error:", e);}).then(hex => {
+    if (hex) {
+      let avrgirl = new AvrgirlArduino({board: board, debug: true});
+    }
+    avrgirl.flash(str2ab(hex.data), (error) => {});
+  })
 }
 
 
