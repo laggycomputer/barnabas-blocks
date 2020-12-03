@@ -91,31 +91,46 @@ async function disconnect() {
   port = null;
 }
 
-function flashCode() {
+var str2ab = function (str) {
+  // var encodedString = unescape(encodeURIComponent(str));
+  var encodedString = str;
+  var bytes = new Uint8Array(encodedString.length);
+  for (var i = 0; i < encodedString.length; ++i) {
+    bytes[i] = encodedString.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
+function flashCode(code) {
   let avrgirl = new AvrgirlArduino({
     board: "arduino:avr:uno",
     debug: true
   });
-  var result = null;
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("GET", "repl/repl.ino", false);
-  xmlhttp.send();
-  if (xmlhttp.status == 200) {
-    result = xmlhttp.responseText;
-  }
+//  var result = null;
+//  var xmlhttp = new XMLHttpRequest();
+//  xmlhttp.open("GET", "repl/repl.ino", false);
+//  xmlhttp.send();
+//  if (xmlhttp.status == 200) {
+//    result = xmlhttp.responseText;
+//  }
+  var result = code;
+  var data = { sketch: result, board: "arduino:avr:uno" };
   fetch(
     "https://compile.barnabasrobotics.com/compile", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(result)
+      body: JSON.stringify(data)
      }
-  ).then(response => response.json()).then(data => {return atob(data.hex);}).then(hex => {
-    if (hex && flash) {
+  ).then(response => response.json()).then(data => {
+    let hexstring = atob(data.hex);
+    return { 'data': hexstring, 'msg': data.stdout };
+  }).then(hex => {
+    if (hex) {
       try {
         let avrgirl = new AvrgirlArduino({
-          board: board,
+          board: 'uno',
           debug: true
         });
 
@@ -126,26 +141,17 @@ function flashCode() {
             console.error("Flash ERROR:", error);
             //typicall wrong board
             // avrgirl.connection.serialPort.close();
-            upload_result(error + '\n' + hex.msg, false);
           } else {
             console.info('done correctly.');
-            upload_result(hex.msg)
           }
         });
       } catch (error) {
         console.error("AVR ERROR:", error);
-        upload_result(error, false);
       }
     } else {
       console.log("HEX:", hex);
-      upload_result(hex.msg);
     }
-  }).catch(e => {console.error("Fetch Error:", e);}).then(hex => {
-    if (hex) {
-      let avrgirl = new AvrgirlArduino({board: board, debug: true});
-    }
-    avrgirl.flash(str2ab(hex.data), (error) => {});
-  })
+  });
 }
 
 
