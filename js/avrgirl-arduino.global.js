@@ -13128,7 +13128,9 @@ class SerialPort extends EventEmitter {
         //- 20201014 - attribute changed from baudrate to baudRate
         //- 20201020 - added back baudrate attribute
         //return this.port.open({ baudrate: this.baudrate || 57600 });
-        return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600 });
+        //return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600 });
+        return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600, dataBits: 8, parity: "none", stopBits: 1, flowControl: "none", bufferSize: 255});
+
       })
       .then(() => this.writer = this.port.writable.getWriter())
       .then(() => this.reader = this.port.readable.getReader())
