@@ -12893,16 +12893,16 @@ var Connection = function(options) {
   this.board = this.options.board;
 };
 
-Connection.prototype._init = function(callback) {
+Connection.prototype._init = function(callback, options={}) {
   this._setUpSerial(function(error) {
     return callback(error);
-  });
+  }, options);
 };
 
 /**
  * Create new serialport instance for the Arduino board, but do not immediately connect.
  */
-Connection.prototype._setUpSerial = function(callback) {
+Connection.prototype._setUpSerial = function(callback, options={}) {
   var _this = this;
   this.serialPort = new Serialport('', {
     baudRate: this.board.baud,
@@ -13120,7 +13120,7 @@ class SerialPort extends EventEmitter {
       .catch((error) => {if (callback) {return callback(error)}}); 
   }
 
-  open(callback) {
+  open(callback, options={}) {
     window.navigator.serial.requestPort(this.requestOptions)
       .then(serialPort => {
         this.port = serialPort;
@@ -13129,8 +13129,18 @@ class SerialPort extends EventEmitter {
         //- 20201020 - added back baudrate attribute
         //return this.port.open({ baudrate: this.baudrate || 57600 });
         //return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600 });
-        return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600, dataBits: 8, parity: "none", stopBits: 1, flowControl: "none", bufferSize: 255});
-
+        if (options) {
+          var baudRate = options["baudRate"] || 57600;
+          var dataBits = options["dataBits"] || 8;
+          var parity = options["parity"] || "none";
+          var stopBits = options["stopBits"] || 1;
+          var flowControl = options["flowControl"] || "none";
+          var bufferSize = options["bufferSize"] || 255;
+          console.log(dataBits);
+          return this.port.open({ baudRate: baudRate, dataBits: dataBits, parity: parity, stopBits: stopBits, flowControl: flowControl, bufferSize: bufferSize});
+        } else {
+          return this.port.open({ baudRate: 57600, dataBits: 8, parity: "none", stopBits: 1, flowControl: "none", bufferSize: 255});
+        }
       })
       .then(() => this.writer = this.port.writable.getWriter())
       .then(() => this.reader = this.port.readable.getReader())
@@ -13679,7 +13689,7 @@ util.inherits(Stk500v1, Protocol);
  * @param {string} file - path to hex file for uploading
  * @param {function} callback - function to run upon completion/error
  */
-Stk500v1.prototype._upload = function(file, callback) {
+Stk500v1.prototype._upload = function(file, callback, options={}) {
   
   var _this = this;
 
@@ -13716,7 +13726,7 @@ Stk500v1.prototype._upload = function(file, callback) {
         return callback(error);
       });
     });
-  });
+  }, options);
 };
 
 Stk500v1.prototype._reset = function(callback) {
@@ -18849,7 +18859,7 @@ var injectDependencies = function(boards, Connection, protocols) {
    * @param {string} file - path to hex file for uploading
    * @param {function} callback - function to run upon completion/error
    */
-  AvrgirlArduino.prototype.flash = function(file, callback) {
+  AvrgirlArduino.prototype.flash = function(file, callback, options={}) {
     var _this = this;
 
     // validate board properties first
@@ -18861,8 +18871,8 @@ var injectDependencies = function(boards, Connection, protocols) {
         if (error) { return callback(error); }
 
         // upload file to board
-        _this.protocol._upload(file, callback);
-      });
+        _this.protocol._upload(file, callback, options);
+      }, options);
     });
   };
 

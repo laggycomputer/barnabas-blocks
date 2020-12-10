@@ -100,7 +100,7 @@ var str2ab = function (str) {
   return bytes.buffer;
 };
 
-function flashCode(code, nano=false) {
+function flashCode(code, nano=false, options={}) {
 
   if (nano) {
     var board_to_api = "arduino:avr:nano:cpu=atmega328";
@@ -149,7 +149,7 @@ function flashCode(code, nano=false) {
           } else {
             console.info('done correctly.');
           }
-        });
+        }, options);
       } catch (error) {
         console.error("AVR ERROR:", error);
       }
