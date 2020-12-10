@@ -101,11 +101,15 @@ var str2ab = function (str) {
   return bytes.buffer;
 };
 
-function flashCode(code) {
-  let avrgirl = new AvrgirlArduino({
-    board: "arduino:avr:uno",
-    debug: true
-  });
+function flashCode(code, nano=false) {
+
+  if (nano) {
+    var board_to_api = "arduino:avr:nano:cpu=atmega328";
+    var board_to_upload = "nano";
+  } else {
+    var board_to_api = "arduino:avr:uno";
+    var board_to_upload = "uno";
+  }
 //  var result = null;
 //  var xmlhttp = new XMLHttpRequest();
 //  xmlhttp.open("GET", "repl/repl.ino", false);
@@ -114,7 +118,9 @@ function flashCode(code) {
 //    result = xmlhttp.responseText;
 //  }
   var result = code;
-  var data = { sketch: result, board: "arduino:avr:uno" };
+
+  var data = { sketch: result, board: board_to_api };
+
   fetch(
     "https://compile.barnabasrobotics.com/compile", {
       method: 'POST',
@@ -129,8 +135,8 @@ function flashCode(code) {
   }).then(hex => {
     if (hex) {
       try {
-        let avrgirl = new AvrgirlArduino({
-          board: 'uno',
+        var avrgirl = new AvrgirlArduino({
+          board: board_to_upload,
           debug: true
         });
 
