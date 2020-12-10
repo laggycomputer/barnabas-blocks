@@ -1,0 +1,1 @@
+Scripts to attempt to bruteforce working serial settings and/or identify broken hardware.
