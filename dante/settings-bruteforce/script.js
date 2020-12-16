@@ -26,11 +26,15 @@ let outputDone;
 let inputStream;
 let outputStream;
 
+const uploadLog = document.getElementById('uploadLog');
 const log = document.getElementById('log');
 const butConnect = document.getElementById('butConnect');
+const butUpload = document.getElementById('butUpload');
+
 
 document.addEventListener('DOMContentLoaded', () => {
   butConnect.addEventListener('click', clickConnect);
+  butUpload.addEventListener('click', handleForm);
 
   // CODELAB: Add feature detection here.
   const notSupported = document.getElementById('notSupported');
@@ -100,6 +104,24 @@ var str2ab = function (str) {
   return bytes.buffer;
 };
 
+function handleForm() {
+    var board = document.getElementById("boardType").value;
+    var baud = document.getElementById("baudRate").value;
+    var dataBits = document.getElementById("dataBits").value;
+    var parity = document.getElementById("parity").value;
+    var stopBits = document.getElementById("stopBits").value;
+    var bufferSize = document.getElementById("bufferSize").value;
+    var flowControl = document.getElementById("flowControl").value;
+
+    var is_nano = board == "nano";
+    var opts = {baudRate: baud, dataBits: dataBits, parity: parity, stopBits: stopBits, flowControl: flowControl};
+
+    const code = "void setup(){} void loop(){}";
+
+    uploadLog.textContent = "";
+    flashCode(code, is_nano, opts);
+}
+
 function flashCode(code, nano=false, options={}) {
 
   if (nano) {
@@ -136,25 +158,21 @@ function flashCode(code, nano=false, options={}) {
       try {
         var avrgirl = new AvrgirlArduino({
           board: board_to_upload,
-          debug: true
+          debug: false
         });
 
         avrgirl.flash(str2ab(hex.data), (error) => {
           // gear.classList.remove('spinning');
           // progress.textContent = "done!";
           if (error) {
-            console.error("Flash ERROR:", error);
-            //typicall wrong board
-            // avrgirl.connection.serialPort.close();
+            uploadLog.textContent += "Upload error:" + error + "\n";
           } else {
-            console.info('done correctly.');
+            uploadLog.textContent += "Upload successful.\n";
           }
         }, options);
       } catch (error) {
-        console.error("AVR ERROR:", error);
+        uploadLog.textContent += "AVR error:" + error + "\n";
       }
-    } else {
-      console.log("HEX:", hex);
     }
   });
 }

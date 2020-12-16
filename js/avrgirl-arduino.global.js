@@ -13136,7 +13136,6 @@ class SerialPort extends EventEmitter {
           var stopBits = options["stopBits"] || 1;
           var flowControl = options["flowControl"] || "none";
           var bufferSize = options["bufferSize"] || 255;
-          console.log(dataBits);
           return this.port.open({ baudRate: baudRate, dataBits: dataBits, parity: parity, stopBits: stopBits, flowControl: flowControl, bufferSize: bufferSize});
         } else {
           return this.port.open({ baudRate: 57600, dataBits: 8, parity: "none", stopBits: 1, flowControl: "none", bufferSize: 255});
