@@ -165,13 +165,13 @@ function flashCode(code, nano=false, options={}) {
           // gear.classList.remove('spinning');
           // progress.textContent = "done!";
           if (error) {
-            uploadLog.textContent += "Upload error:" + error + "\n";
+            uploadLog.textContent += "Upload error:\n" + error + "\n";
           } else {
             uploadLog.textContent += "Upload successful.\n";
           }
         }, options);
       } catch (error) {
-        uploadLog.textContent += "AVR error:" + error + "\n";
+        uploadLog.textContent += "AVR error:\n" + error + "\n";
       }
     }
   });
