@@ -114,7 +114,7 @@ function handleForm() {
     var flowControl = document.getElementById("flowControl").value;
 
     var is_nano = board == "nano";
-    var opts = {baudRate: baud, dataBits: dataBits, parity: parity, stopBits: stopBits, flowControl: flowControl};
+    var opts = {baudRate: baud, dataBits: dataBits, parity: parity, stopBits: stopBits, bufferSize: bufferSize, flowControl: flowControl};
 
     const code = "void setup(){} void loop(){}";
 
