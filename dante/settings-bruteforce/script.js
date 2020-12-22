@@ -116,8 +116,7 @@ function handleForm() {
     var is_nano = board == "nano";
     var opts = {baudRate: baud, dataBits: dataBits, parity: parity, stopBits: stopBits, bufferSize: bufferSize, flowControl: flowControl};
 
-    const code = "void setup(){} void loop(){}";
-
+    var code = document.getElementById("code").value;
     uploadLog.textContent = "";
     flashCode(code, is_nano, opts);
 }
@@ -151,9 +150,21 @@ function flashCode(code, nano=false, options={}) {
       body: JSON.stringify(data)
      }
   ).then(response => response.json()).then(data => {
-    let hexstring = atob(data.hex);
-    return { 'data': hexstring, 'msg': data.stdout };
-  }).then(hex => {
+   // console.log(data);
+   if (!data.success) {
+     // // can only run below if arduino compile error I can still get response with garbage body
+     if (data.stderr.length > 0) {
+       let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
+       let message = data.stderr.replace(regex, "");
+       uploadLog.textContent += "Compilation error:\n" + message + "\n"
+       regex = /\d+\:\d+/g;
+     }
+   } else {
+     let hexstring = atob(data.hex);
+     return { 'data': hexstring, 'msg': data.stdout };
+   }
+ }
+ ).then(hex => {
     if (hex) {
       try {
         var avrgirl = new AvrgirlArduino({

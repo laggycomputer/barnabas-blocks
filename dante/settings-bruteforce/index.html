@@ -48,6 +48,7 @@
             <input list="rates" id="monitorBaud" value="9600"/>
             <br>
 
+            <p>Upload settings:</p>
             <label for="boardType">Board: </label>
             <select id="boardType">
                 <option value="nano">Nano</option>
@@ -102,11 +103,23 @@
                 <option value="hardware">Hardware</option>
             </select>
             <br>
+            <label for="code">Code to upload:</label>
+            <br>
+            <textarea id="code" rows="10" cols="50">
+void setup() {
+  // put your setup code here, to run once:
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}</textarea>
+            <br>
             <button id="butUpload" type="button">Upload</button>
             <br><br>
             <p>Upload log:</p>
             <pre id="uploadLog"></pre>
-            <br>
             <pre id="log"></pre>
         </main>
     </body>
