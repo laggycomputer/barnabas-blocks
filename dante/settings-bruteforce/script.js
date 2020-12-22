@@ -117,7 +117,9 @@ function handleForm() {
     var opts = {baudRate: baud, dataBits: dataBits, parity: parity, stopBits: stopBits, bufferSize: bufferSize, flowControl: flowControl};
 
     var code = document.getElementById("code").value;
-    uploadLog.textContent = "";
+    if (document.getElementById("clearLog").checked) {
+      uploadLog.textContent = "";
+    }
     flashCode(code, is_nano, opts);
 }
 
