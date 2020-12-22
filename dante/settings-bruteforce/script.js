@@ -177,12 +177,14 @@ function flashCode(code, nano=false, options={}) {
           // progress.textContent = "done!";
           if (error) {
             uploadLog.textContent += "Upload error:\n" + error + "\n";
+            avrgirl.connection.serialPort.close();
           } else {
             uploadLog.textContent += "Upload successful.\n";
           }
         }, options);
       } catch (error) {
         uploadLog.textContent += "AVR error:\n" + error + "\n";
+        avrgirl.connection.serialPort.close();
       }
     }
   });
