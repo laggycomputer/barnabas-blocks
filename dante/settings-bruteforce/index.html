@@ -42,8 +42,11 @@
                 <code>chrome://flags</code>
             </div>
             <br>
+            <p>Serial monitor:</p>
             <button id="butConnect" type="button">Connect</button>
-            <br><br>
+            <label for="monitorBaud">Baud: </label>
+            <input list="rates" id="monitorBaud" value="9600"/>
+            <br>
 
             <label for="boardType">Board: </label>
             <select id="boardType">
