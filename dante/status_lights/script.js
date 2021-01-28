@@ -28,8 +28,9 @@ let outputStream;
 
 const log = document.getElementById('log');
 const butConnect = document.getElementById('butConnect');
-const pins = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "A0", "A1", "A2", "A3", "A4", "A5"]
-const pins_reversed = pins.reverse()
+const digital_pin_names = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
+const analog_pin_names = ["A0", "A1", "A2", "A3", "A4", "A5"];
+
 
 document.addEventListener('DOMContentLoaded', () => {
   butConnect.addEventListener('click', clickConnect);
@@ -197,36 +198,36 @@ async function readLoop() {
     const { value, done } = await reader.read();
 
     let bit_chunks = value.trim().split(" ");
-//    console.log(bit_chunks);
+    let digitals = bit_chunks.slice(0, 14);
+    let analogs = bit_chunks.slice(14);
 
-    function updateDisplay(bit_chunk, index) {
-      let chunk_bits = parseInt(bit_chunk);
-//      console.log(bit_chunk);
-      let first_pin = (chunk_bits & (-1 << 10)) >> 10;
-      let second_pin = chunk_bits - (first_pin << 10);
-
-      let pins_being_read = [pins_reversed[index * 2], pins_reversed[index * 2 + 1]];
-//      console.log(pins_being_read);
-      function updatePin(pin, state) {
-        let src;
+    for (let digital_pin_number = 0; digital_pin_number < 14; digital_pin_number++) {
+        let state = parseInt(digitals[digital_pin_number]);
+        let elem_to_update = document.getElementById("bool" + digital_pin_names[digital_pin_number]);
         if (state) {
-          src = "assets/on.svg";
+            elem_to_update.src = "assets/on.svg"
         } else {
-          src = "assets/off.svg";
+            elem_to_update.src = "assets/off.svg"
         }
+    }
+
+    for (let analog_pin_number = 0; analog_pin_number < 6; analog_pin_number++) {
+        let state = parseInt(analogs[analog_pin_number]);
+        let elem_to_update = document.getElementById("bool" + analog_pin_names[analog_pin_number]);
         if (state > 1023) {
           state = 1023;
         } else if (state < 0) {
           state = 0;
         }
+        if (state) {
+            elem_to_update.src = "assets/on.svg"
+        } else {
+            elem_to_update.src = "assets/off.svg"
+        }
         state = (state + 1) / 1024 * 5;
-        document.getElementById("bool" + pin.toString()).src = src;
-        document.getElementById(pin.toString()).innerHTML = state.toFixed(2).toString();
-      }
-      updatePin(pins_being_read[0], first_pin);
-      updatePin(pins_being_read[1], second_pin);
+        document.getElementById(analog_pin_names[analog_pin_number]).innerHTML = state.toFixed(2).toString();
     }
-    bit_chunks.forEach(updateDisplay);
+
     if (done) {
       console.log('[readLoop] DONE', done);
       reader.releaseLock();
