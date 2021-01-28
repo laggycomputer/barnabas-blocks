@@ -132,16 +132,8 @@ function flashCode(code, nano=false, options={}) {
     var board_to_api = "arduino:avr:uno";
     var board_to_upload = "uno";
   }
-//  var result = null;
-//  var xmlhttp = new XMLHttpRequest();
-//  xmlhttp.open("GET", "repl/repl.ino", false);
-//  xmlhttp.send();
-//  if (xmlhttp.status == 200) {
-//    result = xmlhttp.responseText;
-//  }
-  var result = code;
 
-  var data = { sketch: result, board: board_to_api };
+  var data = { sketch: code, board: board_to_api };
 
   fetch(
     "https://compile.barnabasrobotics.com/compile", {
