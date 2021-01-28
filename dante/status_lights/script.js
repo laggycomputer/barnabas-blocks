@@ -61,7 +61,6 @@ async function connect() {
     .pipeThrough(new TransformStream(new LineBreakTransformer()));
   inputDone = port.readable.pipeTo(decoder.writable);
   reader = inputStream.getReader();
-//  flashCode();
   readLoop();
   // The codelab wants us to decode via JSON as well, though that isn't needed here
   // .pipeThrough(new TransformStream(new JSONTransformer()));
@@ -101,7 +100,7 @@ var str2ab = function (str) {
   return bytes.buffer;
 };
 
-function flashCode(code, nano=false) {
+function flashCode(code, nano=false, options={}) {
 
   if (nano) {
     var board_to_api = "arduino:avr:nano:cpu=atmega328";
@@ -110,13 +109,13 @@ function flashCode(code, nano=false) {
     var board_to_api = "arduino:avr:uno";
     var board_to_upload = "uno";
   }
-//  var result = null;
-//  var xmlhttp = new XMLHttpRequest();
-//  xmlhttp.open("GET", "repl/repl.ino", false);
-//  xmlhttp.send();
-//  if (xmlhttp.status == 200) {
-//    result = xmlhttp.responseText;
-//  }
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", "repl/repl.ino", false);
+  xmlhttp.send();
+  if (xmlhttp.status == 200) {
+    result = xmlhttp.responseText;
+  }
   var result = code;
 
   var data = { sketch: result, board: board_to_api };
@@ -130,36 +129,45 @@ function flashCode(code, nano=false) {
       body: JSON.stringify(data)
      }
   ).then(response => response.json()).then(data => {
-    let hexstring = atob(data.hex);
-    return { 'data': hexstring, 'msg': data.stdout };
-  }).then(hex => {
+   // console.log(data);
+   if (!data.success) {
+     // can only run below if arduino compile error I can still get response with garbage body
+     if (data.stderr.length > 0) {
+       let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
+       let message = data.stderr.replace(regex, "");
+       uploadLog.textContent += "Compilation error:\n" + message + "\n"
+       regex = /\d+\:\d+/g;
+     }
+   } else {
+     let hexstring = atob(data.hex);
+     return { 'data': hexstring, 'msg': data.stdout };
+   }
+ }
+ ).then(hex => {
     if (hex) {
       try {
         var avrgirl = new AvrgirlArduino({
           board: board_to_upload,
-          debug: true
+          debug: false
         });
 
         avrgirl.flash(str2ab(hex.data), (error) => {
           // gear.classList.remove('spinning');
           // progress.textContent = "done!";
           if (error) {
-            console.error("Flash ERROR:", error);
-            //typicall wrong board
-            // avrgirl.connection.serialPort.close();
+            uploadLog.textContent += "Upload error:\n" + error + "\n";
+            avrgirl.connection.serialPort.close();
           } else {
-            console.info('done correctly.');
+            uploadLog.textContent += "Upload successful.\n";
           }
-        });
+        }, options);
       } catch (error) {
-        console.error("AVR ERROR:", error);
+        uploadLog.textContent += "AVR error:\n" + error + "\n";
+        avrgirl.connection.serialPort.close();
       }
-    } else {
-      console.log("HEX:", hex);
     }
   });
 }
-
 
 /**
  * @name clickConnect
