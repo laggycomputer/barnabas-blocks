@@ -50,7 +50,7 @@ async function connect() {
   // - Request a port and open a connection.
   port = await navigator.serial.requestPort();
   // - Wait for the port to open.
-  await port.open({baudRate: 19200, dataBits: 7, parity: "none", stopBits: 1});
+  await port.open({baudRate: 19200});
   // CODELAB: Add code setup the output stream here.
   const encoder = new TextEncoderStream();
   outputDone = encoder.readable.pipeTo(port.writable);

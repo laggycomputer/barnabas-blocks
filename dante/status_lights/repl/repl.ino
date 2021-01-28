@@ -6,7 +6,8 @@ void setup() {
   for (int pin = 0; pin < 20; pin++) {
     pinMode(pins[pin], INPUT);
   }
-  Serial.begin(19200, SERIAL_7N1);
+
+  Serial.begin(19200);
 }
 
 void loop() {
