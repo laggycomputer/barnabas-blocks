@@ -29,11 +29,13 @@ let outputStream;
 const uploadLog = document.getElementById('uploadLog');
 const log = document.getElementById('log');
 const butConnect = document.getElementById('butConnect');
+const butClearSerial = document.getElementById('butClearSerial');
 const butUpload = document.getElementById('butUpload');
 
 
 document.addEventListener('DOMContentLoaded', () => {
   butConnect.addEventListener('click', clickConnect);
+  butClearSerial.addEventListener('click', clearSerial);
   butUpload.addEventListener('click', handleForm);
 
   // CODELAB: Add feature detection here.
@@ -287,4 +289,8 @@ function toggleUIConnected(connected) {
     lbl = 'Disconnect';
   }
   butConnect.textContent = lbl;
+}
+
+function clearSerial() {
+  log.textContent = "";
 }
