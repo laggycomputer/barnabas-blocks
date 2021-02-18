@@ -14,129 +14,140 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Web Serial Code Lab</title>
-  <meta charset="utf-8">
-  <meta name="codelab" content="getting-started-w-web-serial">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script>
-      // Redirect to HTTPS if HTTP is requested.
-      if (window.location.protocol === 'http:') {
-        window.location.href = 'https:' + window.location.href.substring(5);
-      }
-    </script>
-  <link rel="stylesheet" href="style.css">
-  <script src="../../js/avrgirl-arduino.global.js"></script>
-  <script src="script.js" defer></script>
-</head>
-<body>
-    <header class="header">
-      <h1>Getting Started with Web Serial</h1>
-    </header>
-    <main class="main">
-      <div id="notSupported" class="hidden">
-        Sorry, <b>Web Serial</b> is not supported on this device, make sure you're
-        running Chrome 78 or later and have enabled the
-        <code>#enable-experimental-web-platform-features</code> flag in
-        <code>chrome://flags</code>
-      </div>
-      <br>
-      <button id="butConnect" type="button">Connect</button>
-      <br>
-      <br>
-      <table>
-        <tr>
-          <td>Pin</td>
-          <td>Status</td>
-        </tr>
-        <tr>
-          <td><code>0 (TX)</code></td><td><img id="bool0" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>1 (RX)</code></td><td><img id="bool1" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>2</code></td><td><img id="bool2" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>3~</code></td><td><img id="bool3" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>4</code></td><td><img id="bool4" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>5~</code></td><td><img id="bool5" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>6~</code></td><td><img id="bool6" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>7</code></td><td><img id="bool7" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>8</code></td><td><img id="bool8" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>9~</code></td><td><img id="bool9" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>10~</code></td><td><img id="bool10" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>11~</code></td><td><img id="bool11" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>12</code></td><td><img id="bool12" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>13 (X1 LED)</code></td><td><img id="bool13" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>A0</code></td><td><img id="boolA0" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>A1</code></td><td><img id="boolA1" src="assets/unknown.svg" height="50">
-        </td>
-        <tr>
-          <td><code>A2</code></td><td><img id="boolA2" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>A3</code></td><td><img id="boolA3" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>A4</code></td><td><img id="boolA4" src="assets/unknown.svg" height="50"></td>
-        </tr>
-        <tr>
-          <td><code>A5</code></td><td><img id="boolA5" src="assets/unknown.svg" height="50"></td>
-        </tr>
-      </table>
-      <table>
-        <tr>
-          <td>Pin</td>
-          <td>Status</td>
-        </tr>
-        <tr>
-          <td><code>A0</code></td><td><div id="A0"></div></td>
-        </tr>
-        <tr>
-          <td><code>A1</code></td><td><div id="A1"></div>
-        </td>
-        <tr>
-          <td><code>A2</code></td><td><div id="A2"></div></td>
-        </tr>
-        <tr>
-          <td><code>A3</code></td><td><div id="A3"></div></td>
-        </tr>
-        <tr>
-          <td><code>A4</code></td><td><div id="A4"></div></td>
-        </tr>
-        <tr>
-          <td><code>A5</code></td><td><div id="A5"></div></td>
-        </tr>
-      </table>
+    <head>
+        <title>Web Serial Code Lab</title>
+        <meta charset="utf-8">
+        <meta name="codelab" content="getting-started-w-web-serial">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>
+            // Redirect to HTTPS if HTTP is requested.
+            if (window.location.protocol === 'http:') {
+                window.location.href = 'https:' + window.location.href.substring(5);
+            }
+        </script>
+        <link rel="stylesheet" href="style.css">
+        <script src="../../js/avrgirl-arduino.global.js"></script>
+        <script src="script.js" defer></script>
+    </head>
+    <body>
+        <header class="header">
+            <h1>Getting Started with Web Serial</h1>
+        </header>
+        <main class="main">
+            <div id="notSupported" class="hidden">
+                Sorry, <b>Web Serial</b> is not supported on this device, make sure you're
+                running Chrome 78 or later and have enabled the
+                <code>#enable-experimental-web-platform-features</code> flag in
+                <code>chrome://flags</code>
+            </div>
+            <br>
+            <button id="butConnect" type="button">Connect</button>
+            <button id="butRefresh" type="button">Refresh (I didn't make it constantly update yet)</button>
+            <br>
+            <label for="pinToChangeMode">Enter a number to change the mode of that pin (14-19 is analog because I again don't have a better solution)</label>
+            <input id="pinToChangeMode" type="number" min="0" max="19">
+            <br>
+            <label for="modeOptions">Mode to set: </label>
+            <select id="modeOptions">
+                <option value="0">Input to Arduino</option>
+                <option value="1">Output from Ardiuno</option>
+            </select>
+            <button id="butModeSubmit">Send</button>
+            <br>
+            <br>
+            <table>
+                <tr>
+                    <td>Pin</td>
+                    <td>Status</td>
+                </tr>
+                <tr>
+                    <td><code>0 (TX)</code></td><td><img id="bool0" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>1 (RX)</code></td><td><img id="bool1" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>2</code></td><td><img id="bool2" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>3~</code></td><td><img id="bool3" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>4</code></td><td><img id="bool4" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>5~</code></td><td><img id="bool5" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>6~</code></td><td><img id="bool6" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>7</code></td><td><img id="bool7" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>8</code></td><td><img id="bool8" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>9~</code></td><td><img id="bool9" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>10~</code></td><td><img id="bool10" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>11~</code></td><td><img id="bool11" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>12</code></td><td><img id="bool12" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>13 (X1 LED)</code></td><td><img id="bool13" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>A0</code></td><td><img id="boolA0" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>A1</code></td><td><img id="boolA1" src="assets/unknown.svg" height="50">
+                </td>
+                <tr>
+                    <td><code>A2</code></td><td><img id="boolA2" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>A3</code></td><td><img id="boolA3" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>A4</code></td><td><img id="boolA4" src="assets/unknown.svg" height="50"></td>
+                </tr>
+                <tr>
+                    <td><code>A5</code></td><td><img id="boolA5" src="assets/unknown.svg" height="50"></td>
+                </tr>
+          </table>
+          <table>
+                <tr>
+                    <td>Pin</td>
+                    <td>Status</td>
+                </tr>
+                <tr>
+                    <td><code>A0</code></td><td><div id="A0"></div></td>
+                </tr>
+                <tr>
+                    <td><code>A1</code></td><td><div id="A1"></div>
+                </td>
+                <tr>
+                    <td><code>A2</code></td><td><div id="A2"></div></td>
+                </tr>
+                <tr>
+                    <td><code>A3</code></td><td><div id="A3"></div></td>
+                </tr>
+                <tr>
+                    <td><code>A4</code></td><td><div id="A4"></div></td>
+                </tr>
+                <tr>
+                    <td><code>A5</code></td><td><div id="A5"></div></td>
+                </tr>
+          </table>
 
-    <pre id="log"></pre>
-  </main>
-</body>
+            <pre id="log"></pre>
+        </main>
+    </body>
 </html>
