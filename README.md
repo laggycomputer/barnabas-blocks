@@ -15,7 +15,7 @@ The core was started as a fork from [BlocklyDuino](https://github.com/makewithar
 * Generate fully compatible Arduino source code
 * Interactive Arduino board with 10+ predefined Grove sensor blocks
 * Load different on-site examples with url parameters
-* Theme choice
+* Theme choice.
 
 ### Demo
 
