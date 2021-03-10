@@ -1,19 +1,15 @@
 #include <limits.h>
 
+#define TIMEOUT_MS 75
+
 const int digitals[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 const int analogs[6] = {A0, A1, A2, A3, A4, A5};  // Really just aliases to 14, 15, 16, 17, 18, and 19 but readability
 
 // 0 is input to Ardiuno, 1 is output from Arduino
-// Despite the fact that we want 0 to always be input and 1 and 13 to always be output, leave the array at the same size for consistency
-// analogWrite only works on analog and PWM pins, so let's use digital for now
-int digital_io_states[14] = {0};
-int analog_io_states[6] = {0};
+int io_states[20] = {0};
+int io_outputs[20] = {0};
 
-char incomingByte = 0;
 String incomingStuff = "";
-int stuff_dump = -1;
-int new_state = -1;
-int pin_to_change = -1;
 
 void setup() {
     for (int pin = 0; pin < 14; pin++) {
@@ -24,67 +20,85 @@ void setup() {
         pinMode(analogs[pin], INPUT);
     }
     Serial.begin(19200);
-    Serial.setTimeout(5000);
+    Serial.setTimeout(TIMEOUT_MS);
 }
 
-void sendUpdate() {
-    for (int digital = 0; digital < 14; digital++) {
-        if (!digital_io_states[digital]) {
-            Serial.print(digitalRead(digitals[digital]));
+void enforceState() {
+    for (int i = 0; i < 14; i++) {
+        if (io_states[i]) {
+            pinMode(i, INPUT);
+            digitalWrite(i, LOW);
         } else {
-            Serial.print("?");
-        }
-        Serial.print(" ");
-    }
-
-    for (int analog = 0; analog < 6; analog++) {
-        if (!analog_io_states[analog]) {
-            Serial.print(analogRead(analogs[analog]));
-            Serial.print(" ");
+            pinMode(i, OUTPUT);
+            digitalWrite(i, io_outputs[i]);
         }
     }
-
-    Serial.print("\n");
 }
 
 void loop() {
-    if (Serial.available() > 0) {
-        incomingByte = Serial.read();
-        if (incomingByte == 13 || incomingByte == 10) {
-            // Discard CR/LF
-            return;
+    enforceState();
+
+    incomingStuff = "";
+    incomingStuff = Serial.readStringUntil('\n');
+
+    if (incomingStuff == "") {
+        return;
+    } else if (incomingStuff == "DI") {
+        Serial.print("DI: ");
+        for (int pin = 0; pin < 20; pin++) {
+            if (!io_states[pin]) {
+                Serial.print(digitalRead(pin));
+            } else {
+                Serial.print("?");
+            }
         }
 
-        switch (incomingByte) {
-            case 'g':
-                sendUpdate();
-                break;
-            case 'u':
-                incomingStuff = Serial.readStringUntil('\n');
-                stuff_dump = incomingStuff.toInt();
-                if (stuff_dump > 100) {
-                    new_state = 1;
-                    pin_to_change = stuff_dump - 100;
-                } else {
-                    new_state = 0;
-                    pin_to_change = stuff_dump;
-                }
-                if (pin_to_change < 0 || pin_to_change > 19) {
-                    return;
-                }
-                if (pin_to_change == 0 || pin_to_change == 1 || pin_to_change == 13) {  // Also invalid
-                    return;
-                }
-                pinMode(pin_to_change, new_state);
-                if (pin_to_change <= 13) {
-                    // This is a digital, update to digital state array.
-                    digital_io_states[pin_to_change] = new_state;
-                } else {
-                    analog_io_states[pin_to_change - 14] = new_state;
-                }
-                break;
-            default:
-                break;
+        Serial.print("\n");
+    } else if (incomingStuff == "IOSTATE") {
+        Serial.print("IOSTATE: ");
+        for (int i = 0; i < 20; i++) {
+            Serial.print(io_states[i]);
         }
+        Serial.print("\n");
+    } else if (incomingStuff.startsWith("IOSTATE=")) {
+        String arg = incomingStuff.substring(8);
+        char working_char;
+        for (int i = 0; i < arg.length(); i++) {
+            working_char = arg.charAt(i);
+            if (i < 2 || i > 13) {
+                continue;
+            }
+            if (working_char == '0') {
+                io_states[i] = 0;
+            } else {
+                io_states[i] = 1;
+            }
+        }
+        Serial.println("OK");
+    } else if (incomingStuff == "DO") {
+        Serial.print("DO: ");
+        for (int i = 0; i < 20; i++) {
+            if (io_states[i]) {
+                Serial.print(io_outputs[i]);
+            } else {
+                Serial.print("?");
+            }
+        }
+        Serial.print("\n");
+    } else if (incomingStuff.startsWith("DO=")) {
+        String arg = incomingStuff.substring(3);
+        char working_char;
+        for (int i = 0; i < arg.length(); i++) {
+            working_char = arg.charAt(i);
+            if (i < 2 || i > 13 || !io_states[i]) {
+                continue;
+            }
+            if (working_char == '0') {
+                io_outputs[i] = 0;
+            } else {
+                io_outputs[i] = 1;
+            }
+        }
+        Serial.println("OK");
     }
 }
