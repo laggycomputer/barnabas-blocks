@@ -29,7 +29,6 @@ let outputStream;
 const log = document.getElementById('log');
 const butConnect = document.getElementById('butConnect');
 const butRefresh = document.getElementById('butRefresh');
-const butModeSubmit = document.getElementById('butModeSubmit');
 const digital_pin_names = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
 const analog_pin_names = ["A0", "A1", "A2", "A3", "A4", "A5"];
 
@@ -37,25 +36,17 @@ const analog_pin_names = ["A0", "A1", "A2", "A3", "A4", "A5"];
 document.addEventListener('DOMContentLoaded', () => {
     butConnect.addEventListener('click', clickConnect);
     butRefresh.addEventListener('click', clickRefresh);
-    butModeSubmit.addEventListener('click', clickModeSubmit);
 
     // CODELAB: Add feature detection here.
     const notSupported = document.getElementById('notSupported');
     notSupported.classList.toggle('hidden', 'serial' in navigator);
 });
 
-async function clickModeSubmit() {
-    if (port) {
-        const pin_to_update = document.getElementById("pinToChangeMode").value;
-        const state_to_set = document.getElementById("modeOptions").value;
-        await writeToStream("u\r", state_to_set + pin_to_update + "\n");
-    }
-}
-
-
 async function clickRefresh() {
     if (port) {
-        await writeToStream("g\n");
+        await writeToStream("DO\n");
+        await writeToStream("DI\n");
+        await writeToStream("IOSTATE\n");
     }
 }
 
@@ -212,44 +203,67 @@ async function readLoop() {
     while (true) {
         const { value, done } = await reader.read();
 
-        let bit_chunks = value.trim().split(" ");
-        let digitals = bit_chunks.slice(0, 14);
-        let analogs = bit_chunks.slice(14);
+        console.log("[RECEIVED] " + value);
 
-        for (let digital_pin_number = 0; digital_pin_number < 14; digital_pin_number++) {
-            let elem_to_update = document.getElementById("bool" + digital_pin_names[digital_pin_number]);
-            if (digitals[digital_pin_number] != "?") {
-                let state = parseInt(digitals[digital_pin_number]);
-                if (state) {
-                    elem_to_update.src = "assets/on.svg";
+        if (value.trim() == "OK") {
+            continue;
+        } else if (value.startsWith("IOSTATE: ")) {
+            let outputs = value.trim().slice(9);
+            function procPin(state, index) {
+                let elem = document.getElementById("state" + index);
+                let new_src;
+                if (state == "?") {
+                    new_src = "assets/unknown.svg";
                 } else {
-                    elem_to_update.src = "assets/off.svg";
+                    state = parseInt(state);
+                    if (state) {
+                        new_src = "assets/output.svg";
+                    } else {
+                        new_src = "assets/input.svg";
+                    }
                 }
-            } else {
-              elem_to_update.src = "assets/unknown.svg"
+                elem.src = new_src;
             }
-        }
-
-        for (let analog_pin_number = 0; analog_pin_number < 6; analog_pin_number++) {
-            let elem_to_update = document.getElementById("bool" + analog_pin_names[analog_pin_number]);
-            if (analogs[analog_pin_number] != "?") {
-                let state = parseInt(analogs[analog_pin_number]);
-                if (state > 1023) {
-                    state = 1023;
-                } else if (state < 0) {
-                    state = 0;
-                }
-                if (state) {
-                    elem_to_update.src = "assets/on.svg"
+            outputs.split("").forEach(procPin);
+        } else if (value.startsWith("DI: ")) {
+            let outputs = value.trim().slice(4);
+            function procPin(state, index) {
+                let elem = document.getElementById("input" + index);
+                let new_src;
+                if (state == "?") {
+                    new_src = "assets/unknown.svg";
                 } else {
-                    elem_to_update.src = "assets/off.svg"
+                    state = parseInt(state);
+                    if (state) {
+                        new_src = "assets/on.svg";
+                    } else {
+                        new_src = "assets/off.svg";
+                    }
                 }
-                state = (state + 1) / 1024 * 5;
-                document.getElementById(analog_pin_names[analog_pin_number]).innerHTML = state.toFixed(2).toString();
-            } else {
-                elem_to_update.src = "assets/unknown.svg";
-                document.getElementById(analog_pin_names[analog_pin_number]).innerHTML = "(pin in output mode)";
+                elem.src = new_src;
             }
+            outputs.split("").forEach(procPin);
+        } else if (value.startsWith("DO: ")) {
+            let outputs = value.trim().slice(4);
+            function procPin(state, index) {
+                let elem = document.getElementById("output" + index);
+                let new_src;
+                if (state == "?") {
+                    new_src = "assets/unknown.svg";
+                } else {
+                    state = parseInt(state);
+                    if (state) {
+                        new_src = "assets/outputhigh.svg";
+                    } else {
+                        new_src = "assets/outputlow.svg";
+                    }
+                }
+                elem.src = new_src;
+            }
+            outputs.split("").forEach(procPin);
+        } else {
+            // Why are we here?
+            return;
         }
 
         if (done) {

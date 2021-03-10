@@ -45,108 +45,120 @@
             <button id="butConnect" type="button">Connect</button>
             <button id="butRefresh" type="button">Refresh (I didn't make it constantly update yet)</button>
             <br>
-            <label for="pinToChangeMode">Enter a number to change the mode of that pin (14-19 is analog because I again don't have a better solution)</label>
-            <input id="pinToChangeMode" type="number" min="0" max="19">
             <br>
-            <label for="modeOptions">Mode to set: </label>
-            <select id="modeOptions">
-                <option value="0">Input to Arduino</option>
-                <option value="1">Output from Ardiuno</option>
-            </select>
-            <button id="butModeSubmit">Send</button>
-            <br>
-            <br>
-            <table>
-                <tr>
-                    <td>Pin</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td><code>0 (TX)</code></td><td><img id="bool0" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>1 (RX)</code></td><td><img id="bool1" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>2</code></td><td><img id="bool2" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>3~</code></td><td><img id="bool3" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>4</code></td><td><img id="bool4" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>5~</code></td><td><img id="bool5" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>6~</code></td><td><img id="bool6" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>7</code></td><td><img id="bool7" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>8</code></td><td><img id="bool8" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>9~</code></td><td><img id="bool9" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>10~</code></td><td><img id="bool10" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>11~</code></td><td><img id="bool11" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>12</code></td><td><img id="bool12" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>13 (X1 LED)</code></td><td><img id="bool13" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>A0</code></td><td><img id="boolA0" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>A1</code></td><td><img id="boolA1" src="assets/unknown.svg" height="50">
-                </td>
-                <tr>
-                    <td><code>A2</code></td><td><img id="boolA2" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>A3</code></td><td><img id="boolA3" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>A4</code></td><td><img id="boolA4" src="assets/unknown.svg" height="50"></td>
-                </tr>
-                <tr>
-                    <td><code>A5</code></td><td><img id="boolA5" src="assets/unknown.svg" height="50"></td>
-                </tr>
-          </table>
-          <table>
-                <tr>
-                    <td>Pin</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td><code>A0</code></td><td><div id="A0"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A1</code></td><td><div id="A1"></div>
-                </td>
-                <tr>
-                    <td><code>A2</code></td><td><div id="A2"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A3</code></td><td><div id="A3"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A4</code></td><td><div id="A4"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A5</code></td><td><div id="A5"></div></td>
-                </tr>
-          </table>
 
+            <p>Pin states:</p>
+            <p>
+                <img src="assets/unknown.svg" width="32" id="state0">
+                <img src="assets/unknown.svg" width="32" id="state1">
+                <img src="assets/unknown.svg" width="32" id="state2">
+                <img src="assets/unknown.svg" width="32" id="state3">
+                <img src="assets/unknown.svg" width="32" id="state4">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="state5">
+                <img src="assets/unknown.svg" width="32" id="state6">
+                <img src="assets/unknown.svg" width="32" id="state7">
+                <img src="assets/unknown.svg" width="32" id="state8">
+                <img src="assets/unknown.svg" width="32" id="state9">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="state10">
+                <img src="assets/unknown.svg" width="32" id="state11">
+                <img src="assets/unknown.svg" width="32" id="state12">
+                <img src="assets/unknown.svg" width="32" id="state13">
+                <img src="assets/unknown.svg" width="32" id="state14">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="state15">
+                <img src="assets/unknown.svg" width="32" id="state16">
+                <img src="assets/unknown.svg" width="32" id="state17">
+                <img src="assets/unknown.svg" width="32" id="state18">
+                <img src="assets/unknown.svg" width="32" id="state19">
+            </p>
+
+            <p>Inputs:</p>
+            <p>
+                <img src="assets/unknown.svg" width="32" id="input0">
+                <img src="assets/unknown.svg" width="32" id="input1">
+                <img src="assets/unknown.svg" width="32" id="input2">
+                <img src="assets/unknown.svg" width="32" id="input3">
+                <img src="assets/unknown.svg" width="32" id="input4">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="input5">
+                <img src="assets/unknown.svg" width="32" id="input6">
+                <img src="assets/unknown.svg" width="32" id="input7">
+                <img src="assets/unknown.svg" width="32" id="input8">
+                <img src="assets/unknown.svg" width="32" id="input9">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="input10">
+                <img src="assets/unknown.svg" width="32" id="input11">
+                <img src="assets/unknown.svg" width="32" id="input12">
+                <img src="assets/unknown.svg" width="32" id="input13">
+                <img src="assets/unknown.svg" width="32" id="input14">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="input15">
+                <img src="assets/unknown.svg" width="32" id="input16">
+                <img src="assets/unknown.svg" width="32" id="input17">
+                <img src="assets/unknown.svg" width="32" id="input18">
+                <img src="assets/unknown.svg" width="32" id="input19">
+            </p>
+
+            <p>Outputs:</p>
+            <p>
+                <img src="assets/unknown.svg" width="32" id="output0">
+                <img src="assets/unknown.svg" width="32" id="output1">
+                <img src="assets/unknown.svg" width="32" id="output2">
+                <img src="assets/unknown.svg" width="32" id="output3">
+                <img src="assets/unknown.svg" width="32" id="output4">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="output5">
+                <img src="assets/unknown.svg" width="32" id="output6">
+                <img src="assets/unknown.svg" width="32" id="output7">
+                <img src="assets/unknown.svg" width="32" id="output8">
+                <img src="assets/unknown.svg" width="32" id="output9">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="output10">
+                <img src="assets/unknown.svg" width="32" id="output11">
+                <img src="assets/unknown.svg" width="32" id="output12">
+                <img src="assets/unknown.svg" width="32" id="output13">
+                <img src="assets/unknown.svg" width="32" id="output14">
+                <br>
+                <img src="assets/unknown.svg" width="32" id="output15">
+                <img src="assets/unknown.svg" width="32" id="output16">
+                <img src="assets/unknown.svg" width="32" id="output17">
+                <img src="assets/unknown.svg" width="32" id="output18">
+                <img src="assets/unknown.svg" width="32" id="output19">
+            </p>
+            <br>
+            <p>Pins, for reference:</p>
+            <table width="30%">
+                <tr>
+                    <td><code>0 (TX)</code></td>
+                    <td><code>1 (RX)</code></td>
+                    <td><code>2</code></td>
+                    <td><code>3~</code></td>
+                    <td><code>4</code></td>
+                </tr>
+                <tr>
+                    <td><code>5~</code></td>
+                    <td><code>6~</code></td>
+                    <td><code>7</code></td>
+                    <td><code>8</code></td>
+                    <td><code>9~</code></td>
+                </tr>
+                <tr>
+                    <td><code>10~</code></td>
+                    <td><code>11~</code></td>
+                    <td><code>12</code></td>
+                    <td><code>13 (X1 LED)</code></td>
+                    <td><code>A0</code></td>
+                </tr>
+                <tr>
+                    <td><code>A1</code></td>
+                    <td><code>A2</code></td>
+                    <td><code>A3</code></td>
+                    <td><code>A4</code></td>
+                    <td><code>A5</code></td>
+                </tr>
+            </table>
             <pre id="log"></pre>
         </main>
     </body>
