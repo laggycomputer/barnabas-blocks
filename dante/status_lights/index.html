@@ -43,35 +43,34 @@
             </div>
             <br>
             <button id="butConnect" type="button">Connect</button>
-            <button id="butRefresh" type="button">Refresh (I didn't make it constantly update yet)</button>
+            <button id="butRefresh" type="button">Refresh (it updates automatically but have a button)</button>
             <br>
             <br>
-
             <p>Pin states:</p>
             <p>
-                <img src="assets/unknown.svg" width="32" id="state0">
-                <img src="assets/unknown.svg" width="32" id="state1">
-                <img src="assets/unknown.svg" width="32" id="state2">
-                <img src="assets/unknown.svg" width="32" id="state3">
-                <img src="assets/unknown.svg" width="32" id="state4">
+                <img src="assets/unknown.svg" width="32" id="state0" onclick="toggleState(0)">
+                <img src="assets/unknown.svg" width="32" id="state1" onclick="toggleState(1)">
+                <img src="assets/unknown.svg" width="32" id="state2" onclick="toggleState(2)">
+                <img src="assets/unknown.svg" width="32" id="state3" onclick="toggleState(3)">
+                <img src="assets/unknown.svg" width="32" id="state4" onclick="toggleState(4)">
                 <br>
-                <img src="assets/unknown.svg" width="32" id="state5">
-                <img src="assets/unknown.svg" width="32" id="state6">
-                <img src="assets/unknown.svg" width="32" id="state7">
-                <img src="assets/unknown.svg" width="32" id="state8">
-                <img src="assets/unknown.svg" width="32" id="state9">
+                <img src="assets/unknown.svg" width="32" id="state5" onclick="toggleState(5)">
+                <img src="assets/unknown.svg" width="32" id="state6" onclick="toggleState(6)">
+                <img src="assets/unknown.svg" width="32" id="state7" onclick="toggleState(7)">
+                <img src="assets/unknown.svg" width="32" id="state8" onclick="toggleState(8)">
+                <img src="assets/unknown.svg" width="32" id="state9" onclick="toggleState(9)">
                 <br>
-                <img src="assets/unknown.svg" width="32" id="state10">
-                <img src="assets/unknown.svg" width="32" id="state11">
-                <img src="assets/unknown.svg" width="32" id="state12">
-                <img src="assets/unknown.svg" width="32" id="state13">
-                <img src="assets/unknown.svg" width="32" id="state14">
+                <img src="assets/unknown.svg" width="32" id="state10" onclick="toggleState(10)">
+                <img src="assets/unknown.svg" width="32" id="state11" onclick="toggleState(11)">
+                <img src="assets/unknown.svg" width="32" id="state12" onclick="toggleState(12)">
+                <img src="assets/unknown.svg" width="32" id="state13" onclick="toggleState(13)">
+                <img src="assets/unknown.svg" width="32" id="state14" onclick="toggleState(14)">
                 <br>
-                <img src="assets/unknown.svg" width="32" id="state15">
-                <img src="assets/unknown.svg" width="32" id="state16">
-                <img src="assets/unknown.svg" width="32" id="state17">
-                <img src="assets/unknown.svg" width="32" id="state18">
-                <img src="assets/unknown.svg" width="32" id="state19">
+                <img src="assets/unknown.svg" width="32" id="state15" onclick="toggleState(15)">
+                <img src="assets/unknown.svg" width="32" id="state16" onclick="toggleState(16)">
+                <img src="assets/unknown.svg" width="32" id="state17" onclick="toggleState(17)">
+                <img src="assets/unknown.svg" width="32" id="state18" onclick="toggleState(18)">
+                <img src="assets/unknown.svg" width="32" id="state19" onclick="toggleState(19)">
             </p>
 
             <p>Inputs:</p>
@@ -103,29 +102,29 @@
 
             <p>Outputs:</p>
             <p>
-                <img src="assets/unknown.svg" width="32" id="output0">
-                <img src="assets/unknown.svg" width="32" id="output1">
-                <img src="assets/unknown.svg" width="32" id="output2">
-                <img src="assets/unknown.svg" width="32" id="output3">
-                <img src="assets/unknown.svg" width="32" id="output4">
+                <img src="assets/unknown.svg" width="32" id="output0" onClick="toggleDigitalOutput(0)">
+                <img src="assets/unknown.svg" width="32" id="output1" onClick="toggleDigitalOutput(1)">
+                <img src="assets/unknown.svg" width="32" id="output2" onClick="toggleDigitalOutput(2)">
+                <img src="assets/unknown.svg" width="32" id="output3" onClick="toggleDigitalOutput(3)">
+                <img src="assets/unknown.svg" width="32" id="output4" onClick="toggleDigitalOutput(4)">
                 <br>
-                <img src="assets/unknown.svg" width="32" id="output5">
-                <img src="assets/unknown.svg" width="32" id="output6">
-                <img src="assets/unknown.svg" width="32" id="output7">
-                <img src="assets/unknown.svg" width="32" id="output8">
-                <img src="assets/unknown.svg" width="32" id="output9">
+                <img src="assets/unknown.svg" width="32" id="output5" onClick="toggleDigitalOutput(5)">
+                <img src="assets/unknown.svg" width="32" id="output6" onClick="toggleDigitalOutput(6)">
+                <img src="assets/unknown.svg" width="32" id="output7" onClick="toggleDigitalOutput(7)">
+                <img src="assets/unknown.svg" width="32" id="output8" onClick="toggleDigitalOutput(8)">
+                <img src="assets/unknown.svg" width="32" id="output9" onClick="toggleDigitalOutput(9)">
                 <br>
-                <img src="assets/unknown.svg" width="32" id="output10">
-                <img src="assets/unknown.svg" width="32" id="output11">
-                <img src="assets/unknown.svg" width="32" id="output12">
-                <img src="assets/unknown.svg" width="32" id="output13">
-                <img src="assets/unknown.svg" width="32" id="output14">
+                <img src="assets/unknown.svg" width="32" id="output10" onClick="toggleDigitalOutput(10)">
+                <img src="assets/unknown.svg" width="32" id="output11" onClick="toggleDigitalOutput(11)">
+                <img src="assets/unknown.svg" width="32" id="output12" onClick="toggleDigitalOutput(12)">
+                <img src="assets/unknown.svg" width="32" id="output13" onClick="toggleDigitalOutput(13)">
+                <img src="assets/unknown.svg" width="32" id="output14" onClick="toggleDigitalOutput(14)">
                 <br>
-                <img src="assets/unknown.svg" width="32" id="output15">
-                <img src="assets/unknown.svg" width="32" id="output16">
-                <img src="assets/unknown.svg" width="32" id="output17">
-                <img src="assets/unknown.svg" width="32" id="output18">
-                <img src="assets/unknown.svg" width="32" id="output19">
+                <img src="assets/unknown.svg" width="32" id="output15" onClick="toggleDigitalOutput(15)">
+                <img src="assets/unknown.svg" width="32" id="output16" onClick="toggleDigitalOutput(16)">
+                <img src="assets/unknown.svg" width="32" id="output17" onClick="toggleDigitalOutput(17)">
+                <img src="assets/unknown.svg" width="32" id="output18" onClick="toggleDigitalOutput(18)">
+                <img src="assets/unknown.svg" width="32" id="output19" onClick="toggleDigitalOutput(19)">
             </p>
             <br>
             <p>Pins, for reference:</p>

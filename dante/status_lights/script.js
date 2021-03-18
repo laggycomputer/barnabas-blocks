@@ -25,6 +25,8 @@ let inputDone;
 let outputDone;
 let inputStream;
 let outputStream;
+let latest_iostate;
+let latest_do;
 
 const log = document.getElementById('log');
 const butConnect = document.getElementById('butConnect');
@@ -44,11 +46,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function clickRefresh() {
     if (port) {
-        await writeToStream("DO\n");
-        await writeToStream("DI\n");
-        await writeToStream("IOSTATE\n");
+        writeToStream("DO\n");
+        writeToStream("DI\n");
+        writeToStream("IOSTATE\n");
     }
 }
+
+async function toggleState(pin) {
+    if (port && latest_iostate != undefined) {
+        let new_iostate = latest_iostate.split("");
+        new_iostate[pin] = (latest_iostate[pin] == "1") ? "0" : "1";
+        writeToStream("IOSTATE=" + new_iostate.reverse().join("") + "\n");
+        clickRefresh();
+    }
+}
+
+async function toggleDigitalOutput(pin) {
+    if (port && latest_do != undefined) {
+        let new_do = latest_do.split("");
+        switch (latest_do[pin]) {
+            case "1":
+                new_do[pin] = "0";
+                break;
+            case "0":
+                new_do[pin] = "1";
+                break;
+            case "?":
+                toggleState(pin);
+                new_do[20 - pin] = "1";
+                break;
+        }
+        await writeToStream("DO=" + new_do.reverse().join("") + "\n");
+        clickRefresh();
+    }
+}
+
 
 /**
  * @name connect
@@ -208,7 +240,8 @@ async function readLoop() {
         if (value.trim() == "OK") {
             continue;
         } else if (value.startsWith("IOSTATE: ")) {
-            let outputs = value.trim().slice(9);
+            let outputs = value.trim().slice(9).split("").reverse().join("");
+            latest_iostate = outputs;
             function procPin(state, index) {
                 let elem = document.getElementById("state" + index);
                 let new_src;
@@ -226,7 +259,7 @@ async function readLoop() {
             }
             outputs.split("").forEach(procPin);
         } else if (value.startsWith("DI: ")) {
-            let outputs = value.trim().slice(4);
+            let outputs = value.trim().slice(4).split("").reverse().join("");
             function procPin(state, index) {
                 let elem = document.getElementById("input" + index);
                 let new_src;
@@ -244,7 +277,8 @@ async function readLoop() {
             }
             outputs.split("").forEach(procPin);
         } else if (value.startsWith("DO: ")) {
-            let outputs = value.trim().slice(4);
+            let outputs = value.trim().slice(4).split("").reverse().join("");
+            latest_do = outputs;
             function procPin(state, index) {
                 let elem = document.getElementById("output" + index);
                 let new_src;
@@ -253,9 +287,9 @@ async function readLoop() {
                 } else {
                     state = parseInt(state);
                     if (state) {
-                        new_src = "assets/outputhigh.svg";
+                        new_src = "assets/outputhigh.png";
                     } else {
-                        new_src = "assets/outputlow.svg";
+                        new_src = "assets/outputlow.png";
                     }
                 }
                 elem.src = new_src;
@@ -341,3 +375,5 @@ function toggleUIConnected(connected) {
     }
     butConnect.textContent = lbl;
 }
+
+window.setInterval(clickRefresh, 500);
