@@ -142,42 +142,51 @@ var str2ab = function (str) {
     return bytes.buffer;
 };
 
-function flashCode(code, nano=false, options={}) {
+function flashCode(nano=false, code="", options={}) {
     if (nano) {
         var board_to_api = "arduino:avr:nano:cpu=atmega328";
         var board_to_upload = "nano";
+        options.baudRate = 57600;
     } else {
         var board_to_api = "arduino:avr:uno";
         var board_to_upload = "uno";
+        options.baudRate = 115200;
     }
-    var result = null;
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "repl/repl.ino", false);
-    xmlhttp.send();
-    if (xmlhttp.status == 200) {
-        result = xmlhttp.responseText;
+    if (code == "") {
+        var result = null;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "./repl/repl.ino", false);
+        xmlhttp.send();
+        if (xmlhttp.status == 200) {
+            result = xmlhttp.responseText;
+        }
+        var code = result;
     }
-    var result = code;
 
-    var data = { sketch: result, board: board_to_api };
+    var data = { sketch: code, board: board_to_api };
 
-    fetch(
-    "https://compile.barnabasrobotics.com/compile", {
+    if (port) {
+        disconnect();
+        toggleUIConnected(false);
+    }
+    // CODELAB: Add connect code here.
+
+    fetch("https://compile.barnabasrobotics.com/compile", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-        }
-    ).then(response => response.json()).then(data => {
+    }).then(response => response.json()).then(data => {
+        console.log(data);
         if (!data.success) {
-            // can only run below if arduino compile error I can still get response with garbage body
-            if (data.stderr.length > 0) {
-                let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
-                let message = data.stderr.replace(regex, "");
-                uploadLog.textContent += "Compilation error:\n" + message + "\n"
-                regex = /\d+\:\d+/g;
-            }
+             // can only run below if arduino compile error I can still get response with garbage body
+             if (data.stderr.length > 0) {
+                 let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
+                 let message = data.stderr.replace(regex, "");
+                 uploadLog.textContent += "Compilation error:\n" + message + "\n"
+                 regex = /\d+\:\d+/g;
+             }
         } else {
             let hexstring = atob(data.hex);
             return { 'data': hexstring, 'msg': data.stdout };
@@ -187,21 +196,21 @@ function flashCode(code, nano=false, options={}) {
             try {
                 var avrgirl = new AvrgirlArduino({
                     board: board_to_upload,
-                    debug: false
+                    debug: true
                 });
 
                 avrgirl.flash(str2ab(hex.data), (error) => {
                     // gear.classList.remove('spinning');
                     // progress.textContent = "done!";
                     if (error) {
-                        uploadLog.textContent += "Upload error:\n" + error + "\n";
+                        alert("Upload error:\n" + error + "\n");
                         avrgirl.connection.serialPort.close();
                     } else {
-                        uploadLog.textContent += "Upload successful.\n";
+                        alert("Upload successful.\n");
                     }
                 }, options);
             } catch (error) {
-                uploadLog.textContent += "AVR error:\n" + error + "\n";
+                alert("AVR error:\n" + error + "\n");
                 avrgirl.connection.serialPort.close();
             }
         }
@@ -308,7 +317,6 @@ async function readLoop() {
     }
 }
 
-
 /**
  * @name writeToStream
  * Gets a writer from the output stream and send the lines to the micro:bit.
@@ -345,22 +353,6 @@ class LineBreakTransformer {
     flush(controller) {
     // CODELAB: Flush the stream.
         controller.enqueue(this.container);
-    }
-}
-
-
-/**
- * @name JSONTransformer
- * TransformStream to parse the stream into a JSON object.
- */
-class JSONTransformer {
-    transform(chunk, controller) {
-    // CODELAB: Attempt to parse JSON content
-    try {
-        controller.enqueue(JSON.parse(chunk));
-    } catch (e) {
-        controller.enqueue(chunk);
-    }
     }
 }
 
