@@ -48,6 +48,14 @@ void loop() {
         }
 
         Serial.print("\n");
+    } else if (incomingStuff == "AI") {
+        Serial.print("AI: ");
+        for (int pin = 19; pin > 14; pin--) {
+            Serial.print(analogRead(pin));
+            Serial.print(" ");
+        }
+        Serial.print(analogRead(14));
+        Serial.print("\n");
     } else if (incomingStuff == "IOSTATE") {
         Serial.print("IOSTATE: ");
         for (int pin = 19; pin >= 0; pin--) {
@@ -57,7 +65,7 @@ void loop() {
     } else if (incomingStuff.startsWith("IOSTATE=")) {
         String arg = incomingStuff.substring(8);
         char working_char;
-        for (int i = 0; i < arg.length(); i++) {
+        for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
             int working_pin = 19 - i;
             if (working_pin < 2 || working_pin > 13) {
@@ -83,7 +91,7 @@ void loop() {
     } else if (incomingStuff.startsWith("DO=")) {
         String arg = incomingStuff.substring(3);
         char working_char;
-        for (int i = 0; i < arg.length(); i++) {
+        for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
             int working_pin = 19 - i;
             if (working_pin < 2 || working_pin > 13 || !io_states[working_pin]) {

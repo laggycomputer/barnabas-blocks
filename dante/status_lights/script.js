@@ -68,6 +68,14 @@ void loop() {
         }
 
         Serial.print("\\n");
+    } else if (incomingStuff == "AI") {
+        Serial.print("AI: ");
+        for (int pin = 19; pin > 14; pin--) {
+            Serial.print(analogRead(pin));
+            Serial.print(" ");
+        }
+        Serial.print(analogRead(14));
+        Serial.print("\\n");
     } else if (incomingStuff == "IOSTATE") {
         Serial.print("IOSTATE: ");
         for (int pin = 19; pin >= 0; pin--) {
@@ -77,7 +85,7 @@ void loop() {
     } else if (incomingStuff.startsWith("IOSTATE=")) {
         String arg = incomingStuff.substring(8);
         char working_char;
-        for (int i = 0; i < arg.length(); i++) {
+        for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
             int working_pin = 19 - i;
             if (working_pin < 2 || working_pin > 13) {
@@ -103,7 +111,7 @@ void loop() {
     } else if (incomingStuff.startsWith("DO=")) {
         String arg = incomingStuff.substring(3);
         char working_char;
-        for (int i = 0; i < arg.length(); i++) {
+        for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
             int working_pin = 19 - i;
             if (working_pin < 2 || working_pin > 13 || !io_states[working_pin]) {
@@ -150,6 +158,7 @@ async function clickRefresh() {
     if (port) {
         writeToStream("DO\n");
         writeToStream("DI\n");
+        writeToStream("AI\n");
         writeToStream("IOSTATE\n");
     }
 }
@@ -351,6 +360,33 @@ async function readLoop() {
 
         if (value.trim() == "OK") {
             continue;
+        } else if (value.startsWith("DI: ")) {
+            let outputs = value.trim().slice(4).split("").reverse().join("");
+            function procPin(state, index) {
+                let elem = document.getElementById("input" + index);
+                let new_src;
+                if (state == "?") {
+                    new_src = "assets/unknown.svg";
+                } else {
+                    state = parseInt(state);
+                    if (state) {
+                        new_src = "assets/on.svg";
+                    } else {
+                        new_src = "assets/off.svg";
+                    }
+                }
+                elem.src = new_src;
+            }
+            outputs.split("").forEach(procPin);
+        } else if (value.startsWith("AI: ")) {
+            let outputs = value.trim().slice(4).split(" ").reverse();
+            function procPin(state, index) {
+                let elem = document.getElementById("A" + index);
+                elem.textContent = state.toString();
+                elem = document.getElementById("A" + index + "V");
+                elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString();
+            }
+            outputs.forEach(procPin);
         } else if (value.startsWith("IOSTATE: ")) {
             let outputs = value.trim().slice(9).split("").reverse().join("");
             latest_iostate = outputs;
@@ -365,24 +401,6 @@ async function readLoop() {
                         new_src = "assets/output.svg";
                     } else {
                         new_src = "assets/input.svg";
-                    }
-                }
-                elem.src = new_src;
-            }
-            outputs.split("").forEach(procPin);
-        } else if (value.startsWith("DI: ")) {
-            let outputs = value.trim().slice(4).split("").reverse().join("");
-            function procPin(state, index) {
-                let elem = document.getElementById("input" + index);
-                let new_src;
-                if (state == "?") {
-                    new_src = "assets/unknown.svg";
-                } else {
-                    state = parseInt(state);
-                    if (state) {
-                        new_src = "assets/on.svg";
-                    } else {
-                        new_src = "assets/off.svg";
                     }
                 }
                 elem.src = new_src;
