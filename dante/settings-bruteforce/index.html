@@ -1,0 +1,130 @@
+<!--
+ Getting Started with Web Serial Codelab (https://todo)
+ Copyright 2019 Google Inc.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Web Serial Code Lab</title>
+        <meta charset="utf-8">
+        <meta name="codelab" content="getting-started-w-web-serial">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>
+            // Redirect to HTTPS if HTTP is requested.
+            if (window.location.protocol === 'http:') {
+                window.location.href = 'https:' + window.location.href.substring(5);
+            }
+        </script>
+        <link rel="stylesheet" href="style.css">
+        <script src="avrgirl-arduino.js"></script>
+        <script src="script.js" defer></script>
+    </head>
+    <body>
+    <header class="header">
+        <h1>Getting Started with Web Serial</h1>
+    </header>
+        <main class="main">
+            <div id="notSupported" class="hidden">
+                Sorry, <b>Web Serial</b> is not supported on this device, make sure you're
+                running Chrome 78 or later and have enabled the
+                <code>#enable-experimental-web-platform-features</code> flag in
+                <code>chrome://flags</code>
+            </div>
+            <br>
+            <p>Serial monitor:</p>
+            <button id="butConnect" type="button">Connect</button>
+            <button id="butClearSerial" type="button">Clear serial</button>
+            <label for="monitorBaud">Baud: </label>
+            <input list="rates" id="monitorBaud" value="9600"/>
+            <br>
+
+            <p>Upload settings:</p>
+            <label for="boardType">Board: </label>
+            <select id="boardType">
+                <option value="nano">Nano</option>
+                <option value="uno">Uno</option>
+            </select>
+            <br>
+            <label for="baudRate">Baud rate: </label>
+            <input list="rates" id="baudRate" value="57600"/>
+            <datalist id="rates">
+                <option value="300">
+                <option value="1200">
+                <option value="2400">
+                <option value="4800">
+                <option value="9600">
+                <option value="19200">
+                <option value="38400">
+                <option value="57600">
+                <option value="74880">
+                <option value="115200">
+                <option value="230400">
+                <option value="250000">
+                <option value="500000">
+                <option value="1000000">
+                <option value="2000000">
+            </datalist>
+            <br>
+            <label for="dataBits">Data bits: </label>
+            <select id="dataBits">
+                <option value="8">8</option>
+                <option value="7">7</option>
+            </select>
+            <br>
+            <label for="parity">Parity: </label>
+            <select id="parity">
+                <option value="none">None</option>
+                <option value="even">Even</option>
+                <option value="odd">Odd</option>
+            </select>
+            <br>
+            <label for="stopBits">Stop bits: </label>
+            <select id="stopBits">
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+            <br>
+            <label for="bufferSize">Buffer size (in bytes): </label>
+            <input id="bufferSize" value="255" min="1"/>
+            <br>
+            <label for="flowControl">Flow control: </label>
+            <select id="flowControl">
+                <option value="none">None</option>
+                <option value="hardware">Hardware</option>
+            </select>
+            <br>
+            <label for="clearLog">Clear log every upload: </label>
+            <input type="checkbox" id="clearLog">
+            <br>
+            <label for="code">Code to upload:</label>
+            <br>
+            <textarea id="code" rows="10" cols="50">
+void setup() {
+  // put your setup code here, to run once:
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}</textarea>
+            <br>
+            <button id="butUpload" type="button">Upload</button>
+            <br><br>
+            <p>Upload log:</p>
+            <pre id="uploadLog"></pre>
+            <pre id="log"></pre>
+        </main>
+    </body>
+</html>

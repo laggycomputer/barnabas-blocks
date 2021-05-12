@@ -12893,16 +12893,16 @@ var Connection = function(options) {
   this.board = this.options.board;
 };
 
-Connection.prototype._init = function(callback) {
+Connection.prototype._init = function(callback, options={}) {
   this._setUpSerial(function(error) {
     return callback(error);
-  });
+  }, options);
 };
 
 /**
  * Create new serialport instance for the Arduino board, but do not immediately connect.
  */
-Connection.prototype._setUpSerial = function(callback) {
+Connection.prototype._setUpSerial = function(callback, options={}) {
   var _this = this;
   this.serialPort = new Serialport('', {
     baudRate: this.board.baud,
@@ -12955,11 +12955,11 @@ Connection.prototype._setDTR = function(bool, timeout, callback) {
     requestToSend: false,
     dataTerminalReady: bool
 
-
+    
 
   };
 
-
+  
   _this.serialPort.set(props, function(error) {
     if (error) { return callback(error); }
 
@@ -13117,10 +13117,10 @@ class SerialPort extends EventEmitter {
   list(callback) {
     return navigator.serial.getPorts()
       .then((list) => {if (callback) {return callback(null, list)}})
-      .catch((error) => {if (callback) {return callback(error)}});
+      .catch((error) => {if (callback) {return callback(error)}}); 
   }
 
-  open(callback) {
+  open(callback, options={}) {
     window.navigator.serial.requestPort(this.requestOptions)
       .then(serialPort => {
         this.port = serialPort;
@@ -13129,8 +13129,17 @@ class SerialPort extends EventEmitter {
         //- 20201020 - added back baudrate attribute
         //return this.port.open({ baudrate: this.baudrate || 57600 });
         //return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600 });
-        return this.port.open({ baudRate: this.baudrate || 57600,  baudrate: this.baudrate || 57600, dataBits: 8, parity: "none", stopBits: 1, flowControl: "none", bufferSize: 255});
-
+        if (options) {
+          var baudRate = options["baudRate"] || 57600;
+          var dataBits = options["dataBits"] || 8;
+          var parity = options["parity"] || "none";
+          var stopBits = options["stopBits"] || 1;
+          var flowControl = options["flowControl"] || "none";
+          var bufferSize = options["bufferSize"] || 255;
+          return this.port.open({ baudRate: baudRate, dataBits: dataBits, parity: parity, stopBits: stopBits, flowControl: flowControl, bufferSize: bufferSize});
+        } else {
+          return this.port.open({ baudRate: 57600, dataBits: 8, parity: "none", stopBits: 1, flowControl: "none", bufferSize: 255});
+        }
       })
       .then(() => this.writer = this.port.writable.getWriter())
       .then(() => this.reader = this.port.readable.getReader())
@@ -13157,11 +13166,11 @@ class SerialPort extends EventEmitter {
     try {
       await this.writer.releaseLock();
 
-      //await this.reader.releaseLock();
+      await this.reader.cancel();
+
+      await this.reader.releaseLock();
       /*cancel the reader instead of try to release the lock.  releaseLock was throwing an exception of
       "Cannot release a readable stream reader when it still has outstanding read() calls that have not yet settled" */
-
-      await this.reader.cancel()
 
       await this.port.close();
       this.isOpen = false;
@@ -13174,7 +13183,7 @@ class SerialPort extends EventEmitter {
 
   async set(props, callback) {
     try {
-
+    
       await this.port.setSignals(props);
 
     } catch (error) {
@@ -13498,21 +13507,21 @@ module.exports = function awty(poll) {
       interval = setTimeout(run, timeout);
     }
 
-    instance = function pollInstance(cb) {
+    instance = function pollInstance(cb) { 
       if (interval) {
         clearTimeout(interval);
-        interval = null;
+        interval = null; 
         if (done) {
           done(false);
-        }
+        } 
         done = null;
         counter = 0;
-      }
-
+      } 
+      
       if (arguments.length) {
         if (!isval(cb, 'function')) {
           throw new TypeError('done callback must be a function');
-        }
+        } 
         done = cb;
       }
 
@@ -13524,18 +13533,18 @@ module.exports = function awty(poll) {
         throw new SyntaxError('can not set ask limit during polling');
       } else if (!isval(n, 'number')) {
         throw new TypeError('ask limit must be a number');
-      }
-      times = n;
+      } 
+      times = n; 
       return instance;
     };
 
-    instance.every = function pollEvery(ms) {
+    instance.every = function pollEvery(ms) { 
       if (interval) {
         throw new SyntaxError('can not set timeout during polling');
       } else if (!isval(ms, 'number')) {
         throw new TypeError('timout must be a number');
-      }
-      every = ms;
+      } 
+      every = ms; 
       return instance;
     };
 
@@ -13548,7 +13557,7 @@ module.exports = function awty(poll) {
         incr = ms;
       } else {
         throw new TypeError('increment must be a boolean or number');
-      }
+      } 
       return instance;
     };
 
@@ -13679,8 +13688,8 @@ util.inherits(Stk500v1, Protocol);
  * @param {string} file - path to hex file for uploading
  * @param {function} callback - function to run upon completion/error
  */
-Stk500v1.prototype._upload = function(file, callback) {
-
+Stk500v1.prototype._upload = function(file, callback, options={}) {
+  
   var _this = this;
 
   this.serialPort = this.connection.serialPort;
@@ -13693,7 +13702,7 @@ Stk500v1.prototype._upload = function(file, callback) {
 
   // open connection
   _this.serialPort.open(function(error) {
-
+   
     if (error) { return callback(error); }
 
     _this.debug('connected');
@@ -13716,13 +13725,13 @@ Stk500v1.prototype._upload = function(file, callback) {
         return callback(error);
       });
     });
-  });
+  }, options);
 };
 
 Stk500v1.prototype._reset = function(callback) {
   var _this = this;
 
-  /**
+  /** 
    * A reset is cause by the DTR signal going from false to true
    */
 
@@ -13738,7 +13747,7 @@ Stk500v1.prototype._reset = function(callback) {
       return callback(error);
     });
   });
-
+  
 };
 
 module.exports = Stk500v1;
@@ -13840,7 +13849,7 @@ stk500.prototype.getSignature = function (stream, timeout, done) {
 stk500.prototype.setOptions = function (stream, options, timeout, done) {
 	this.log("set device");
 	var self = this;
-
+	
   var opt = {
     cmd: [
       Statics.Cmnd_STK_SET_DEVICE,
@@ -14072,7 +14081,7 @@ stk500.prototype.verifyPage = function (stream, writeBytes, pageSize, timeout, d
   sendCommand(stream, opt, function (err, data) {
 		self.log('confirm page', err, data, data.toString('hex'));
     done(err, data);
-  });
+  }); 
 };
 
 stk500.prototype.bootload = function (stream, hex, opt, done) {
@@ -16132,7 +16141,7 @@ module.exports = Stk500v2;
 /* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {//use strict might have screwed up my this context, or might not have..
+/* WEBPACK VAR INJECTION */(function(Buffer) {//use strict might have screwed up my this context, or might not have.. 
 
 var async = __webpack_require__(59);
 var parser = __webpack_require__(60);
@@ -16156,7 +16165,7 @@ var _options = {
 };
 
 function stk500(port) {
-  if (!(this instanceof stk500))
+  if (!(this instanceof stk500)) 
     return new stk500(port);
 
   var self = this;
@@ -16166,7 +16175,7 @@ function stk500(port) {
   // use these constants. instead of requiring them above because that should be a different module.
   self.constants = self.parser.constants;
   self.serialPort = port;
-
+  
 };
 
 stk500.prototype.sync = function(attempts, done) {
@@ -16192,18 +16201,18 @@ stk500.prototype.sync = function(attempts, done) {
         var response = pkt.message;
 
         if(response[0] !== c.CMD_SIGN_ON){
-          // something is wrong. look for error in constants.
-          error = new Error('command response was not CMD_SIGN_ON. '+response[0]);
+          // something is wrong. look for error in constants. 
+          error = new Error('command response was not CMD_SIGN_ON. '+response[0]); 
           error.code = "E_CMD_ERROR";
         } else if(response[1] !== c.STATUS_CMD_OK){
           // malformed. check command status constants and return error
-          error = new Error('command status was not ok. '+response[1]);
+          error = new Error('command status was not ok. '+response[1]); 
           error.code = "E_CMD_STATUS";
         } else {
           var len = response[2];
           res = response.slice(3)+'';
           if(res.length != len) {
-            // something is wrong but all signs point to right,
+            // something is wrong but all signs point to right, 
           }
         }
       }
@@ -16232,7 +16241,7 @@ stk500.prototype.reset = function(delay1, delay2, done){
       //console.log("asserting");
 
       //-20201014
-      //-20201015 - added rts,dtr attribute back in
+      //-20201015 - added rts,dtr attribute back in 
       //self.serialPort.set({rts:true, dtr:true}, function(result){
         self.serialPort.set({requestToSend:true, dataTerminalReady:true, rts:true, dtr:true}, function(result){
       	//console.log("asserted");
@@ -16246,7 +16255,7 @@ stk500.prototype.reset = function(delay1, delay2, done){
     },
     function(cbdone) {
     	//console.log("clearing");
-
+      
       //-20201014
       //-20201015 - added rts,dtr attribute back in
       self.serialPort.set({requestToSend:false, dataTerminalReady:false, rts:false, dtr:false}, function(result){
@@ -17708,12 +17717,12 @@ module.exports = function(serialPort){
       var timeout = this._commandTimeout(body[0]);
 
       var messageLen = Buffer.from([0,0]);
-      messageLen.writeUInt16BE(body.length,0);
+      messageLen.writeUInt16BE(body.length,0);    
 
       //MESSAGE_START,SEQUENCE_NUMBER,MESSAGE_SIZE,TOKEN,MESSAGE_BODY,CMD_READ/PROGRAM_FLASH/EEPROM,CHECKSUM
       var out = Buffer.concat([Buffer.from([c.MESSAGE_START,this._seq(),messageLen[0],messageLen[1],c.TOKEN]),body]);
-
-
+     
+ 
       var checksum = this.checksum(out);
 
 
@@ -17726,7 +17735,7 @@ module.exports = function(serialPort){
 
       var checksum = 0;
       for(var i=0;i<buf.length;++i){
-        checksum ^= buf[i];
+        checksum ^= buf[i]; 
       }
 
       return checksum;
@@ -17760,7 +17769,7 @@ module.exports = function(serialPort){
     _send:function(){
       if(this.closed) return false;
       if(this._current) return;
-      if(!this._queue.length) return;
+      if(!this._queue.length) return;   
 
       var portIsOpen = typeof serialPort.isOpen === 'function' ? serialPort.isOpen() : serialPort.isOpen;
 
@@ -17781,12 +17790,12 @@ module.exports = function(serialPort){
       };
 
       this._current
-      this.state = 0;
+      this.state = 0;  
       var z = this;
 
       this.port.write(message.buf);
       this.port.drain(function(){
-        if(current !== z._current) return z.emit('log',"current was no longer the current message after drain callback");
+        if(current !== z._current) return z.emit('log',"current was no longer the current message after drain callback"); 
         current.timeout = setTimeout(function(){
           var err = new Error("stk500 timeout. "+message.timeout+"ms")
           err.code = "E_TIMEOUT";
@@ -17800,7 +17809,7 @@ module.exports = function(serialPort){
       this.emit('raw',data);
       if(!current) return this.emit('log','notice',"dropping data",'data');
       // put state machine here. proove this works foolio.
-
+      
       for(var i=0;i<data.length;++i) {
         this._stateMachine(data.readUInt8(i));
       }
@@ -17820,7 +17829,7 @@ module.exports = function(serialPort){
       case 0:
         // always reset packet.
         pkt = this.pkt = this._pkt();
-
+        
         if (curByte !== 0x1b) {
           // the spec says "update statistics".
           // the avrdude source just logs this out and does not treat it as a hard failure
@@ -17873,7 +17882,7 @@ module.exports = function(serialPort){
         if (--pkt.len == 0) ++this.state;
         break;
       case 6:
-
+        
         pkt.checksum = this.checksum(pkt.raw);
 
         pkt.checksum = (pkt.checksum === curByte) ? true : false;
@@ -17916,14 +17925,14 @@ module.exports = function(serialPort){
           e = new Error("a call queued before this call errored leaving the protocol in an upredictable state. timidly refusing to run queued commands.");
           e.code = "E_DEPENDENT";
           e.prev_code = err.code;
-        }
+        } 
         while(q.lenth) q.shift()(err);
       }
 
       this._send();
     }
   });
-
+ 
   serialPort.on('data',dataHandler).once('error',cleanup).once('close',cleanup);
 
   return o;
@@ -18014,7 +18023,7 @@ Avr109.prototype._upload = function(file, callback) {
       _this._write(data, function(error) {
         var color = (error ? colors.red : colors.green);
         _this.debug(color('flash complete.'));
-  // this is a workaround, please see https://github.com/noopkat/avrgirl-arduino/issues/193
+  // this is a workaround, please see https://github.com/noopkat/avrgirl-arduino/issues/193 
   //      _this.connection.serialPort.close();
 
         return callback(error);
@@ -18849,7 +18858,7 @@ var injectDependencies = function(boards, Connection, protocols) {
    * @param {string} file - path to hex file for uploading
    * @param {function} callback - function to run upon completion/error
    */
-  AvrgirlArduino.prototype.flash = function(file, callback) {
+  AvrgirlArduino.prototype.flash = function(file, callback, options={}) {
     var _this = this;
 
     // validate board properties first
@@ -18861,8 +18870,8 @@ var injectDependencies = function(boards, Connection, protocols) {
         if (error) { return callback(error); }
 
         // upload file to board
-        _this.protocol._upload(file, callback);
-      });
+        _this.protocol._upload(file, callback, options);
+      }, options);
     });
   };
 

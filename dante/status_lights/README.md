@@ -1,0 +1,1 @@
+Second project - same drill with the files. This page (once connected) shows the status of every pin.
