@@ -372,8 +372,14 @@ Code.renderContent = function () {
   }
   var btnMonitor = document.getElementById('monitorButton');
   var clrMonitor = document.getElementById('clearMonitor');
+  var textToSend = document.getElementById('textToSend');
+  var sendButton = document.getElementById('sendButton');
   btnMonitor.style.display = (content.id == 'content_monitor') ? "" : "none";
   clrMonitor.style.display = (content.id == 'content_monitor') ? "" : "none";
+  textToSend.style.display = (content.id == 'content_monitor') ? "" : "none";
+  sendButton.style.display = (content.id == 'content_monitor') ? "" : "none";
+
+
 };
 
 /**

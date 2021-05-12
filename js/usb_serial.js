@@ -26,7 +26,33 @@ let outputStream;
 
 const monitor = document.getElementById('content_monitor');
 const btnMonitor = document.getElementById('monitorButton');
+const btnSend = document.getElementById('sendButton');
+const textToSend = document.getElementById('textToSend');
 
+document.addEventListener('DOMContentLoaded', () => {
+  btnSend.addEventListener('click', sendText);
+
+  textToSend.addEventListener("keydown", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.key === 'Enter') {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      sendText();
+    }
+  });
+
+  // CODELAB: Add feature detection here.
+  const notSupported = document.getElementById('notSupported');
+  notSupported.classList.toggle('hidden', 'serial' in navigator);
+});
+
+async function sendText() {
+  if (port) {
+      writeToStream(textToSend.value);
+      textToSend.value = "";
+  }
+}
 
 /**
  * @name connect
@@ -136,9 +162,15 @@ async function connectUSB() {
 async function readLoop() {
   // CODELAB: Add read loop here.
   while (true) {
+
     const { value, done } = await reader.read();
+
     if (value) {
+
+      console.log("[RECEIVED] " + value);
+
       monitor.textContent += value + '';
+      //monitor.textContent += value + 'asdfasdf';
       monitor.scrollTop = monitor.scrollHeight;
       // console.log(value + '\n');
     }
@@ -147,6 +179,8 @@ async function readLoop() {
       reader.releaseLock();
       break;
     }
+
+
   }
 }
 
