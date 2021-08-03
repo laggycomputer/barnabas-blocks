@@ -13,16 +13,19 @@ Blockly.Arduino.extra_logic = function (block) {
     }
 };
 Blockly.Arduino.logic_ternary = function (a) { var b = Blockly.Arduino.valueToCode(a, "IF", Blockly.Arduino.ORDER_CONDITIONAL) || "false", c = Blockly.Arduino.valueToCode(a, "THEN", Blockly.Arduino.ORDER_CONDITIONAL) || "null"; a = Blockly.Arduino.valueToCode(a, "ELSE", Blockly.Arduino.ORDER_CONDITIONAL) || "null"; return [b + " ? " + c + " : " + a, Blockly.Arduino.ORDER_CONDITIONAL] };
-Blockly.Arduino.pulse_in = function (block) {
-    var listenPin = Blockly.Arduino.valueToCode(block, "PIN", Blockly.Arduino.ORDER_ATOMIC) || "4";
-    Blockly.Arduino.setups_["setup_output_" + listenPin] = "pinMode(" + listenPin + ", INPUT);"
-    var state = Blockly.Arduino.valueToCode(block, "STATE", Blockly.Arduino.ORDER_ATOMIC) || "HIGH";
-    return ["pulseIn(" + listenPin + ", " + state + ");\n", Blockly.Arduino.ORDER_FUNCTION_CALL]
-};
-Blockly.Arduino.pulse_in_timeout = function (block) {
-    var listenPin = Blockly.Arduino.valueToCode(block, "PIN", Blockly.Arduino.ORDER_ATOMIC) || "4";
-    Blockly.Arduino.setups_["setup_output_" + listenPin] = "pinMode(" + listenPin + ", INPUT);"
-    var state = Blockly.Arduino.valueToCode(block, "STATE", Blockly.Arduino.ORDER_ATOMIC) || "HIGH";
-    var timeout = Blockly.Arduino.valueToCode(block, "TIMEOUT", Blockly.Arduino.ORDER_ATOMIC) || "4";
-    return ["pulseIn(" + listenPin + ", " + state + ", " + timeout + ");\n", Blockly.Arduino.ORDER_FUNCTION_CALL]
+// base.js
+Blockly.Arduino.pulsein = function () {
+    var code;
+    var value_pin = Blockly.Arduino.valueToCode(this, 'pin', Blockly.Arduino.ORDER_ATOMIC) || '0';
+    var value_timeout = Blockly.Arduino.valueToCode(this, 'timeout', Blockly.Arduino.ORDER_ATOMIC) || '-1';
+    var dropdown_type = (this.getFieldValue('type') == 'HIGH') ? 'HIGH' : 'LOW';
+    console.log(value_timeout);
+    if (value_timeout > 0) {
+        code = 'pulseIn(' + value_pin + ', ' + dropdown_type + ', ' + value_timeout + ')';
+    } else {
+        code = 'pulseIn(' + value_pin + ', ' + dropdown_type + ')';
+    }
+    // TODO: Change ORDER_NONE to the correct strength.
+    Blockly.Arduino.setups_['setup_output_' + value_pin] = 'pinMode(' + value_pin + ', INPUT);';
+    return [code, Blockly.Arduino.ORDER_ATOMIC];
 };
