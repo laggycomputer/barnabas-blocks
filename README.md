@@ -24,8 +24,8 @@ This is a web tool for teaching [Barnabas Robotics Curriculum](https://lessons.b
 ### Creating New Blocks
 1. Creating a new block has three parts - creating a block definition, creating a generator, and adding the block to a drawer. 
 2. Old blocks from Chromeduino are still used as a base layer of definitions. These should not be touched without good reason.
-3. New block definitions should be placed in `blocks/custom.js`.
-4. New generators should be added to `generators/custom.js`. These are named to match block names. For example, the serial print block is defined with the name `print_ln`, and its generator has the same name.
+3. New block definitions should be placed in `blocks/custom_blocks.js`.
+4. New generators should be added to `generators/custom_generators.js`. These are named to match block names. For example, the serial print block is defined with the name `print_ln`, and its generator has the same name.
 5. Finally, an XML tree in `index.html` defines how blocks appear in drawers. Add your block to an existing category or make a new one. Make sure you add input blocks if your block has inputs otherwise the entire drawer will break.
 
 ### Authors and Contributors
