@@ -36,6 +36,8 @@ Code.LANGUAGE_RTL = ['ar', 'fa', 'he', 'lki'];
  */
 Code.workspace = null;
 
+Code.hasConfirmedBoard = false;
+
 /**
  * Extracts a parameter from the URL.
  * If the parameter is absent default_value is returned.
@@ -750,6 +752,12 @@ Code.initSelects = function () {
  * 
  */
 Code.getHex = function (flash = false) {
+  if (!Code.hasConfirmedBoard) {
+    if (!confirm("Please check your board and press OK to dismiss this warning forever. To change your board, press Cancel.")) {
+      return
+    }
+    Code.hasConfirmedBoard = true;
+  }
 
   let code = Code.getINO();
 
