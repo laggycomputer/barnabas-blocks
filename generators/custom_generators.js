@@ -1,11 +1,4 @@
-Blockly.Arduino.sandwich = function () { return "const int SANDWICH = 123123;\n" }
 Blockly.Arduino.extra_logic = function (block) {
-    // var operand = "XOR" == block.getFieldValue("OP") ? "&&" : "||";
-    // var order = "&&" == b ? Blockly.Arduino.ORDER_LOGICAL_AND : Blockly.Arduino.ORDER_LOGICAL_OR;
-    // var leftCode = Blockly.Arduino.valueToCode(block, "A", order) || "false";
-    // var rightCode = Blockly.Arduino.valueToCode(block, "B", order) || "false";
-    // return [leftCode + " " + operand + " " + rightCode, order]
-
     if (block.getFieldValue("OP") === "XOR") {
         return ["!" + (Blockly.Arduino.valueToCode(block, "A", Blockly.Arduino.ORDER_EQUALITY) || "false") + " != " + "!" + (Blockly.Arduino.valueToCode(block, "B", Blockly.Arduino.ORDER_EQUALITY) || "false"), Blockly.Arduino.ORDER_EQUALITY]
     } else {
