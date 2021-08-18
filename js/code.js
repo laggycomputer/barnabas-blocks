@@ -761,10 +761,27 @@ Code.getHex = function (flash = false) {
   let code = Code.getINO();
 
   let board = Code.getBoard();
-  if (board == 'uno') {
-    var avr = 'arduino:avr:uno';
-  } else {
-    var avr = 'arduino:avr:nano:cpu=atmega328';
+
+  if (Code.getEditor() === 'blocks') {
+    if (!(Code.getLesson() === 'ezDisplay') != !(board === 'ezDisplay')) {
+      alert('You must use both the ezDisplay board and lesson, not only one or the other.');
+      return;
+    }
+  }
+
+  switch (board) {
+    case 'uno':
+      var avr = 'arduino:avr:uno';
+      break;
+    case 'nano':
+      var avr = 'arduino:avr:nano:cpu=atmega328';
+      break;
+    case 'ezDisplay':
+      var avr = 'ATTinyCore:avr:attinyx5';
+      break;
+    default:
+      alert('Invalid board.');
+      return;
   }
 
   let data = { sketch: code, board: avr };
@@ -785,7 +802,8 @@ Code.getHex = function (flash = false) {
         // // can only run below if arduino compile error I can still get response with garbage body
         if (data.stderr.length > 0) {
           let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
-          let message = data.stderr.replace(regex, "");
+          let other_regex = /\/tmp\/waca\-(.*?)\/waca\-(.*?)\.ino\:/g;
+          let message = data.stderr.replace(regex, "").replace(other_regex, "");
           console.error(message);
           upload_result(message, false)
           regex = /\d+\:\d+/g;
@@ -801,6 +819,10 @@ Code.getHex = function (flash = false) {
     )
     .then(hex => {
       if (hex && flash) {
+        if (board === 'ezDisplay') {
+          alert("Uploading is not implemented for ezDisplay.");
+          return;
+        }
         try {
           let avrgirl = new AvrgirlArduino({
             board: board,
