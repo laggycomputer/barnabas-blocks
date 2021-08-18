@@ -83,13 +83,20 @@ Blockly.Arduino.SSD1306_font = function (block) {
 
     let font = block.getFieldValue("FONT")
 
-    let resolved_include;
     // is the font built-in? if not, import the fonts too:
     if (!["FONT8X16", "FONT6X8"].includes(font)) {
-        resolved_include = font_to_include_map[font];
+        let resolved_include = font_to_include_map[font];
+        Blockly.Arduino.definitions_["define_" + font] = "#include <" + resolved_include + ">\n"
     }
 
-    Blockly.Arduino.definitions_["define_" + font] = "#include <" + resolved_include + ">\n"
-
     return [font, Blockly.Arduino.ORDER_ATOMIC]
+}
+
+Blockly.Arduino.SSD1306_set_font = function (block) {
+    Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
+    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
+
+    let contentCode = Blockly.Arduino.valueToCode(block, "FONT", Blockly.Arduino.ORDER_ATOMIC)
+
+    return "oled.setFont(" + contentCode + ");\n"
 }

@@ -785,13 +785,25 @@ Blockly.Blocks['SSD1306_font'] = {
         ["Tama Mini 02", "FONTTAMAMINI02"],
         ["zxpix", "FONTZXPIX"]
       ]), 'FONT')
-    this.setOutput(true, 'String');
+    this.setOutput(true, 'DCFont');  // this is the C type of the fonts, so we will use it here
     this.setTooltip('');
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/TinyOLED-Fonts");
   }
 };
 
+Blockly.Blocks['SSD1306_set_font'] = {
+  init: function () {
+    this.setTooltip('Set the font used for printing text.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendValueInput("FONT")
+      .setCheck(["DCFont"])
+      .appendField('Set the LCD font to');
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+  }
+};
 
 
 Blockly.Extensions.register('test_max',
