@@ -744,6 +744,54 @@ Blockly.Blocks['SSD1306_print'] = {
   }
 };
 
+Blockly.Blocks['SSD1306_font'] = {
+  init: function () {
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldDropdown([
+        ["Default font (6x8)", "FONT8X16"],
+        ["Default font (8x16)", "FONT6X8"],
+        ["5x5 font", "FONT5X5"],
+        ["7 segment style", "FONT7LINEDIGITAL"],
+        ["Acme 5 outlines", "FONTACME5OUTLINES"],
+        ["Aztech", "FONTAZTECH"],
+        ["Blokus", "FONTBLOKUS"],
+        ["BM Plain", "FONTBMPLAIN"],
+        ["BMSPA", "FONTBMSPA"],
+        ["Boxes (for drawing outlines)", "&cp_437_box_drawing_font"],
+        ["Bubbles Standard", "FONTBUBBLESSTANDARD"],
+        ["Commo Monospaced", "FONTCOMMOMONOSPACED"],
+        ["Crackers", "FONTCRACKERS"],
+        ["Atari 8x16", "FONT8X16ATARI"],
+        ["11x16 font", "FONT11X16"],
+        ["Simplified Chinese 16x16", "&ssd1306xled_font16x16cn"],  // will the different locale (GBK) work with utf-8?
+        ["Giant digits (16x32)", "FONT16X32DIGITS"],
+        ["Formplex 12pt", "FONTFORMPLEX12"],
+        ["Haiku", "FONTHAIKU"],
+        ["HISKYF21", "FONTHISKYF21"],
+        ["Homespun", "FONTHOMESPUN"],
+        ["HUNTER", "FONTHUNTER"],
+        ["m38", "FONTM38"],
+        ["Minimum", "FONTMINIMUM"],
+        ["Minimum (outline)", "FONTMINIMUM1"],
+        ["Modern DOS (8x16)", "FONT8X16MDOS"],
+        ["Modern DOS (8x8)", "FONT8X8MDOS"],
+        ["Pixel Operator", "FONT8X16PO"],
+        ["Pixel Operator Bold", "FONT8X16POB"],
+        ["pzim (3x5)", "FONTPZIM3X5"],
+        ["Raumsond", "FONTRAUMSOND"],
+        ["Renew", "FONTRENEW"],
+        ["Sloth", "FONTSLOTH"],
+        ["SUPERDIG", "FONTSUPERDIG"],
+        ["Tama Mini 02", "FONTTAMAMINI02"],
+        ["zxpix", "FONTZXPIX"]
+      ]), 'FONT')
+    this.setOutput(true, 'String');
+    this.setTooltip('');
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/TinyOLED-Fonts");
+  }
+};
+
 
 
 Blockly.Extensions.register('test_max',
