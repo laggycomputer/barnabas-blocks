@@ -1095,6 +1095,7 @@ const categoryStyles =
   "sounds": { "colour": "#ff6900" },
   "motors": { "colour": 240 },
   "sensors": { "colour": 180 },
+  "ezDisplay": { "colour": "#530b77" },
 }
 
 Blockly.Themes.Barnabas = Blockly.Theme.defineTheme('barnabas', {
