@@ -762,6 +762,11 @@ Code.getHex = function (flash = false) {
 
   let board = Code.getBoard();
 
+  if (flash && board === 'ezDisplay') {
+    alert("Uploading is not implemented for ezDisplay.");
+    return;
+  }
+
   if (Code.getEditor() === 'blocks') {
     if (!(Code.getLesson() === 'ezDisplay') != !(board === 'ezDisplay')) {
       alert('You must use both the ezDisplay board and lesson, not only one or the other.');
@@ -819,10 +824,6 @@ Code.getHex = function (flash = false) {
     )
     .then(hex => {
       if (hex && flash) {
-        if (board === 'ezDisplay') {
-          alert("Uploading is not implemented for ezDisplay.");
-          return;
-        }
         try {
           let avrgirl = new AvrgirlArduino({
             board: board,
