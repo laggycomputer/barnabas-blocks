@@ -698,7 +698,7 @@ Blockly.Blocks['sandwich'] = {init: function () {
 
 Blockly.Blocks['extra_logic'] = {
   /**
-   * Block for logical operations: 'and', 'or'.
+   * Block for logical operations: 'xor', 'nor'.
    * @this Blockly.Block
    */
   init: function() {
