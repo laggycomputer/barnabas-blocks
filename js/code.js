@@ -1081,6 +1081,7 @@ const blockStyles =
   "control_blocks": { "colourPrimary": 60 },
   "logic_blocks": { "colourPrimary": "#ffa555"},
   "loop_blocks": { "colourPrimary": 60 },
+  "ezDisplay_blocks": { "colourPrimary": "#530b77" },
 }
 
 const categoryStyles =

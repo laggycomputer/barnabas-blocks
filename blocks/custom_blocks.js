@@ -719,12 +719,12 @@ Blockly.Blocks['pulsein'] = {
 
 Blockly.Blocks['SSD1306_clear'] = {
   init: function() {
-    this.setColour("#530b77");
     this.setTooltip('Clear the currently rendered framebuffer.');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
       .appendField("Clear LCD display");
+    this.setStyle("ezDisplay_blocks");
   }
 };
 
