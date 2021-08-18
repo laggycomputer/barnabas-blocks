@@ -1,4 +1,4 @@
-var number_types = ["Number","Int","Long","Float"];
+var number_types = ["Number", "Int", "Long", "Float"];
 
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   // wait
@@ -239,7 +239,8 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": "Number",
         "align": "RIGHT",
         "min": 0,
-        "max": 255      }
+        "max": 255
+      }
     ],
     "inputsInline": false,
     "previousStatement": null,
@@ -495,7 +496,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   // Block for variable getter.
   {
     "type": "variables_get_dynamic",
-    "message0": "%1 %2" ,
+    "message0": "%1 %2",
     "args0": [{
       "type": "field_label_serializable",
       "name": "TYPE",
@@ -562,108 +563,108 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
 
 Blockly.Blocks['boolean_onoff'] = {
   init: function () {
-      this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
-      this.setColour('#c6a0ec');
-      this.appendDummyInput()
-          .appendField(new Blockly.FieldDropdown([["On", "HIGH"], ["Off", "LOW"]]), 'BOOL')
-      this.setOutput(true, 'Boolean');
-      this.setTooltip('');
+    this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
+    this.setColour('#c6a0ec');
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldDropdown([["On", "HIGH"], ["Off", "LOW"]]), 'BOOL')
+    this.setOutput(true, 'Boolean');
+    this.setTooltip('');
   }
 };
 
 Blockly.Blocks['boolean_pressed'] = {
   init: function () {
-      this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
-      this.setColour(180);
-      this.appendDummyInput()
-          .appendField(new Blockly.FieldDropdown([["Pressed", "LOW"], ["Not Pressed", "HIGH"]]), 'BOOL')
-      this.setOutput(true, 'Boolean');
-      this.setTooltip('');
+    this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
+    this.setColour(180);
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldDropdown([["Pressed", "LOW"], ["Not Pressed", "HIGH"]]), 'BOOL')
+    this.setOutput(true, 'Boolean');
+    this.setTooltip('');
   }
 };
 
 Blockly.Blocks['controls_delay'] = {
   helpUrl: 'http://arduino.cc/en/Reference/delay',
   init: function () {
-      this.setColour(60);
-      this.appendValueInput("DELAY_TIME", 'Number')
-          .appendField("delay")
-          .setCheck('Number');
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
-      this.setTooltip('Pause instruction for specific time');
+    this.setColour(60);
+    this.appendValueInput("DELAY_TIME", 'Number')
+      .appendField("delay")
+      .setCheck('Number');
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip('Pause instruction for specific time');
   }
 };
 
 Blockly.Blocks['boolean_hilo'] = {
   init: function () {
-      this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
-      this.setColour('#c6a0ec');
-      this.appendDummyInput()
-          .appendField(new Blockly.FieldDropdown([["HIGH", "HIGH"], ["LOW", "LOW"]]), 'BOOL')
-      this.setOutput(true, 'Boolean');
-      this.setTooltip('');
+    this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
+    this.setColour('#c6a0ec');
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldDropdown([["HIGH", "HIGH"], ["LOW", "LOW"]]), 'BOOL')
+    this.setOutput(true, 'Boolean');
+    this.setTooltip('');
   }
 };
 
 Blockly.Blocks['serial_print'] = {
   init: function () {
-      this.setHelpUrl(Blockly.Msg.SERIAL_PRINT_HELPURL);
-      // this.setColour(Blockly.Blocks.serial.HUE);
-      this.appendValueInput("CONTENT")
-          .setCheck(["Number", "String"])
-          .appendField(Blockly.Msg.SERIAL_PRINT_APPENDTEXT);
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
-      this.setTooltip(Blockly.Msg.SERIAL_PRINT_TOOLTIP);
+    this.setHelpUrl(Blockly.Msg.SERIAL_PRINT_HELPURL);
+    // this.setColour(Blockly.Blocks.serial.HUE);
+    this.appendValueInput("CONTENT")
+      .setCheck(["Number", "String"])
+      .appendField(Blockly.Msg.SERIAL_PRINT_APPENDTEXT);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip(Blockly.Msg.SERIAL_PRINT_TOOLTIP);
   }
 };
 
 Blockly.Blocks['serial_read'] = {
   init: function () {
-      this.setHelpUrl(Blockly.Msg.SERIAL_READ_HELPURL);
-      // this.setColour(Blockly.Blocks.serial.HUE);
-      this.appendDummyInput()
-          .appendField(Blockly.Msg.SERIAL_READ_APPENDTEXT);
-      this.setOutput(true, ["Number", "String"]);
-      this.setTooltip(Blockly.Msg.SERIAL_READ_TOOLTIP);
+    this.setHelpUrl(Blockly.Msg.SERIAL_READ_HELPURL);
+    // this.setColour(Blockly.Blocks.serial.HUE);
+    this.appendDummyInput()
+      .appendField(Blockly.Msg.SERIAL_READ_APPENDTEXT);
+    this.setOutput(true, ["Number", "String"]);
+    this.setTooltip(Blockly.Msg.SERIAL_READ_TOOLTIP);
   }
 };
 
 Blockly.Blocks['serial_byte_number'] = {
   init: function () {
-      this.setHelpUrl(Blockly.Msg.SERIAL_READ_HELPURL);
-      // this.setColour(Blockly.Blocks.serial.HUE);
-      this.appendDummyInput()
-          .appendField(Blockly.Msg.SERIAL_BYTE_NUMBER_TEXT1)
-          .appendField(new Blockly.FieldDropdown([["0", "48"], ["1", "49"], ["2", "50"], ["3", "51"], ["4", "52"], ["5", "53"], ["6", "54"], ["7", "55"], ["8", "56"], ["9", "57"]]), "NUM")
-          .appendField(Blockly.Msg.SERIAL_BYTE_NUMBER_TEXT2);
-      this.setOutput(true, "NUMBER");
-      this.setTooltip(Blockly.Msg.SERIAL_READ_TOOLTIP);
+    this.setHelpUrl(Blockly.Msg.SERIAL_READ_HELPURL);
+    // this.setColour(Blockly.Blocks.serial.HUE);
+    this.appendDummyInput()
+      .appendField(Blockly.Msg.SERIAL_BYTE_NUMBER_TEXT1)
+      .appendField(new Blockly.FieldDropdown([["0", "48"], ["1", "49"], ["2", "50"], ["3", "51"], ["4", "52"], ["5", "53"], ["6", "54"], ["7", "55"], ["8", "56"], ["9", "57"]]), "NUM")
+      .appendField(Blockly.Msg.SERIAL_BYTE_NUMBER_TEXT2);
+    this.setOutput(true, "NUMBER");
+    this.setTooltip(Blockly.Msg.SERIAL_READ_TOOLTIP);
   }
 };
 
 Blockly.Blocks['serial_available'] = {
   init: function () {
-      this.setHelpUrl(Blockly.Msg.SERIAL_AVAILABLE_HELPURL);
-      // this.setColour(Blockly.Blocks.serial.HUE);
-      this.appendDummyInput()
-          .appendField(Blockly.Msg.SERIAL_AVAILABLE_APPENDTEXT);
-      this.setOutput(true, "Number");
-      this.setTooltip(Blockly.Msg.SERIAL_AVAILABLE_TOOLTIP);
+    this.setHelpUrl(Blockly.Msg.SERIAL_AVAILABLE_HELPURL);
+    // this.setColour(Blockly.Blocks.serial.HUE);
+    this.appendDummyInput()
+      .appendField(Blockly.Msg.SERIAL_AVAILABLE_APPENDTEXT);
+    this.setOutput(true, "Number");
+    this.setTooltip(Blockly.Msg.SERIAL_AVAILABLE_TOOLTIP);
   }
 };
 
 Blockly.Blocks['serial_println'] = {
   init: function () {
-      this.setHelpUrl(Blockly.Msg.SERIAL_PRINTLN_HELPURL);
-      this.setColour('#ccc');
-      this.appendValueInput("CONTENT")
-          .setCheck(["Number", "String"])
-          .appendField('SERIAL print line');
-      this.setPreviousStatement(true);
-      this.setNextStatement(true);
-      this.setTooltip('Blockly.Msg.SERIAL_PRINTLN_TOOLTIP');
+    this.setHelpUrl(Blockly.Msg.SERIAL_PRINTLN_HELPURL);
+    this.setColour('#ccc');
+    this.appendValueInput("CONTENT")
+      .setCheck(["Number", "String"])
+      .appendField('SERIAL print line');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('Blockly.Msg.SERIAL_PRINTLN_TOOLTIP');
   }
 };
 
@@ -672,22 +673,22 @@ Blockly.Blocks['extra_logic'] = {
    * Block for logical operations: 'xor', 'nor'.
    * @this Blockly.Block
    */
-  init: function() {
+  init: function () {
     var OPERATORS =
-        [['XOR', 'XOR'],
-         ['NOR', 'NOR']];
+      [['XOR', 'XOR'],
+      ['NOR', 'NOR']];
     this.setHelpUrl(Blockly.Msg.LOGIC_OPERATION_HELPURL);
     this.setColour('#ffa555');
     this.setOutput(true, 'Boolean');
     this.appendValueInput('A')
-        .setCheck('Boolean');
+      .setCheck('Boolean');
     this.appendValueInput('B')
-        .setCheck('Boolean')
-        .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
+      .setCheck('Boolean')
+      .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
     this.setInputsInline(true);
     // Assign 'this' to a variable for use in the tooltip closure below.
     var thisBlock = this;
-    this.setTooltip(function() {
+    this.setTooltip(function () {
       var op = thisBlock.getFieldValue('OP');
       var TOOLTIPS = {
         'XOR': 'bazinga',
@@ -699,13 +700,13 @@ Blockly.Blocks['extra_logic'] = {
 };
 
 Blockly.Blocks['pulsein'] = {
-  init: function() {
+  init: function () {
     this.setHelpUrl('http://www.example.com/');
     this.setColour(230);
     this.appendValueInput("pin")
       .setCheck(["Number"])
       .appendField('Wait for pulse on pin');
-      this.appendValueInput("type")
+    this.appendValueInput("type")
       .setCheck(["Boolean"])
       .appendField('of strength');
     this.appendValueInput("timeout")
@@ -718,18 +719,19 @@ Blockly.Blocks['pulsein'] = {
 };
 
 Blockly.Blocks['SSD1306_clear'] = {
-  init: function() {
+  init: function () {
     this.setTooltip('Clear the currently rendered framebuffer.');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
       .appendField("Clear LCD display");
     this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
 Blockly.Blocks['SSD1306_print'] = {
-  init: function() {
+  init: function () {
     this.setTooltip('Write some text to the currently written framebuffer.');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -738,13 +740,14 @@ Blockly.Blocks['SSD1306_print'] = {
       .appendField('Print');
     this.appendDummyInput().appendField("to LCD")
     this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
 
 
 Blockly.Extensions.register('test_max',
-function() {
-  // this refers to the block that the extension is being run on
-  console.log('running test_max:',this);
-});
+  function () {
+    // this refers to the block that the extension is being run on
+    console.log('running test_max:', this);
+  });
