@@ -677,7 +677,7 @@ Blockly.Blocks['extra_logic'] = {
         [['XOR', 'XOR'],
          ['NOR', 'NOR']];
     this.setHelpUrl(Blockly.Msg.LOGIC_OPERATION_HELPURL);
-    this.setColour('#f92f2f');
+    this.setColour('#ffa555');
     this.setOutput(true, 'Boolean');
     this.appendValueInput('A')
         .setCheck('Boolean');
