@@ -717,6 +717,18 @@ Blockly.Blocks['pulsein'] = {
   }
 };
 
+Blockly.Blocks['SSD1306_clear'] = {
+  init: function() {
+    this.setColour("#530b77");
+    this.setTooltip('Clear the currently rendered framebuffer.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendDummyInput()
+      .appendField("Clear LCD display");
+  }
+};
+
+
 Blockly.Extensions.register('test_max',
 function() {
   // this refers to the block that the extension is being run on
