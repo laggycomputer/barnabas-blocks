@@ -28,3 +28,12 @@ Blockly.Arduino.SSD1306_clear = function () {
 
     return "oled.clear();\n"
 }
+
+Blockly.Arduino.SSD1306_print = function (block) {
+    Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
+    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
+
+    let contentCode = Blockly.Arduino.valueToCode(block, "CONTENT", Blockly.Arduino.ORDER_ATOMIC)
+
+    return "oled.print(" + contentCode + ");\n"
+}

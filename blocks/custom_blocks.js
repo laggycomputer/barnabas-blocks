@@ -728,6 +728,20 @@ Blockly.Blocks['SSD1306_clear'] = {
   }
 };
 
+Blockly.Blocks['SSD1306_print'] = {
+  init: function() {
+    this.setTooltip('Write some text to the currently written framebuffer.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendValueInput("CONTENT")
+      .setCheck(["Number", "String"])
+      .appendField('Print');
+    this.appendDummyInput().appendField("to LCD")
+    this.setStyle("ezDisplay_blocks");
+  }
+};
+
+
 
 Blockly.Extensions.register('test_max',
 function() {
