@@ -559,7 +559,8 @@ Code.init = function () {
         // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
         let newTree = Code.buildToolbox(this.value);
         Code.workspace.updateToolbox(newTree);
-        if (prev === 'racer') {
+        console.log(this.value)
+        if (prev != 'bot' && this.value === 'bot') {
           document.getElementById('title').textContent = "BOT";
           Code.discard();
         } else {
@@ -724,7 +725,7 @@ Code.initLanguage = function () {
   document.getElementById('title').textContent = Code.getLesson() || document.getElementById('lessonSelect').value;//MSG['title'];
   if (Code.getLesson() == 'bot') {
     document.getElementById('title').textContent = 'bot';
-  } else if (Code.getLesson() == 'racer') {
+  } else {
     document.getElementById('title').textContent = 'advanced';
   }
   document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
