@@ -701,7 +701,7 @@ Blockly.Blocks['extra_logic'] = {
 
 Blockly.Blocks['pulsein'] = {
   init: function () {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('https://www.arduino.cc/reference/en/language/functions/advanced-io/pulsein/');
     this.setColour(230);
     this.appendValueInput("pin")
       .setCheck(["Number"])
