@@ -5,6 +5,13 @@ Blockly.Arduino.extra_logic = function (block) {
         return ["!" + (Blockly.Arduino.valueToCode(block, "A", Blockly.Arduino.ORDER_EQUALITY) || "false") + " && " + "!" + (Blockly.Arduino.valueToCode(block, "B", Blockly.Arduino.ORDER_EQUALITY) || "false"), Blockly.Arduino.ORDER_EQUALITY]
     }
 };
+
+Blockly.Arduino.boolean_button = function (block) {
+    let pin = (block.getFieldValue("PIN") || "2").toString();
+    0 < pin && (Blockly.Arduino.setups_["setup_output_" + pin] = "pinMode(" + pin + ", INPUT_PULLUP);");
+    return ["digitalRead(" + pin + ")", Blockly.Arduino.ORDER_ATOMIC]
+};
+
 Blockly.Arduino.logic_ternary = function (a) { var b = Blockly.Arduino.valueToCode(a, "IF", Blockly.Arduino.ORDER_CONDITIONAL) || "false", c = Blockly.Arduino.valueToCode(a, "THEN", Blockly.Arduino.ORDER_CONDITIONAL) || "null"; a = Blockly.Arduino.valueToCode(a, "ELSE", Blockly.Arduino.ORDER_CONDITIONAL) || "null"; return [b + " ? " + c + " : " + a, Blockly.Arduino.ORDER_CONDITIONAL] };
 // base.js
 Blockly.Arduino.pulsein = function () {
