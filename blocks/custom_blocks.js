@@ -712,6 +712,7 @@ Blockly.Blocks['pulsein'] = {
     this.appendValueInput("timeout")
       .setCheck(["Number"])
       .appendField('for');
+    this.appendDummyInput().appendField('nanoseconds')
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setTooltip('');
