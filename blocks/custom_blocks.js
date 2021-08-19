@@ -805,6 +805,23 @@ Blockly.Blocks['SSD1306_set_font'] = {
   }
 };
 
+Blockly.Blocks['SSD1306_set_cursor'] = {
+  init: function () {
+    this.setTooltip('Move the origin from which drawing will occur.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendValueInput("X")
+      .setCheck(["Number"])
+      .appendField('Move the LCD cursor to (');
+    this.appendValueInput("Y")
+    .setCheck(["Number"])
+    .appendField(', ');
+    this.appendDummyInput().appendField(" × 8)")
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+  }
+};
+
 
 Blockly.Extensions.register('test_max',
   function () {

@@ -100,3 +100,13 @@ Blockly.Arduino.SSD1306_set_font = function (block) {
 
     return "oled.setFont(" + contentCode + ");\n"
 }
+
+Blockly.Arduino.SSD1306_set_cursor = function (block) {
+    Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
+    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
+
+    let xCode = Blockly.Arduino.valueToCode(block, "X", Blockly.Arduino.ORDER_ATOMIC)
+    let yCode = Blockly.Arduino.valueToCode(block, "Y", Blockly.Arduino.ORDER_ATOMIC)
+
+    return "oled.setCursor(" + xCode + ", " + yCode + ");\n"
+}
