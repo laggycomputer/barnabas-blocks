@@ -431,9 +431,7 @@ Code.checkAllGeneratorFunctionsDefined = function (generator) {
 Code.checkRoots = function () {
 
   let lesson = Code.getLesson();
-  let blocks = Code.workspace.getBlocksByType('controls_loop');
-  if (lesson == 'racer')
-    blocks = Code.workspace.getBlocksByType('controls_setup');
+  let blocks = lesson == 'bot' ? Code.workspace.getBlocksByType('controls_loop') : Code.workspace.getBlocksByType('controls_setup');
 
   let roots = blocks.length;
   let singleRoot = roots == 1;
@@ -726,7 +724,7 @@ Code.initLanguage = function () {
   document.getElementById('title').textContent = Code.getLesson() || document.getElementById('lessonSelect').value;//MSG['title'];
   if (Code.getLesson() == 'bot') {
     document.getElementById('title').textContent = 'bot';
-  } else {
+  } else if (Code.getLesson() == 'racer') {
     document.getElementById('title').textContent = 'advanced';
   }
   document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];

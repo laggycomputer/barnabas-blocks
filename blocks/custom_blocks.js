@@ -667,6 +667,56 @@ Blockly.Blocks['serial_println'] = {
   }
 };
 
+Blockly.Blocks['extra_logic'] = {
+  /**
+   * Block for logical operations: 'xor', 'nor'.
+   * @this Blockly.Block
+   */
+  init: function() {
+    var OPERATORS =
+        [['XOR', 'XOR'],
+         ['NOR', 'NOR']];
+    this.setHelpUrl(Blockly.Msg.LOGIC_OPERATION_HELPURL);
+    this.setColour('#f92f2f');
+    this.setOutput(true, 'Boolean');
+    this.appendValueInput('A')
+        .setCheck('Boolean');
+    this.appendValueInput('B')
+        .setCheck('Boolean')
+        .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
+    this.setInputsInline(true);
+    // Assign 'this' to a variable for use in the tooltip closure below.
+    var thisBlock = this;
+    this.setTooltip(function() {
+      var op = thisBlock.getFieldValue('OP');
+      var TOOLTIPS = {
+        'XOR': 'bazinga',
+        'NOR': 'bazinga'
+      };
+      return TOOLTIPS[op];
+    });
+  }
+};
+
+Blockly.Blocks['pulsein'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(230);
+    this.appendValueInput("pin")
+      .setCheck(["Number"])
+      .appendField('Wait for pulse on pin');
+      this.appendValueInput("type")
+      .setCheck(["Boolean"])
+      .appendField('of strength');
+    this.appendValueInput("timeout")
+      .setCheck(["Number"])
+      .appendField('for');
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setTooltip('');
+  }
+};
+
 Blockly.Extensions.register('test_max',
 function() {
   // this refers to the block that the extension is being run on
