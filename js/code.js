@@ -431,9 +431,7 @@ Code.checkAllGeneratorFunctionsDefined = function (generator) {
 Code.checkRoots = function () {
 
   let lesson = Code.getLesson();
-  let blocks = Code.workspace.getBlocksByType('controls_loop');
-  if (lesson == 'racer')
-    blocks = Code.workspace.getBlocksByType('controls_setup');
+  let blocks = lesson == 'bot' ? Code.workspace.getBlocksByType('controls_loop') : Code.workspace.getBlocksByType('controls_setup');
 
   let roots = blocks.length;
   let singleRoot = roots == 1;
@@ -561,7 +559,8 @@ Code.init = function () {
         // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
         let newTree = Code.buildToolbox(this.value);
         Code.workspace.updateToolbox(newTree);
-        if (prev === 'racer') {
+        console.log(this.value)
+        if (prev != 'bot' && this.value === 'bot') {
           document.getElementById('title').textContent = "BOT";
           Code.discard();
         } else {
@@ -762,10 +761,32 @@ Code.getHex = function (flash = false) {
   let code = Code.getINO();
 
   let board = Code.getBoard();
-  if (board == 'uno') {
-    var avr = 'arduino:avr:uno';
-  } else {
-    var avr = 'arduino:avr:nano:cpu=atmega328';
+
+  if (flash && board === 'ezDisplay') {
+    alert("Uploading is not implemented for ezDisplay.");
+    return;
+  }
+
+  if (Code.getEditor() === 'blocks') {
+    if (!(Code.getLesson() === 'ezDisplay') != !(board === 'ezDisplay')) {
+      alert('You must use both the ezDisplay board and lesson, not only one or the other.');
+      return;
+    }
+  }
+
+  switch (board) {
+    case 'uno':
+      var avr = 'arduino:avr:uno';
+      break;
+    case 'nano':
+      var avr = 'arduino:avr:nano:cpu=atmega328';
+      break;
+    case 'ezDisplay':
+      var avr = 'ATTinyCore:avr:attinyx5';
+      break;
+    default:
+      alert('Invalid board.');
+      return;
   }
 
   let data = { sketch: code, board: avr };
@@ -786,7 +807,8 @@ Code.getHex = function (flash = false) {
         // // can only run below if arduino compile error I can still get response with garbage body
         if (data.stderr.length > 0) {
           let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
-          let message = data.stderr.replace(regex, "");
+          let other_regex = /\/tmp\/waca\-(.*?)\/waca\-(.*?)\.ino\:/g;
+          let message = data.stderr.replace(regex, "").replace(other_regex, "");
           console.error(message);
           upload_result(message, false)
           regex = /\d+\:\d+/g;
@@ -1083,6 +1105,7 @@ const blockStyles =
   "control_blocks": { "colourPrimary": 60 },
   "logic_blocks": { "colourPrimary": "#ffa555"},
   "loop_blocks": { "colourPrimary": 60 },
+  "ezDisplay_blocks": { "colourPrimary": "#530b77" },
 }
 
 const categoryStyles =
@@ -1097,6 +1120,7 @@ const categoryStyles =
   "sounds": { "colour": "#ff6900" },
   "motors": { "colour": 240 },
   "sensors": { "colour": 180 },
+  "ezDisplay": { "colour": "#530b77" },
 }
 
 Blockly.Themes.Barnabas = Blockly.Theme.defineTheme('barnabas', {
