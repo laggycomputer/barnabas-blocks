@@ -117,3 +117,39 @@ Blockly.Arduino.SSD1306_set_cursor = function (block) {
 
     return "oled.setCursor(" + xCode + ", " + yCode + ");\n"
 }
+
+Blockly.Arduino.SSD1306_print_image = function (block) {
+    Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
+    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
+
+    function chunk(str, size) {
+        if (typeof str === 'string') {
+            const length = str.length
+            const chunks = Array(Math.ceil(length / size))
+            for (let i = 0, index = 0; index < length; i++) {
+                chunks[i] = str.slice(index, index += size)
+            }
+            return chunks
+        }
+    }
+
+    const hex = Blockly.Arduino.valueToCode(block, "CONTENT", Blockly.Arduino.ORDER_ATOMIC)
+    const hashed = md5(hex).slice(0, 16)
+
+    const chunks = chunk(hex, 16 * 2)
+
+    chunks.map(c => {
+        return "  " + chunk(c).join(",\n")
+    })
+
+    definition = `const char bitmap_${hashed} [] PROGMEM = {\n${chunks.join(",\n")}\n}`
+
+    Blockly.Arduino.definitions_["define_" + hashed] = definition
+
+    const x = Blockly.Arduino.valueToCode(block, "X", Blockly.Arduino.ORDER_ATOMIC)
+    const y = Blockly.Arduino.valueToCode(block, "Y", Blockly.Arduino.ORDER_ATOMIC)
+    const w = Blockly.Arduino.valueToCode(block, "W", Blockly.Arduino.ORDER_ATOMIC)
+    const h = Blockly.Arduino.valueToCode(block, "H", Blockly.Arduino.ORDER_ATOMIC)
+
+    return `oled.drawImage(bitmap_${hashed}, ${x}, ${y}, ${w}, ${h});\n`
+}
