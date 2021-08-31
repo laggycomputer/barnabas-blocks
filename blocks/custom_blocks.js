@@ -823,6 +823,35 @@ Blockly.Blocks['SSD1306_set_cursor'] = {
   }
 };
 
+Blockly.Blocks['SSD1306_print_image'] = {
+    init: function () {
+      this.setTooltip('Upload image hex to display on screen and set image location and size.');
+      this.setPreviousStatement(true);
+      this.setNextStatement(true);
+      this.appendValueInput("CONTENT")
+        .setCheck(["Number", "String"])
+        .appendField('Input hex string');
+      this.appendDummyInput().appendField(". ")
+      this.appendValueInput("X")
+        .setCheck(["Number"])
+        .appendField('Set image location X,Y to (');
+      this.appendValueInput("Y")
+        .setCheck(["Number"])
+        .appendField(', ');
+      this.appendDummyInput().appendField(" x 8)")
+      this.appendDummyInput().appendField(", and ")
+      this.appendValueInput("W")
+        .setCheck(["Number"])
+        .appendField('set size of image (Width by Height) on screen to (');
+      this.appendValueInput("H")
+        .setCheck(["Number"])
+        .appendField(', ');
+      this.appendDummyInput().appendField(" x 8 )")
+      this.setStyle("ezDisplay_blocks");
+      this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+    }
+};
+
 
 Blockly.Extensions.register('test_max',
   function () {
