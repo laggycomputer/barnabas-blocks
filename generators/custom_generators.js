@@ -125,7 +125,7 @@ Blockly.Arduino.SSD1306_print_image = function (block) {
     function chunk(str, size) {
         if (typeof str === 'string') {
             const length = str.length
-            const chunks = Array(Math.ceil(length / size))
+            const chunks = new Array(Math.ceil(length / size))
             for (let i = 0, index = 0; index < length; i++) {
                 chunks[i] = str.slice(index, index += size)
             }
@@ -133,16 +133,19 @@ Blockly.Arduino.SSD1306_print_image = function (block) {
         }
     }
 
-    const hex = Blockly.Arduino.valueToCode(block, "CONTENT", Blockly.Arduino.ORDER_ATOMIC)
+    let hex = Blockly.Arduino.valueToCode(block, "CONTENT", Blockly.Arduino.ORDER_ATOMIC)
+    while (hex.includes("\"")) {
+        hex = hex.replace("\"", "")
+    }
     const hashed = md5(hex).slice(0, 16)
 
-    const chunks = chunk(hex, 16 * 2)
-
-    chunks.map(c => {
-        return "  " + chunk(c).join(",\n")
+    const chunks = chunk(hex, 16 * 2).map(c => {
+        const asBytes = chunk(c, 2).map(b => "0x" + b)
+        return "  " + asBytes.join(", ")
     })
 
-    definition = `const char bitmap_${hashed} [] PROGMEM = {\n${chunks.join(",\n")}\n}`
+
+    definition = `const char bitmap_${hashed} [] PROGMEM = {\n${chunks.join(",\n")}\n}\n`
 
     Blockly.Arduino.definitions_["define_" + hashed] = definition
 
