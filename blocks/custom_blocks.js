@@ -849,6 +849,41 @@ Blockly.Blocks['SSD1306_print_image'] = {
   }
 };
 
+Blockly.Blocks['SSD1306_framebuffer_img'] = {
+  init: function () {
+    this.setTooltip('Buffer the frame to switch the imaginary (print to) arrow.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendDummyInput()
+      .appendField("Switch imaginary arrow.");
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+  }
+};
+
+Blockly.Blocks['SSD1306_framebuffer_real'] = {
+  init: function () {
+    this.setTooltip('Buffer the frame to switch the real (display) arrow.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendDummyInput()
+      .appendField("Switch real arrow.");
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+  }
+};
+
+Blockly.Blocks['SSD1306_framebuffer_both'] = {
+  init: function () {
+    this.setTooltip('Buffer the frame to switch both the imaginary and real arrows.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendDummyInput()
+      .appendField("Switch both imaginary and real arrows.");
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+  }
+};
 
 Blockly.Extensions.register('test_max',
   function () {
