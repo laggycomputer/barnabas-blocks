@@ -108,7 +108,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "inputsInline": false,
     "previousStatement": null,
     "nextStatement": null,
-    "colour": '#2dc32d',
+    "colour": "#2dc32d",
     "tooltip": "digitalWrite",
     "helpUrl": "https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/"
   },
@@ -145,7 +145,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "inputsInline": false,
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 'ec792d',
+    "colour": "ec792d",
     "tooltip": "tone",
     "helpUrl": "https://www.arduino.cc/reference/en/language/functions/digital-io/tone/"
   },
@@ -172,7 +172,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": '#ec792d',
+    "colour": "#ec792d",
     "tooltip": "noTone",
     "helpUrl": "https://www.arduino.cc/reference/en/language/functions/digital-io/noTone/"
   },
@@ -248,7 +248,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "colour": 230,
     "tooltip": "analogWrite",
     "helpUrl": "http://www.arduino.cc/playground/ComponentLib/servo",
-    "extensions": ['test_max']
+    "extensions": ["test_max"]
   },
   // button
   {
@@ -380,9 +380,9 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "type": "field_dropdown",
         "name": "OP",
         "options": [
-          ["%{BKY_MATH_SINGLE_OP_ROOT}", 'ROOT'],
-          ["%{BKY_MATH_SINGLE_OP_ABSOLUTE}", 'ABS'],
-          ['-', 'NEG'],
+          ["%{BKY_MATH_SINGLE_OP_ROOT}", "ROOT"],
+          ["%{BKY_MATH_SINGLE_OP_ABSOLUTE}", "ABS"],
+          ["-", "NEG"],
         ]
       },
       {
@@ -500,7 +500,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "args0": [{
       "type": "field_label_serializable",
       "name": "TYPE",
-      "text": ''
+      "text": ""
     },
     {
       "type": "field_variable",
@@ -561,53 +561,53 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   },
 ]);
 
-Blockly.Blocks['boolean_onoff'] = {
+Blockly.Blocks["boolean_onoff"] = {
   init: function () {
-    this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
-    this.setColour('#c6a0ec');
+    this.setHelpUrl("http://arduino.cc/en/Reference/Constants");
+    this.setColour("#c6a0ec");
     this.appendDummyInput()
-      .appendField(new Blockly.FieldDropdown([["On", "HIGH"], ["Off", "LOW"]]), 'BOOL')
-    this.setOutput(true, 'Boolean');
-    this.setTooltip('');
+      .appendField(new Blockly.FieldDropdown([["On", "HIGH"], ["Off", "LOW"]]), "BOOL")
+    this.setOutput(true, "Boolean");
+    this.setTooltip("");
   }
 };
 
-Blockly.Blocks['boolean_pressed'] = {
+Blockly.Blocks["boolean_pressed"] = {
   init: function () {
-    this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
+    this.setHelpUrl("http://arduino.cc/en/Reference/Constants");
     this.setColour(180);
     this.appendDummyInput()
-      .appendField(new Blockly.FieldDropdown([["Pressed", "LOW"], ["Not Pressed", "HIGH"]]), 'BOOL')
-    this.setOutput(true, 'Boolean');
-    this.setTooltip('');
+      .appendField(new Blockly.FieldDropdown([["Pressed", "LOW"], ["Not Pressed", "HIGH"]]), "BOOL")
+    this.setOutput(true, "Boolean");
+    this.setTooltip("");
   }
 };
 
-Blockly.Blocks['controls_delay'] = {
-  helpUrl: 'http://arduino.cc/en/Reference/delay',
+Blockly.Blocks["controls_delay"] = {
+  helpUrl: "http://arduino.cc/en/Reference/delay",
   init: function () {
     this.setColour(60);
-    this.appendValueInput("DELAY_TIME", 'Number')
+    this.appendValueInput("DELAY_TIME", "Number")
       .appendField("delay")
-      .setCheck('Number');
+      .setCheck("Number");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setTooltip('Pause instruction for specific time');
+    this.setTooltip("Pause instruction for specific time");
   }
 };
 
-Blockly.Blocks['boolean_hilo'] = {
+Blockly.Blocks["boolean_hilo"] = {
   init: function () {
-    this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
-    this.setColour('#c6a0ec');
+    this.setHelpUrl("http://arduino.cc/en/Reference/Constants");
+    this.setColour("#c6a0ec");
     this.appendDummyInput()
-      .appendField(new Blockly.FieldDropdown([["HIGH", "HIGH"], ["LOW", "LOW"]]), 'BOOL')
-    this.setOutput(true, 'Boolean');
-    this.setTooltip('');
+      .appendField(new Blockly.FieldDropdown([["HIGH", "HIGH"], ["LOW", "LOW"]]), "BOOL")
+    this.setOutput(true, "Boolean");
+    this.setTooltip("");
   }
 };
 
-Blockly.Blocks['serial_print'] = {
+Blockly.Blocks["serial_print"] = {
   init: function () {
     this.setHelpUrl(Blockly.Msg.SERIAL_PRINT_HELPURL);
     // this.setColour(Blockly.Blocks.serial.HUE);
@@ -620,7 +620,7 @@ Blockly.Blocks['serial_print'] = {
   }
 };
 
-Blockly.Blocks['serial_read'] = {
+Blockly.Blocks["serial_read"] = {
   init: function () {
     this.setHelpUrl(Blockly.Msg.SERIAL_READ_HELPURL);
     // this.setColour(Blockly.Blocks.serial.HUE);
@@ -631,7 +631,7 @@ Blockly.Blocks['serial_read'] = {
   }
 };
 
-Blockly.Blocks['serial_byte_number'] = {
+Blockly.Blocks["serial_byte_number"] = {
   init: function () {
     this.setHelpUrl(Blockly.Msg.SERIAL_READ_HELPURL);
     // this.setColour(Blockly.Blocks.serial.HUE);
@@ -644,7 +644,7 @@ Blockly.Blocks['serial_byte_number'] = {
   }
 };
 
-Blockly.Blocks['serial_available'] = {
+Blockly.Blocks["serial_available"] = {
   init: function () {
     this.setHelpUrl(Blockly.Msg.SERIAL_AVAILABLE_HELPURL);
     // this.setColour(Blockly.Blocks.serial.HUE);
@@ -655,73 +655,73 @@ Blockly.Blocks['serial_available'] = {
   }
 };
 
-Blockly.Blocks['serial_println'] = {
+Blockly.Blocks["serial_println"] = {
   init: function () {
     this.setHelpUrl(Blockly.Msg.SERIAL_PRINTLN_HELPURL);
-    this.setColour('#ccc');
+    this.setColour("#ccc");
     this.appendValueInput("CONTENT")
       .setCheck(["Number", "String"])
-      .appendField('SERIAL print line');
+      .appendField("SERIAL print line");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
-    this.setTooltip('Blockly.Msg.SERIAL_PRINTLN_TOOLTIP');
+    this.setTooltip("Blockly.Msg.SERIAL_PRINTLN_TOOLTIP");
   }
 };
 
-Blockly.Blocks['extra_logic'] = {
+Blockly.Blocks["extra_logic"] = {
   /**
-   * Block for logical operations: 'xor', 'nor'.
+   * Block for logical operations: "xor", "nor".
    * @this Blockly.Block
    */
   init: function () {
     var OPERATORS =
-      [['XOR', 'XOR'],
-      ['NOR', 'NOR']];
+      [["XOR", "XOR"],
+      ["NOR", "NOR"]];
     this.setHelpUrl(Blockly.Msg.LOGIC_OPERATION_HELPURL);
-    this.setColour('#ffa555');
-    this.setOutput(true, 'Boolean');
-    this.appendValueInput('A')
-      .setCheck('Boolean');
-    this.appendValueInput('B')
-      .setCheck('Boolean')
-      .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
+    this.setColour("#ffa555");
+    this.setOutput(true, "Boolean");
+    this.appendValueInput("A")
+      .setCheck("Boolean");
+    this.appendValueInput("B")
+      .setCheck("Boolean")
+      .appendField(new Blockly.FieldDropdown(OPERATORS), "OP");
     this.setInputsInline(true);
-    // Assign 'this' to a variable for use in the tooltip closure below.
+    // Assign "this" to a variable for use in the tooltip closure below.
     var thisBlock = this;
     this.setTooltip(function () {
-      var op = thisBlock.getFieldValue('OP');
+      var op = thisBlock.getFieldValue("OP");
       var TOOLTIPS = {
-        'XOR': 'bazinga',
-        'NOR': 'bazinga'
+        "XOR": "bazinga",
+        "NOR": "bazinga"
       };
       return TOOLTIPS[op];
     });
   }
 };
 
-Blockly.Blocks['pulsein'] = {
+Blockly.Blocks["pulsein"] = {
   init: function () {
-    this.setHelpUrl('https://www.arduino.cc/reference/en/language/functions/advanced-io/pulsein/');
+    this.setHelpUrl("https://www.arduino.cc/reference/en/language/functions/advanced-io/pulsein/");
     this.setColour(230);
     this.appendValueInput("pin")
       .setCheck(["Number"])
-      .appendField('Wait for pulse on pin');
+      .appendField("Wait for pulse on pin");
     this.appendValueInput("type")
       .setCheck(["Boolean"])
-      .appendField('of strength');
+      .appendField("of strength");
     this.appendValueInput("timeout")
       .setCheck(["Number"])
-      .appendField('for');
-    this.appendDummyInput().appendField('nanoseconds')
+      .appendField("for");
+    this.appendDummyInput().appendField("nanoseconds")
     this.setInputsInline(true);
     this.setOutput(true, "Number");
-    this.setTooltip('');
+    this.setTooltip("");
   }
 };
 
-Blockly.Blocks['SSD1306_clear'] = {
+Blockly.Blocks["SSD1306_clear"] = {
   init: function () {
-    this.setTooltip('Clear the currently rendered framebuffer.');
+    this.setTooltip("Clear the currently rendered framebuffer.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
@@ -731,35 +731,35 @@ Blockly.Blocks['SSD1306_clear'] = {
   }
 };
 
-Blockly.Blocks['SSD1306_print'] = {
+Blockly.Blocks["SSD1306_print"] = {
   init: function () {
-    this.setTooltip('Write some text to the currently written framebuffer.');
+    this.setTooltip("Write some text to the currently written framebuffer.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("CONTENT")
       .setCheck(["Number", "String"])
-      .appendField('Print');
+      .appendField("Print");
     this.appendDummyInput().appendField("to LCD")
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks['SSD1306_scroll'] = {
+Blockly.Blocks["SSD1306_scroll"] = {
   init: function () {
-    this.setTooltip('Write some text to the currently written framebuffer.');
+    this.setTooltip("Write some text to the currently written framebuffer.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("CONTENT")
       .setCheck(["Number", "String"])
-      .appendField('Scroll');
+      .appendField("Scroll");
     this.appendDummyInput().appendField("left")
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks['SSD1306_font'] = {
+Blockly.Blocks["SSD1306_font"] = {
   init: function () {
     this.appendDummyInput()
       .appendField(new Blockly.FieldDropdown([
@@ -799,73 +799,73 @@ Blockly.Blocks['SSD1306_font'] = {
         ["SUPERDIG", "FONTSUPERDIG"],
         ["Tama Mini 02", "FONTTAMAMINI02"],
         ["zxpix", "FONTZXPIX"]
-      ]), 'FONT')
-    this.setOutput(true, 'DCFont');  // this is the C type of the fonts, so we will use it here
-    this.setTooltip('');
+      ]), "FONT")
+    this.setOutput(true, "DCFont");  // this is the C type of the fonts, so we will use it here
+    this.setTooltip("");
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/TinyOLED-Fonts");
   }
 };
 
-Blockly.Blocks['SSD1306_set_font'] = {
+Blockly.Blocks["SSD1306_set_font"] = {
   init: function () {
-    this.setTooltip('Set the font used for printing text.');
+    this.setTooltip("Set the font used for printing text.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("FONT")
       .setCheck(["DCFont"])
-      .appendField('Set the LCD font to');
+      .appendField("Set the LCD font to");
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks['SSD1306_set_cursor'] = {
+Blockly.Blocks["SSD1306_set_cursor"] = {
   init: function () {
-    this.setTooltip('Move the origin from which drawing will occur.');
+    this.setTooltip("Move the origin from which drawing will occur.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("X")
       .setCheck(["Number"])
-      .appendField('Move the LCD cursor to (');
+      .appendField("Move the LCD cursor to (");
     this.appendValueInput("Y")
       .setCheck(["Number"])
-      .appendField(', ');
+      .appendField(", ");
     this.appendDummyInput().appendField(" × 8)")
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks['SSD1306_print_image'] = {
+Blockly.Blocks["SSD1306_print_image"] = {
   init: function () {
-    this.setTooltip('Upload image hex to display on screen and set image location and size.');
+    this.setTooltip("Upload image hex to display on screen and set image location and size.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("CONTENT")
       .setCheck(["Number", "String"])
-      .appendField('Input hex string');
+      .appendField("Input hex string");
     this.appendValueInput("X")
       .setCheck(["Number"])
-      .appendField('. Set image location (');
+      .appendField(". Set image location (");
     this.appendValueInput("Y")
       .setCheck(["Number"])
-      .appendField(', ');
+      .appendField(", ");
     this.appendValueInput("W")
       .setCheck(["Number"])
-      .appendField('× 8) with size (');
+      .appendField("× 8) with size (");
     this.appendValueInput("H")
       .setCheck(["Number"])
-      .appendField(',');
+      .appendField(",");
     this.appendDummyInput().appendField("× 8)")
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks['SSD1306_framebuffer_img'] = {
+Blockly.Blocks["SSD1306_framebuffer_img"] = {
   init: function () {
-    this.setTooltip('Buffer the frame to switch the imaginary (print to) arrow.');
+    this.setTooltip("Buffer the frame to switch the imaginary (print to) arrow.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
@@ -875,9 +875,9 @@ Blockly.Blocks['SSD1306_framebuffer_img'] = {
   }
 };
 
-Blockly.Blocks['SSD1306_framebuffer_real'] = {
+Blockly.Blocks["SSD1306_framebuffer_real"] = {
   init: function () {
-    this.setTooltip('Buffer the frame to switch the real (display) arrow.');
+    this.setTooltip("Buffer the frame to switch the real (display) arrow.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
@@ -887,9 +887,9 @@ Blockly.Blocks['SSD1306_framebuffer_real'] = {
   }
 };
 
-Blockly.Blocks['SSD1306_framebuffer_both'] = {
+Blockly.Blocks["SSD1306_framebuffer_both"] = {
   init: function () {
-    this.setTooltip('Buffer the frame to switch both the imaginary and real arrows.');
+    this.setTooltip("Buffer the frame to switch both the imaginary and real arrows.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
@@ -899,8 +899,8 @@ Blockly.Blocks['SSD1306_framebuffer_both'] = {
   }
 };
 
-Blockly.Extensions.register('test_max',
+Blockly.Extensions.register("test_max",
   function () {
     // this refers to the block that the extension is being run on
-    console.log('running test_max:', this);
+    console.log("running test_max:", this);
   });
