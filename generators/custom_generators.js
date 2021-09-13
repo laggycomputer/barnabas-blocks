@@ -56,6 +56,14 @@ Blockly.Arduino.SSD1306_scroll = function (block) {
     return ""+direction+"\ndelay(10);\noled.setCursor(122, 1);\noled.clipText(nextRowOfTextToDraw++, 1, textToScroll);\nif (nextRowOfTextToDraw >= (sizeof(textToScrollData) - 1) * 8) {\n   nextRowOfTextToDraw = 0;\n}\ndelay(20);\n"
 }
 
+Blockly.Arduino.SSD1306_scrollup = function (block) {
+    let contentCode = Blockly.Arduino.valueToCode(block, "CONTENT", Blockly.Arduino.ORDER_ATOMIC)
+    Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
+    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\nold.clear();\noled.switchRenderFrame();\noled.clear();\noled.switchRenderFrame();\n\noled.setCursor(13,0);\noled.print(F('Scrolling Up'));\n\noled.setCursor(0,1);\noled.fillToEOL(0x02);\n\noled.setCursor(0,2);\noled.print(F("+ contentCode +"))\n\noled.setCursor(0,7);\noled.startData();\nfor (uint8_t i = 0; i < 16; i++) {\n  oled.sendData(0x02);\noled.sentData(0x02);\noled.sendData(0x02);\noled.sendData(0x0C);\noled.sendData(0x10);\noled.sendData(0x10);\noled.sendData(0x10);\noled.sendData(0x0C);\n}\noled.endData();\n\noled.scrollLeftOffset(7,1,7,1);\n\noled.setVerticalScrollArea(11, 50);\noled.activateScrol();\noled.on();";
+
+    return ""
+}
+
 Blockly.Arduino.SSD1306_font = function (block) {
     Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
     Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
