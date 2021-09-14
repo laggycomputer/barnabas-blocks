@@ -843,11 +843,11 @@ Blockly.Blocks["SSD1306_print_image"] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("CONTENT")
-      .setCheck(["Number", "String"])
-      .appendField("Input hex string");
+      .setCheck(["String"])
+      .appendField("Draw image data");
     this.appendValueInput("X")
       .setCheck(["Number"])
-      .appendField(". Set image location (");
+      .appendField(" at (");
     this.appendValueInput("Y")
       .setCheck(["Number"])
       .appendField(", ");
@@ -863,25 +863,25 @@ Blockly.Blocks["SSD1306_print_image"] = {
   }
 };
 
-Blockly.Blocks["SSD1306_framebuffer_img"] = {
+Blockly.Blocks["SSD1306_framebuffer_render"] = {
   init: function () {
-    this.setTooltip("Buffer the frame to switch the imaginary (print to) arrow.");
+    this.setTooltip("Change the render (draw) frame.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
-      .appendField("Switch imaginary arrow.");
+      .appendField("Switch draw frame");
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks["SSD1306_framebuffer_real"] = {
+Blockly.Blocks["SSD1306_framebuffer_display"] = {
   init: function () {
-    this.setTooltip("Buffer the frame to switch the real (display) arrow.");
+    this.setTooltip("Change the display (show) frame.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
-      .appendField("Switch real arrow.");
+      .appendField("Switch display frame");
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
@@ -889,11 +889,11 @@ Blockly.Blocks["SSD1306_framebuffer_real"] = {
 
 Blockly.Blocks["SSD1306_framebuffer_both"] = {
   init: function () {
-    this.setTooltip("Buffer the frame to switch both the imaginary and real arrows.");
+    this.setTooltip("Change both the render (draw) frame and display (show) frame.");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
-      .appendField("Switch both imaginary and real arrows.");
+      .appendField("Switch both frames");
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }

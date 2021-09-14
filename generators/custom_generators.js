@@ -171,21 +171,21 @@ Blockly.Arduino.SSD1306_print_image = function (block) {
     return `oled.drawImage(bitmap_${hashed}, ${x}, ${y}, ${w}, ${h});\n`
 };
 
-Blockly.Arduino.SSD1306_framebuffer_img = function (block) {
+Blockly.Arduino.SSD1306_framebuffer_render = function () {
     Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
     Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
 
     return "oled.switchRenderFrame();\n"
 };
 
-Blockly.Arduino.SSD1306_framebuffer_real = function (block) {
+Blockly.Arduino.SSD1306_framebuffer_display = function () {
     Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
     Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
     
     return "oled.switchDisplayFrame();\n"
 };
 
-Blockly.Arduino.SSD1306_framebuffer_both = function (block) {
+Blockly.Arduino.SSD1306_framebuffer_both = function () {
     Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
     Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"
 
