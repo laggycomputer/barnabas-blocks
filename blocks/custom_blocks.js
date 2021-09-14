@@ -747,19 +747,35 @@ Blockly.Blocks["SSD1306_print"] = {
 
 Blockly.Blocks["SSD1306_scroll"] = {
   init: function () {
-    this.setTooltip("Write some text to the currently written framebuffer.");
+    this.setTooltip('Scroll text in a direction.');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput("CONTENT")
       .setCheck(["Number", "String"])
-      .appendField("Scroll");
-    this.appendDummyInput().appendField("left")
+      .appendField('Scroll');
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldDropdown([["LEFT", "oled.scrollContentLeft(1, 2, 5, 122);"], ["RIGHT", "oled.scrollContentRight(1, 2, 5, 122);"]]), 'TEST')
     this.setStyle("ezDisplay_blocks");
     this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
   }
 };
 
-Blockly.Blocks["SSD1306_font"] = {
+Blockly.Blocks['SSD1306_scrollup'] = {
+  init: function () {
+    this.setTooltip('Scroll text Upward.');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.appendValueInput("CONTENT")
+      .setCheck(["Number", "String"])
+      .appendField('Scroll');
+    this.appendDummyInput()
+      .appendField("UP");
+    this.setStyle("ezDisplay_blocks");
+    this.setHelpUrl("https://github.com/datacute/Tiny4kOLED");
+  }
+};
+
+Blockly.Blocks['SSD1306_font'] = {
   init: function () {
     this.appendDummyInput()
       .appendField(new Blockly.FieldDropdown([
