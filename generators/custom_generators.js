@@ -148,13 +148,16 @@ Blockly.Arduino.SSD1306_print_image = function (block) {
     while (hex.includes("\"")) {
         hex = hex.replace("\"", "")
     }
+
+    const validChars = Array.from(new Array(16)).map((_e, i) => i.toString(16))
+    hex = hex.split().filter(c => validChars.includes(c.toLowerCase())).join("")
+
     const hashed = md5(hex).slice(0, 16)
 
     const chunks = chunk(hex, 16 * 2).map(c => {
         const asBytes = chunk(c, 2).map(b => "0x" + b)
         return "  " + asBytes.join(", ")
     })
-
 
     definition = `const char bitmap_${hashed} [] PROGMEM = {\n${chunks.join(",\n")}\n}\n`
 
