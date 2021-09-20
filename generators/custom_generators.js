@@ -58,8 +58,16 @@ Blockly.Arduino.SSD1306_scroll = function (block) {
 
 Blockly.Arduino.SSD1306_scrollup = function (block) {
     let contentCode = Blockly.Arduino.valueToCode(block, "CONTENT", Blockly.Arduino.ORDER_ATOMIC)
+    var str = new String(contentCode);
+    var substr = str.substring(0, str.length - 1);
+    var string1 = substr.slice(0, 20).replace(/\\/g, '')+'"';
+    var string2 = '"'+ substr.slice(20, 40).replace(/\\/g, '')+'"';
+    var string3 = '"'+ substr.slice(40, 60).replace(/\\/g, '')+'"';
+    var string4 = '"'+ substr.slice(60, 80).replace(/\\/g, '')+'"';
+    var string5 = '"'+ substr.slice(80, 100).replace(/\\/g, '')+'"';
+    var string6 = '"'+ substr.slice(100, 120).replace(/\\/g, '')+'"';
     Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
-    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\noled.setFont(FONT6X8);\noled.clear();\noled.switchRenderFrame();\noled.clear();\noled.switchRenderFrame();\n\noled.setCursor(0,2);\noled.print(F("+ contentCode +"));\n\noled.setCursor(0,7);\noled.startData();\nfor (uint8_t i = 0; i < 16; i++) {\n  oled.sendData(0x02);\noled.sendData(0x02);\noled.sendData(0x02);\noled.sendData(0x0C);\noled.sendData(0x10);\noled.sendData(0x10);\noled.sendData(0x10);\noled.sendData(0x0C);\n}\noled.endData();\n\noled.scrollLeftOffset(7,1,7,1);\n\noled.setVerticalScrollArea(4, 50);\noled.activateScroll();\noled.on();";
+    Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\noled.setFont(FONT6X8);\noled.clear();\noled.switchRenderFrame();\noled.clear();\noled.switchRenderFrame();\n\noled.setCursor(0,1);\noled.print(F("+ string1 +"));\noled.setCursor(0,2);\noled.print(F("+ string2 +"));\noled.setCursor(0,3);\noled.print(F("+ string3 +"));\noled.setCursor(0,4);\noled.print(F("+ string4 +"));\noled.setCursor(0,5);\noled.print(F("+ string5 +"));\noled.setCursor(0,6);\noled.print(F("+ string6 +"));\n\noled.setCursor(0,7);\noled.startData();\nfor (uint8_t i = 0; i < 16; i++) {\n  oled.sendData(0x02);\noled.sendData(0x02);\noled.sendData(0x02);\noled.sendData(0x0C);\noled.sendData(0x10);\noled.sendData(0x10);\noled.sendData(0x10);\noled.sendData(0x0C);\n}\noled.endData();\n\noled.scrollLeftOffset(7,1,7,1);\n\noled.setVerticalScrollArea(4, 60);\noled.activateScroll();\noled.on();";
 
     return ""
 }
