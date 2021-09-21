@@ -549,6 +549,14 @@ Code.init = function () {
     function () {
       localStorage.setItem('board', this.value);
       document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
+
+      if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
+        document.getElementById("img2hex").classList.remove("hide")
+      } else {
+        document.getElementById("img2hex").classList.add("hide")
+      }
+
+      onresize()
     });
 
   Code.bindClick('lessonSelect',
@@ -567,6 +575,13 @@ Code.init = function () {
           document.getElementById('title').textContent = "Advanced";
           Code.switchLoops();
         }
+
+        if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
+          document.getElementById("img2hex").classList.remove("hide")
+        } else {
+          document.getElementById("img2hex").classList.add("hide")
+        }
+
         onresize();
       }
     });
@@ -1032,6 +1047,9 @@ Code.initEditor = function (init = true) {
     document.getElementById("content_arduino").readOnly = false;
     Code.ace.setReadOnly(false);
     Code.tabClick('editor');
+    if (Code.getLesson() != "ezDisplay" || Code.getBoard() != "ezDisplay") {
+      document.getElementById("img2hex").classList.add("hide")
+    }
   } else {
     document.getElementById("editButton").innerHTML = "TEXT CODE"
     document.getElementById("content_arduino").readOnly = true;
