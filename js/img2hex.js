@@ -26,7 +26,14 @@ function invert(canvas, context) {
     context.putImageData(imageData, 0, 0)
 }
 
-function toBytes(context) {
+function toBytes(canvas) {
+    const context = canvas?.getContext("2d")
+
+    if (!context) {
+        // don't block the page, especially image processing
+        return new Promise(resolve => resolve(alert("Please upload an image first!"))) 
+    }
+
     const imageData = context.getImageData(0, 0, 128, 64)
     const data = imageData.data
     const out = []

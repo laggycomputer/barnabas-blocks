@@ -44,10 +44,12 @@
     <br>
     <div id="canvasContainer"></div>
     <button type="button"
-        onclick="toBytes(document.getElementById('canvasContainer').childNodes[0].getContext('2d'))">Generate and
+        onclick="toBytes(document.getElementById('canvasContainer').childNodes[0])">Generate and
         copy</button>
     <br>
     <textarea id="code-output"></textarea>
+    <br>
+    <button type="button" onclick="window.close()">Close this window</button>
 </body>
 
 </html>
