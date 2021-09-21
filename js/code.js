@@ -615,7 +615,7 @@ Code.init = function () {
   Blockly.svgResize(Code.workspace);
 
   // Lazy-load the syntax-highlighting.
-  window.setTimeout(Code.importPrettify, 1);
+  window.setTimeout(Code.importPrettify, 0);
 
   // old init loadxml();
   Code.initEditor();
