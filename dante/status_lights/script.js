@@ -1,21 +1,6 @@
-/*
- * @license
- * Getting Started with Web Serial Codelab (https://todo)
- * Copyright 2019 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
-'use strict';
+"use strict"
+
+/* global AvrgirlArduino, TextEncoderStream, TextDecoderStream, TransformStream, Uint8Array */
 
 const default_code = `
 #include <limits.h>
@@ -128,67 +113,65 @@ void loop() {
 }
 `
 
+let port
+let reader
+let inputDone
+let outputDone
+let inputStream
+let outputStream
+let latest_iostate
+let latest_do
 
-let port;
-let reader;
-let inputDone;
-let outputDone;
-let inputStream;
-let outputStream;
-let latest_iostate;
-let latest_do;
-
-const log = document.getElementById('log');
-const butConnect = document.getElementById('butConnect');
-const butRefresh = document.getElementById('butRefresh');
-const digital_pin_names = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
-const analog_pin_names = ["A0", "A1", "A2", "A3", "A4", "A5"];
+const butConnect = document.getElementById("butConnect")
+const butRefresh = document.getElementById("butRefresh")
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    butConnect.addEventListener('click', clickConnect);
-    butRefresh.addEventListener('click', clickRefresh);
+document.addEventListener("DOMContentLoaded", () => {
+    butConnect.addEventListener("click", clickConnect)
+    butRefresh.addEventListener("click", clickRefresh)
 
     // CODELAB: Add feature detection here.
-    const notSupported = document.getElementById('notSupported');
-    notSupported.classList.toggle('hidden', 'serial' in navigator);
-});
+    const notSupported = document.getElementById("notSupported")
+    notSupported.classList.toggle("hidden", "serial" in navigator)
+})
 
 async function clickRefresh() {
     if (port) {
-        writeToStream("DO\n");
-        writeToStream("DI\n");
-        writeToStream("AI\n");
-        writeToStream("IOSTATE\n");
+        writeToStream("DO\n")
+        writeToStream("DI\n")
+        writeToStream("AI\n")
+        writeToStream("IOSTATE\n")
     }
 }
 
 async function toggleState(pin) {
     if (port && latest_iostate != undefined) {
-        let new_iostate = latest_iostate.split("");
-        new_iostate[pin] = (latest_iostate[pin] == "1") ? "0" : "1";
-        writeToStream("IOSTATE=" + new_iostate.reverse().join("") + "\n");
-        clickRefresh();
+        let new_iostate = latest_iostate.split("")
+        new_iostate[pin] = (latest_iostate[pin] == "1") ? "0" : "1"
+        writeToStream("IOSTATE=" + new_iostate.reverse().join("") + "\n")
+        clickRefresh()
     }
 }
 
+// Bound to an onclick which eslint cannot detect
+// eslint-disable-next-line no-unused-vars
 async function toggleDigitalOutput(pin) {
     if (port && latest_do != undefined) {
-        let new_do = latest_do.split("");
+        let new_do = latest_do.split("")
         switch (latest_do[pin]) {
-            case "1":
-                new_do[pin] = "0";
-                break;
-            case "0":
-                new_do[pin] = "1";
-                break;
-            case "?":
-                toggleState(pin);
-                new_do[20 - pin] = "1";
-                break;
+        case "1":
+            new_do[pin] = "0"
+            break
+        case "0":
+            new_do[pin] = "1"
+            break
+        case "?":
+            toggleState(pin)
+            new_do[20 - pin] = "1"
+            break
         }
-        await writeToStream("DO=" + new_do.reverse().join("") + "\n");
-        clickRefresh();
+        await writeToStream("DO=" + new_do.reverse().join("") + "\n")
+        clickRefresh()
     }
 }
 
@@ -201,20 +184,20 @@ async function toggleDigitalOutput(pin) {
 async function connect() {
     // CODELAB: Add code to request & open port here.
     // - Request a port and open a connection.
-    port = await navigator.serial.requestPort();
+    port = await navigator.serial.requestPort()
     // - Wait for the port to open.
-    await port.open({baudRate: 19200});
+    await port.open({ baudRate: 19200 })
     // CODELAB: Add code setup the output stream here.
-    const encoder = new TextEncoderStream();
-    outputDone = encoder.readable.pipeTo(port.writable);
-    outputStream = encoder.writable;
+    const encoder = new TextEncoderStream()
+    outputDone = encoder.readable.pipeTo(port.writable)
+    outputStream = encoder.writable
     // CODELAB: Add code to read the stream here.
-    let decoder = new TextDecoderStream();
+    let decoder = new TextDecoderStream()
     inputStream = decoder.readable
-    .pipeThrough(new TransformStream(new LineBreakTransformer()));
-    inputDone = port.readable.pipeTo(decoder.writable);
-    reader = inputStream.getReader();
-    readLoop();
+        .pipeThrough(new TransformStream(new LineBreakTransformer()))
+    inputDone = port.readable.pipeTo(decoder.writable)
+    reader = inputStream.getReader()
+    readLoop()
     // The codelab wants us to decode via JSON as well, though that isn't needed here
     // .pipeThrough(new TransformStream(new JSONTransformer()));
 }
@@ -226,82 +209,69 @@ async function connect() {
 async function disconnect() {
     // CODELAB: Close the input stream (reader).
     if (reader) {
-        await reader.cancel();
-        await inputDone.catch(() => {});
-        reader = null;
-        inputDone = null;
+        await reader.cancel()
+        await inputDone.catch(() => { })
+        reader = null
+        inputDone = null
     }
     // CODELAB: Close the output stream.
     if (outputStream) {
-        await outputStream.getWriter().close();
-        await outputDone;
-        outputStream = null;
-        outputDone = null;
+        await outputStream.getWriter().close()
+        await outputDone
+        outputStream = null
+        outputDone = null
     }
     // CODELAB: Close the port.
-    await port.close();
-    port = null;
+    await port.close()
+    port = null
 }
 
 var str2ab = function (str) {
     // var encodedString = unescape(encodeURIComponent(str));
-    var encodedString = str;
-    var bytes = new Uint8Array(encodedString.length);
+    var encodedString = str
+    var bytes = new Uint8Array(encodedString.length)
     for (var i = 0; i < encodedString.length; ++i) {
-        bytes[i] = encodedString.charCodeAt(i);
+        bytes[i] = encodedString.charCodeAt(i)
     }
-    return bytes.buffer;
-};
+    return bytes.buffer
+}
 
-function flashCode(nano=false, code="", options={}) {
-    if (nano) {
-        var board_to_api = "arduino:avr:nano:cpu=atmega328";
-        var board_to_upload = "nano";
-        options.baudRate = 57600;
-    } else {
-        var board_to_api = "arduino:avr:uno";
-        var board_to_upload = "uno";
-        options.baudRate = 115200;
-    }
-    if (code == "") {
-//        var result = null;
-//        var xmlhttp = new XMLHttpRequest();
-//        xmlhttp.open("GET", "./repl/repl.ino", false);
-//        xmlhttp.send();
-//        if (xmlhttp.status == 200) {
-//            result = xmlhttp.responseText;
-//        }
-//        var code = result;
-        var code = default_code;
-    }
+// bound to onclick
+// eslint-disable-next-line no-unused-vars
+function flashCode(nano = false, code = "", options = {}) {
+    const board_to_api = nano ? "arduino:avr:nano:cpu=atmega328" : "arduino:avr:uno"
+    const board_to_upload = nano ? "nano" : "uno"
+    options.baudRate = nano ? 57600 : 115200
 
-    var data = { sketch: code, board: board_to_api };
+    code = code == "" ? default_code : code
+
+    var data = { sketch: code, board: board_to_api }
 
     if (port) {
-        disconnect();
-        toggleUIConnected(false);
+        disconnect()
+        toggleUIConnected(false)
     }
     // CODELAB: Add connect code here.
 
     fetch("https://compile.barnabasrobotics.com/compile", {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
     }).then(response => response.json()).then(data => {
-        console.log(data);
+        console.log(data)
         if (!data.success) {
-             // can only run below if arduino compile error I can still get response with garbage body
-             if (data.stderr.length > 0) {
-                 let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
-                 let message = data.stderr.replace(regex, "");
-                 alert("Compilation error:\n" + message + "\n")
-                 regex = /\d+\:\d+/g;
-             }
+            // can only run below if arduino compile error I can still get response with garbage body
+            if (data.stderr.length > 0) {
+                let regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
+                let message = data.stderr.replace(regex, "")
+                alert("Compilation error:\n" + message + "\n")
+                regex = /\d+:\d+/g
+            }
         } else {
-            let hexstring = atob(data.hex);
-            return { 'data': hexstring, 'msg': data.stdout };
+            let hexstring = atob(data.hex)
+            return { "data": hexstring, "msg": data.stdout }
         }
     }).then(hex => {
         if (hex) {
@@ -309,24 +279,24 @@ function flashCode(nano=false, code="", options={}) {
                 var avrgirl = new AvrgirlArduino({
                     board: board_to_upload,
                     debug: true
-                });
+                })
 
                 avrgirl.flash(str2ab(hex.data), (error) => {
                     // gear.classList.remove('spinning');
                     // progress.textContent = "done!";
                     if (error) {
-                        alert("Upload error:\n" + error + "\n");
-                        avrgirl.connection.serialPort.close();
+                        alert("Upload error:\n" + error + "\n")
+                        avrgirl.connection.serialPort.close()
                     } else {
-                        alert("Upload successful.\n");
+                        alert("Upload successful.\n")
                     }
-                }, options);
+                }, options)
             } catch (error) {
-                alert("AVR error:\n" + error + "\n");
-                avrgirl.connection.serialPort.close();
+                alert("AVR error:\n" + error + "\n")
+                avrgirl.connection.serialPort.close()
             }
         }
-    });
+    })
 }
 
 /**
@@ -336,14 +306,14 @@ function flashCode(nano=false, code="", options={}) {
 async function clickConnect() {
     // CODELAB: Add disconnect code here.
     if (port) {
-        await disconnect();
-        toggleUIConnected(false);
-        return;
+        await disconnect()
+        toggleUIConnected(false)
+        return
     }
     // CODELAB: Add connect code here.
-    await connect();
+    await connect()
 
-    toggleUIConnected(true);
+    toggleUIConnected(true)
 }
 
 
@@ -354,86 +324,83 @@ async function clickConnect() {
 async function readLoop() {
     // CODELAB: Add read loop here.
     while (true) {
-        const { value, done } = await reader.read();
+        const { value, done } = await reader.read()
 
-        console.log("[RECEIVED] " + value);
+        console.log("[RECEIVED] " + value)
 
         if (value.trim() == "OK") {
-            continue;
+            continue
         } else if (value.startsWith("DI: ")) {
-            let outputs = value.trim().slice(4).split("").reverse().join("");
-            function procPin(state, index) {
-                let elem = document.getElementById("input" + index);
-                let new_src;
+            let outputs = value.trim().slice(4).split("").reverse().join("")
+            outputs.split("").forEach((state, index) => {
+                let elem = document.getElementById("input" + index)
+                let new_src
                 if (state == "?") {
-                    new_src = "assets/unknown.svg";
+                    new_src = "assets/unknown.svg"
                 } else {
-                    state = parseInt(state);
+                    state = parseInt(state)
                     if (state) {
-                        new_src = "assets/on.svg";
+                        new_src = "assets/on.svg"
                     } else {
-                        new_src = "assets/off.svg";
+                        new_src = "assets/off.svg"
                     }
                 }
-                elem.src = new_src;
-            }
-            outputs.split("").forEach(procPin);
+                elem.src = new_src
+            })
         } else if (value.startsWith("AI: ")) {
-            let outputs = value.trim().slice(4).split(" ").reverse();
-            function procPin(state, index) {
-                let elem = document.getElementById("A" + index);
-                elem.textContent = state.toString();
-                elem = document.getElementById("A" + index + "V");
-                elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString();
-            }
-            outputs.forEach(procPin);
+            let outputs = value.trim().slice(4).split(" ").reverse()
+            outputs.forEach((state, index) => {
+                let elem = document.getElementById("A" + index)
+                elem.textContent = state.toString()
+                elem = document.getElementById("A" + index + "V")
+                elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
+            })
         } else if (value.startsWith("IOSTATE: ")) {
-            let outputs = value.trim().slice(9).split("").reverse().join("");
-            latest_iostate = outputs;
-            function procPin(state, index) {
-                let elem = document.getElementById("state" + index);
-                let new_src;
+            let outputs = value.trim().slice(9).split("").reverse().join("")
+            latest_iostate = outputs
+            outputs.split("").forEach((state, index) => {
+                let elem = document.getElementById("state" + index)
+                let new_src
                 if (state == "?") {
-                    new_src = "assets/unknown.svg";
+                    new_src = "assets/unknown.svg"
                 } else {
-                    state = parseInt(state);
+                    state = parseInt(state)
                     if (state) {
-                        new_src = "assets/output.svg";
+                        new_src = "assets/output.svg"
                     } else {
-                        new_src = "assets/input.svg";
+                        new_src = "assets/input.svg"
                     }
                 }
-                elem.src = new_src;
-            }
-            outputs.split("").forEach(procPin);
+                elem.src = new_src
+            })
         } else if (value.startsWith("DO: ")) {
-            let outputs = value.trim().slice(4).split("").reverse().join("");
-            latest_do = outputs;
-            function procPin(state, index) {
-                let elem = document.getElementById("output" + index);
-                let new_src;
+            let outputs = value.trim().slice(4).split("").reverse().join("")
+            latest_do = outputs
+
+            outputs.split("").forEach((state, index) => {
+                let elem = document.getElementById("output" + index)
+                let new_src
                 if (state == "?") {
-                    new_src = "assets/unknown.svg";
+                    new_src = "assets/unknown.svg"
                 } else {
-                    state = parseInt(state);
+                    state = parseInt(state)
                     if (state) {
-                        new_src = "assets/outputhigh.png";
+                        new_src = "assets/outputhigh.png"
                     } else {
-                        new_src = "assets/outputlow.png";
+                        new_src = "assets/outputlow.png"
                     }
                 }
-                elem.src = new_src;
-            }
-            outputs.split("").forEach(procPin);
+                elem.src = new_src
+            })
         } else {
             // Why are we here?
-            return;
+            return
         }
 
         if (done) {
-            console.log('[readLoop] DONE', done);
-            reader.releaseLock();
-            break;
+            console.log("[readLoop] DONE", done)
+            reader.releaseLock()
+            break
         }
     }
 }
@@ -445,12 +412,12 @@ async function readLoop() {
  */
 function writeToStream(...lines) {
     // CODELAB: Write to output stream
-    const writer = outputStream.getWriter();
+    const writer = outputStream.getWriter()
     lines.forEach((line) => {
-        console.log('[SEND]', line);
-        writer.write(line); // Allow user to specify which line ending
-    });
-    writer.releaseLock();
+        console.log("[SEND]", line)
+        writer.write(line) // Allow user to specify which line ending
+    })
+    writer.releaseLock()
 }
 
 /**
@@ -459,21 +426,21 @@ function writeToStream(...lines) {
  */
 class LineBreakTransformer {
     constructor() {
-    // A container for holding stream data until a new line.
-        this.container = '';
+        // A container for holding stream data until a new line.
+        this.container = ""
     }
 
     transform(chunk, controller) {
-    // CODELAB: Handle incoming chunk
-        this.container += chunk;
-        const lines = this.container.split('\n');
-        this.container = lines.pop();
-        lines.forEach(line => controller.enqueue(line));
+        // CODELAB: Handle incoming chunk
+        this.container += chunk
+        const lines = this.container.split("\n")
+        this.container = lines.pop()
+        lines.forEach(line => controller.enqueue(line))
     }
 
     flush(controller) {
-    // CODELAB: Flush the stream.
-        controller.enqueue(this.container);
+        // CODELAB: Flush the stream.
+        controller.enqueue(this.container)
     }
 }
 
@@ -482,11 +449,11 @@ class LineBreakTransformer {
  */
 
 function toggleUIConnected(connected) {
-    let lbl = 'Connect';
+    let lbl = "Connect"
     if (connected) {
-        lbl = 'Disconnect';
+        lbl = "Disconnect"
     }
-    butConnect.textContent = lbl;
+    butConnect.textContent = lbl
 }
 
-window.setInterval(clickRefresh, 500);
+window.setInterval(clickRefresh, 500)
