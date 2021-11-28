@@ -369,6 +369,9 @@ async function clickConnect() {
  */
 async function readLoop() {
     // CODELAB: Add read loop here.
+
+    // eslint be quiet
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         const { value, done } = await reader.read()
 
