@@ -216,7 +216,7 @@ async function toggleDigitalOutput(pin) {
             newDOState[20 - pin] = "1"
             break
         }
-        await writeToStream("DO=" + newDOState.reverse().join("") + "\n")
+        writeToStream("DO=" + newDOState.reverse().join("") + "\n")
         clickRefresh()
     }
 }
