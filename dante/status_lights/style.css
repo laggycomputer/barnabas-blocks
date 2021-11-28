@@ -112,3 +112,7 @@ table {
 table, th, td {
   border: 1px solid black;
 }
+
+img + img {
+  margin-left: 6px;
+}

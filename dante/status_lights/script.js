@@ -113,6 +113,52 @@ void loop() {
 }
 `
 
+// IIFE for GC
+;(() => {
+    const addlPinInfo = {
+        0: "Serial RX", 1: "Serial TX", 13: "Built-in LED",
+        14: "A0", 15: "A1", 16: "A2", 17: "A3", 18: "A4", 19: "A5"
+    }
+
+    const PWMPins = [3, 5, 6, 9, 10, 11]
+
+    const pins = Array.from(new Array(20)).map((_e, i) => i)
+    const pinTooltips = pins.map(pinNum => `Pin ${pinNum}${PWMPins.includes(pinNum) ? "~" : ""}${addlPinInfo[pinNum] ? " (" + addlPinInfo[pinNum] + ")" : ""}`)
+
+    const statesGrid = document.getElementById("statesGrid")
+    const inputStatesGrid = document.getElementById("inputStatesGrid")
+    const digitalOutputsGrid = document.getElementById("digitalOutputsGrid")
+
+    for (const pinNum in pins) {
+        let img = new Image(32)
+        img.src = "assets/unknown.svg"
+        img.title = pinTooltips[pinNum]
+        img.id = `state${pinNum}`
+        img.onclick = `toggleState(${pinNum})`
+        statesGrid.appendChild(img)
+        
+        img = new Image(32)
+        img.src = "assets/unknown.svg"
+        img.title = pinTooltips[pinNum]
+        img.id = `input${pinNum}`
+        inputStatesGrid.appendChild(img)
+
+        img = new Image(32)
+        img.src = "assets/unknown.svg"
+        img.title = pinTooltips[pinNum]
+        img.id = `output${pinNum}`
+        img.onclick = `toggleDigitalOutput(${pinNum})`
+        digitalOutputsGrid.appendChild(img)
+
+        if (pinNum > 0 && pinNum % 5 == 4) {
+            statesGrid.appendChild(document.createElement("br"))
+            inputStatesGrid.appendChild(document.createElement("br"))
+            digitalOutputsGrid.appendChild(document.createElement("br"))
+        }
+    }
+})()
+
+
 let port
 let reader
 let inputDone
