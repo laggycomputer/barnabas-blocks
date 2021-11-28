@@ -2,7 +2,7 @@
 
 /* global AvrgirlArduino, TextEncoderStream, TextDecoderStream, TransformStream, Uint8Array */
 
-const default_code = `
+const arduinoSideCode = `
 #include <limits.h>
 
 #define TIMEOUT_MS 75
@@ -119,8 +119,8 @@ let inputDone
 let outputDone
 let inputStream
 let outputStream
-let latest_iostate
-let latest_do
+let latestIOState
+let latestDOState
 
 const butConnect = document.getElementById("butConnect")
 const butRefresh = document.getElementById("butRefresh")
@@ -145,10 +145,10 @@ async function clickRefresh() {
 }
 
 async function toggleState(pin) {
-    if (port && latest_iostate != undefined) {
-        let new_iostate = latest_iostate.split("")
-        new_iostate[pin] = (latest_iostate[pin] == "1") ? "0" : "1"
-        writeToStream("IOSTATE=" + new_iostate.reverse().join("") + "\n")
+    if (port && latestIOState != undefined) {
+        let newIOState = latestIOState.split("")
+        newIOState[pin] = (latestIOState[pin] == "1") ? "0" : "1"
+        writeToStream("IOSTATE=" + newIOState.reverse().join("") + "\n")
         clickRefresh()
     }
 }
@@ -156,21 +156,21 @@ async function toggleState(pin) {
 // Bound to an onclick which eslint cannot detect
 // eslint-disable-next-line no-unused-vars
 async function toggleDigitalOutput(pin) {
-    if (port && latest_do != undefined) {
-        let new_do = latest_do.split("")
-        switch (latest_do[pin]) {
+    if (port && latestDOState != undefined) {
+        let newDOState = latestDOState.split("")
+        switch (latestDOState[pin]) {
         case "1":
-            new_do[pin] = "0"
+            newDOState[pin] = "0"
             break
         case "0":
-            new_do[pin] = "1"
+            newDOState[pin] = "1"
             break
         case "?":
             toggleState(pin)
-            new_do[20 - pin] = "1"
+            newDOState[20 - pin] = "1"
             break
         }
-        await writeToStream("DO=" + new_do.reverse().join("") + "\n")
+        await writeToStream("DO=" + newDOState.reverse().join("") + "\n")
         clickRefresh()
     }
 }
@@ -239,13 +239,13 @@ var str2ab = function (str) {
 // bound to onclick
 // eslint-disable-next-line no-unused-vars
 function flashCode(nano = false, code = "", options = {}) {
-    const board_to_api = nano ? "arduino:avr:nano:cpu=atmega328" : "arduino:avr:uno"
-    const board_to_upload = nano ? "nano" : "uno"
+    const boardForAPI = nano ? "arduino:avr:nano:cpu=atmega328" : "arduino:avr:uno"
+    const boardToUpload = nano ? "nano" : "uno"
     options.baudRate = nano ? 57600 : 115200
 
-    code = code == "" ? default_code : code
+    code = code == "" ? arduinoSideCode : code
 
-    var data = { sketch: code, board: board_to_api }
+    var data = { sketch: code, board: boardForAPI }
 
     if (port) {
         disconnect()
@@ -277,7 +277,7 @@ function flashCode(nano = false, code = "", options = {}) {
         if (hex) {
             try {
                 var avrgirl = new AvrgirlArduino({
-                    board: board_to_upload,
+                    board: boardToUpload,
                     debug: true
                 })
 
@@ -334,18 +334,18 @@ async function readLoop() {
             let outputs = value.trim().slice(4).split("").reverse().join("")
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("input" + index)
-                let new_src
+                let newImageSource
                 if (state == "?") {
-                    new_src = "assets/unknown.svg"
+                    newImageSource = "assets/unknown.svg"
                 } else {
                     state = parseInt(state)
                     if (state) {
-                        new_src = "assets/on.svg"
+                        newImageSource = "assets/on.svg"
                     } else {
-                        new_src = "assets/off.svg"
+                        newImageSource = "assets/off.svg"
                     }
                 }
-                elem.src = new_src
+                elem.src = newImageSource
             })
         } else if (value.startsWith("AI: ")) {
             let outputs = value.trim().slice(4).split(" ").reverse()
@@ -357,40 +357,40 @@ async function readLoop() {
             })
         } else if (value.startsWith("IOSTATE: ")) {
             let outputs = value.trim().slice(9).split("").reverse().join("")
-            latest_iostate = outputs
+            latestIOState = outputs
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("state" + index)
-                let new_src
+                let newImageSource
                 if (state == "?") {
-                    new_src = "assets/unknown.svg"
+                    newImageSource = "assets/unknown.svg"
                 } else {
                     state = parseInt(state)
                     if (state) {
-                        new_src = "assets/output.svg"
+                        newImageSource = "assets/output.svg"
                     } else {
-                        new_src = "assets/input.svg"
+                        newImageSource = "assets/input.svg"
                     }
                 }
-                elem.src = new_src
+                elem.src = newImageSource
             })
         } else if (value.startsWith("DO: ")) {
             let outputs = value.trim().slice(4).split("").reverse().join("")
-            latest_do = outputs
+            latestDOState = outputs
 
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("output" + index)
-                let new_src
+                let newImageSource
                 if (state == "?") {
-                    new_src = "assets/unknown.svg"
+                    newImageSource = "assets/unknown.svg"
                 } else {
                     state = parseInt(state)
                     if (state) {
-                        new_src = "assets/outputhigh.png"
+                        newImageSource = "assets/outputhigh.png"
                     } else {
-                        new_src = "assets/outputlow.png"
+                        newImageSource = "assets/outputlow.png"
                     }
                 }
-                elem.src = new_src
+                elem.src = newImageSource
             })
         } else {
             // Why are we here?
