@@ -37,6 +37,8 @@ void loop() {
 
     if (incomingStuff == "") {
         return;
+    } else if (incomingStuff == "HELP") {
+        Serial.println("DI, AI, DATADIR, DATADIR=, DO, DO=");
     } else if (incomingStuff == "DI") {
         Serial.print("DI: ");
         for (int pin = 19; pin >= 0; pin--) {
