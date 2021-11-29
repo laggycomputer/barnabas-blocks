@@ -5,7 +5,7 @@
 const arduinoSideCode = `
 #include <limits.h>
 
-#define TIMEOUT_MS 75
+#define SERIAL_POLL_RATE 75
 
 // 0 is input to Ardiuno, 1 is output from Arduino
 int io_states[20] = {0};
@@ -19,7 +19,7 @@ void setup() {
     }
 
     Serial.begin(19200);
-    Serial.setTimeout(TIMEOUT_MS);
+    Serial.setTimeout(SERIAL_POLL_RATE);
 }
 
 void enforceState() {
@@ -61,13 +61,13 @@ void loop() {
         }
         Serial.print(analogRead(14));
         Serial.print("\\n");
-    } else if (incomingStuff == "IOSTATE") {
-        Serial.print("IOSTATE: ");
+    } else if (incomingStuff == "DATADIR") {
+        Serial.print("DATADIR: ");
         for (int pin = 19; pin >= 0; pin--) {
             Serial.print(io_states[pin]);
         }
         Serial.print("\\n");
-    } else if (incomingStuff.startsWith("IOSTATE=")) {
+    } else if (incomingStuff.startsWith("DATADIR=")) {
         String arg = incomingStuff.substring(8);
         char working_char;
         for (unsigned int i = 0; i < arg.length(); i++) {
@@ -165,7 +165,7 @@ let inputDone
 let outputDone
 let inputStream
 let outputStream
-let latestIOState
+let latestDataDirs
 let latestDOState
 
 const butConnect = document.getElementById("butConnect")
@@ -186,15 +186,15 @@ async function clickRefresh() {
         writeToStream("DO\n")
         writeToStream("DI\n")
         writeToStream("AI\n")
-        writeToStream("IOSTATE\n")
+        writeToStream("DATADIR\n")
     }
 }
 
 async function toggleState(pin) {
-    if (port && latestIOState != undefined) {
-        let newIOState = latestIOState.split("")
-        newIOState[pin] = (latestIOState[pin] == "1") ? "0" : "1"
-        writeToStream("IOSTATE=" + newIOState.reverse().join("") + "\n")
+    if (port && latestDataDirs != undefined) {
+        let newDataDrits = latestDataDirs.split("")
+        newDataDrits[pin] = (latestDataDirs[pin] == "1") ? "0" : "1"
+        writeToStream("DATADIR=" + newDataDrits.reverse().join("") + "\n")
         clickRefresh()
     }
 }
@@ -404,9 +404,9 @@ async function readLoop() {
                 elem = document.getElementById("A" + index + "V")
                 elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
             })
-        } else if (value.startsWith("IOSTATE: ")) {
+        } else if (value.startsWith("DATADIR: ")) {
             let outputs = value.trim().slice(9).split("").reverse().join("")
-            latestIOState = outputs
+            latestDataDirs = outputs
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("state" + index)
                 let newImageSource

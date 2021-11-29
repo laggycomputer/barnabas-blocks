@@ -1,6 +1,6 @@
 #include <limits.h>
 
-#define TIMEOUT_MS 75
+#define SERIAL_POLL_RATE 75
 
 // 0 is input to Ardiuno, 1 is output from Arduino
 int io_states[20] = {0};
@@ -14,7 +14,7 @@ void setup() {
     }
 
     Serial.begin(19200);
-    Serial.setTimeout(TIMEOUT_MS);
+    Serial.setTimeout(SERIAL_POLL_RATE);
 }
 
 void enforceState() {
@@ -56,13 +56,13 @@ void loop() {
         }
         Serial.print(analogRead(14));
         Serial.print("\n");
-    } else if (incomingStuff == "IOSTATE") {
-        Serial.print("IOSTATE: ");
+    } else if (incomingStuff == "DATADIR") {
+        Serial.print("DATADIR: ");
         for (int pin = 19; pin >= 0; pin--) {
             Serial.print(io_states[pin]);
         }
         Serial.print("\n");
-    } else if (incomingStuff.startsWith("IOSTATE=")) {
+    } else if (incomingStuff.startsWith("DATADIR=")) {
         String arg = incomingStuff.substring(8);
         char working_char;
         for (unsigned int i = 0; i < arg.length(); i++) {
