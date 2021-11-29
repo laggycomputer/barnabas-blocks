@@ -47,9 +47,11 @@
         <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
         <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
         <button id="butConnect" type="button">Connect</button>
-        <button id="butRefresh" type="button">Refresh (it updates automatically but have a button)</button>
         <br>
         <br>
+        <label for="butAutoRefresh">Automatically refresh?</label>
+        <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
+        <button id="butRefresh" type="button">Refresh</button>
         <p>Pin states:</p>
         <p id="statesGrid"> </p>
 

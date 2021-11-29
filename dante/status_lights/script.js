@@ -175,6 +175,7 @@ let inputStream
 let outputStream
 let latestDataDirs
 let latestDOState
+let autoRefreshIntervalID
 
 const butConnect = document.getElementById("butConnect")
 const butRefresh = document.getElementById("butRefresh")
@@ -513,4 +514,23 @@ function toggleUIConnected(connected) {
     butConnect.textContent = lbl
 }
 
-window.setInterval(clickRefresh, 500)
+// bound to onclick
+// eslint-disable-next-line no-unused-vars
+function handleAutoRefreshChange() {
+    console.log("consciousness")
+
+    const isNowChecked = document.getElementById("butAutoRefresh").checked
+
+    // if we want this on, it was previously off and we need an interval (clear the old one just in case)
+    // if we want this off, we need an interval
+    // therefore unconditionally clear
+    if (autoRefreshIntervalID !== undefined) {
+        clearInterval(autoRefreshIntervalID)
+    }
+
+    if (isNowChecked) {
+        autoRefreshIntervalID = window.setInterval(clickRefresh, 500)
+    }
+}
+
+autoRefreshIntervalID = window.setInterval(clickRefresh, 500)
