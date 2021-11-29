@@ -142,7 +142,7 @@ void loop() {
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
         img.id = `state${pinNum}`
-        img.onclick = `toggleState(${pinNum})`
+        img.onclick = () => toggleState(pinNum)
         statesGrid.appendChild(img)
         
         img = new Image(32)
@@ -155,7 +155,7 @@ void loop() {
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
         img.id = `output${pinNum}`
-        img.onclick = `toggleDigitalOutput(${pinNum})`
+        img.onclick = () => toggleDigitalOutput(pinNum)
         digitalOutputsGrid.appendChild(img)
 
         if (pinNum > 0 && pinNum % 5 == 4) {
