@@ -7,7 +7,7 @@ const arduinoSideCode = `
 
 #define SERIAL_POLL_RATE 75
 
-// 0 is input to Ardiuno, 1 is output from Arduino
+// 0 is input to Ardiuno, 1 is output from Arduino, 2 is servo control
 int io_states[20] = {0};
 int io_outputs[20] = {0};
 
@@ -24,12 +24,18 @@ void setup() {
 
 void enforceState() {
     for (int i = 0; i < 14; i++) {
-        if (io_states[i]) {
-            pinMode(i, INPUT);
-            digitalWrite(i, LOW);
-        } else {
-            pinMode(i, OUTPUT);
-            digitalWrite(i, io_outputs[i]);
+        switch (io_states[i]) {
+            case 0:
+                pinMode(i, INPUT);
+                digitalWrite(i, LOW);
+                break;
+            case 1:
+                pinMode(i, OUTPUT);
+                digitalWrite(i, io_outputs[i]);
+                break;
+            case 2:
+                // nop for now
+                break;
         }
     }
 }
