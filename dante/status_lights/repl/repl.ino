@@ -3,7 +3,7 @@
 #define SERIAL_POLL_RATE 75
 
 // 0 is input to Ardiuno, 1 is output from Arduino, 2 is servo control
-int io_states[20] = {0};
+int data_directions[20] = {0};
 int io_outputs[20] = {0};
 
 String incomingStuff = "";
@@ -19,7 +19,7 @@ void setup() {
 
 void enforceState() {
     for (int i = 0; i < 14; i++) {
-        switch (io_states[i]) {
+        switch (data_directions[i]) {
             case 0:
                 pinMode(i, INPUT);
                 digitalWrite(i, LOW);
@@ -48,7 +48,7 @@ void loop() {
     } else if (incomingStuff == "DI") {
         Serial.print("DI: ");
         for (int pin = 19; pin >= 0; pin--) {
-            if (!io_states[pin]) {
+            if (data_directions[pin] == 0) {
                 Serial.print(digitalRead(pin));
             } else {
                 Serial.print("?");
@@ -67,7 +67,7 @@ void loop() {
     } else if (incomingStuff == "DATADIR") {
         Serial.print("DATADIR: ");
         for (int pin = 19; pin >= 0; pin--) {
-            Serial.print(io_states[pin]);
+            Serial.print(data_directions[pin]);
         }
         Serial.print("\n");
     } else if (incomingStuff.startsWith("DATADIR=")) {
@@ -89,7 +89,7 @@ void loop() {
     } else if (incomingStuff == "DO") {
         Serial.print("DO: ");
         for (int pin = 19; pin >= 0; pin--) {
-            if (io_states[pin]) {
+            if (data_directions[pin] == 1) {
                 Serial.print(io_outputs[pin]);
             } else {
                 Serial.print("?");
@@ -102,7 +102,7 @@ void loop() {
         for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
             int working_pin = 19 - i;
-            if (working_pin < 2 || working_pin > 13 || !io_states[working_pin]) {
+            if (working_pin < 2 || working_pin > 13 || data_directions[working_pin] != 1) {
                 continue;
             }
             if (working_char == '0') {
