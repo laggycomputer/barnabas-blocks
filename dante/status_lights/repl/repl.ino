@@ -56,7 +56,7 @@ void loop() {
         }
 
         Serial.print("\n");
-    } else if (incomingStuff == "AI") {
+    } else if (incomingStuff.equals("AI")) {
         Serial.print("AI: ");
         for (int pin = 19; pin > 14; pin--) {
             Serial.print(analogRead(pin));
@@ -64,7 +64,7 @@ void loop() {
         }
         Serial.print(analogRead(14));
         Serial.print("\n");
-    } else if (incomingStuff == "DATADIR") {
+    } else if (incomingStuff.equals("DATADIR")) {
         Serial.print("DATADIR: ");
         for (int pin = 19; pin >= 0; pin--) {
             Serial.print(data_directions[pin]);
@@ -86,7 +86,7 @@ void loop() {
             }
         }
         Serial.println("OK");
-    } else if (incomingStuff == "DO") {
+    } else if (incomingStuff.equals("DO")) {
         Serial.print("DO: ");
         for (int pin = 19; pin >= 0; pin--) {
             if (data_directions[pin] == 1) {
