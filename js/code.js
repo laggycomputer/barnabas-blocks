@@ -76,6 +76,21 @@ Code.getBoard = function () {
 };
 
 /**
+ * Get the configured text editor font size.
+ * @returns {number} Set font size or a default.
+ */
+Code.getAceFontSize = function () {
+  let configuredSize = localStorage.getItem('aceFontSize');
+  if (configuredSize === undefined || configuredSize == null || configuredSize === "") {
+    // nothing found.
+    configuredSize = "12";
+    localStorage.setItem('aceFontSize', configuredSize);
+  }
+
+  return parseInt(configuredSize);
+}
+
+/**
  * Get the board of this user from the URL.
  * @return {string} User's board.
  */
@@ -588,12 +603,14 @@ Code.init = function () {
   );
   Code.bindClick('editorFontUp',
     function () {
-      Code.ace.setOption("fontSize", Code.ace.getOption("fontSize") + 1);
+      Code.ace.setFontSize(Code.ace.getOption("fontSize") + 1);
+      localStorage.setItem("aceFontSize", Code.ace.getOption("fontSize"));
     }
   );
   Code.bindClick('editorFontDown',
   function () {
-    Code.ace.setOption("fontSize", Code.ace.getOption("fontSize") - 1);
+    Code.ace.setFontSize(Code.ace.getOption("fontSize") - 1);
+    localStorage.setItem("aceFontSize", Code.ace.getOption("fontSize"));
   }
 );
 
@@ -1020,6 +1037,8 @@ Code.initEditor = function(init = true) {
     document.getElementById("content_arduino").readOnly = true;
     Code.ace.setReadOnly(true);
   }
+
+  Code.ace.setFontSize(Code.getAceFontSize());
 }
 
 /**
