@@ -394,8 +394,10 @@ Code.renderContent = function () {
   textToSend.style.display = (content.id == 'content_monitor') ? "" : "none";
   sendButton.style.display = (content.id == 'content_monitor') ? "" : "none";
 
+  var butEditorSizeReset = document.getElementById('editorFontReset');
   var butEditorSizeUp = document.getElementById('editorFontUp');
   var butEditorSizeDown = document.getElementById('editorFontDown');
+  butEditorSizeReset.style.display = (content.id == 'content_editor') ? "" : "none";
   butEditorSizeUp.style.display = (content.id == 'content_editor') ? "" : "none";
   butEditorSizeDown.style.display = (content.id == 'content_editor') ? "" : "none";
 };
@@ -601,6 +603,12 @@ Code.init = function () {
       document.getElementById('content_monitor').textContent = '';
     }
   );
+  Code.bindClick('editorFontReset',
+    function () {
+      // do not specify the actual default here, defer to Code.getAceFontSize
+      localStorage.removeItem("aceFontSize");
+      Code.ace.setFontSize(Code.getAceFontSize());
+    })
   Code.bindClick('editorFontUp',
     function () {
       Code.ace.setFontSize(Code.ace.getOption("fontSize") + 1);
