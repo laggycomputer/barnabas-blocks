@@ -379,7 +379,10 @@ Code.renderContent = function () {
   textToSend.style.display = (content.id == 'content_monitor') ? "" : "none";
   sendButton.style.display = (content.id == 'content_monitor') ? "" : "none";
 
-
+  var butEditorSizeUp = document.getElementById('editorFontUp');
+  var butEditorSizeDown = document.getElementById('editorFontDown');
+  butEditorSizeUp.style.display = (content.id == 'content_editor') ? "" : "none";
+  butEditorSizeDown.style.display = (content.id == 'content_editor') ? "" : "none";
 };
 
 /**
@@ -583,6 +586,16 @@ Code.init = function () {
       document.getElementById('content_monitor').textContent = '';
     }
   );
+  Code.bindClick('editorFontUp',
+    function () {
+      Code.ace.setOption("fontSize", Code.ace.getOption("fontSize") + 1);
+    }
+  );
+  Code.bindClick('editorFontDown',
+  function () {
+    Code.ace.setOption("fontSize", Code.ace.getOption("fontSize") - 1);
+  }
+);
 
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
