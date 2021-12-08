@@ -76,6 +76,21 @@ Code.getBoard = function () {
 };
 
 /**
+ * Get the configured text editor font size.
+ * @returns {number} Set font size or a default.
+ */
+Code.getAceFontSize = function () {
+  let configuredSize = localStorage.getItem('aceFontSize');
+  if (configuredSize === undefined || configuredSize == null || configuredSize === "") {
+    // nothing found.
+    configuredSize = "12";
+    localStorage.setItem('aceFontSize', configuredSize);
+  }
+
+  return parseInt(configuredSize);
+}
+
+/**
  * Get the board of this user from the URL.
  * @return {string} User's board.
  */
@@ -379,7 +394,12 @@ Code.renderContent = function () {
   textToSend.style.display = (content.id == 'content_monitor') ? "" : "none";
   sendButton.style.display = (content.id == 'content_monitor') ? "" : "none";
 
-
+  var butEditorSizeReset = document.getElementById('editorFontReset');
+  var butEditorSizeUp = document.getElementById('editorFontUp');
+  var butEditorSizeDown = document.getElementById('editorFontDown');
+  butEditorSizeReset.style.display = (content.id == 'content_editor') ? "" : "none";
+  butEditorSizeUp.style.display = (content.id == 'content_editor') ? "" : "none";
+  butEditorSizeDown.style.display = (content.id == 'content_editor') ? "" : "none";
 };
 
 /**
@@ -583,6 +603,24 @@ Code.init = function () {
       document.getElementById('content_monitor').textContent = '';
     }
   );
+  Code.bindClick('editorFontReset',
+    function () {
+      // do not specify the actual default here, defer to Code.getAceFontSize
+      localStorage.removeItem("aceFontSize");
+      Code.ace.setFontSize(Code.getAceFontSize());
+    })
+  Code.bindClick('editorFontUp',
+    function () {
+      Code.ace.setFontSize(Code.ace.getOption("fontSize") + 1);
+      localStorage.setItem("aceFontSize", Code.ace.getOption("fontSize"));
+    }
+  );
+  Code.bindClick('editorFontDown',
+  function () {
+    Code.ace.setFontSize(Code.ace.getOption("fontSize") - 1);
+    localStorage.setItem("aceFontSize", Code.ace.getOption("fontSize"));
+  }
+);
 
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
@@ -1007,6 +1045,8 @@ Code.initEditor = function(init = true) {
     document.getElementById("content_arduino").readOnly = true;
     Code.ace.setReadOnly(true);
   }
+
+  Code.ace.setFontSize(Code.getAceFontSize());
 }
 
 /**
