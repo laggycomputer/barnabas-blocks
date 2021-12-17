@@ -41,11 +41,11 @@ void loop() {
     incomingStuff = "";
     incomingStuff = Serial.readStringUntil('\n');
 
-    if (incomingStuff == "") {
+    if (incomingStuff.equals("")) {
         return;
-    } else if (incomingStuff == "HELP") {
+    } else if (incomingStuff.equals("HELP")) {
         Serial.println("DI, AI, DATADIR, DATADIR=, DO, DO=");
-    } else if (incomingStuff == "DI") {
+    } else if (incomingStuff.equals("DI")) {
         Serial.print("DI: ");
         for (int pin = 19; pin >= 0; pin--) {
             if (data_directions[pin] == 0) {
