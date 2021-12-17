@@ -55,7 +55,7 @@ void loop() {
     if (incomingStuff.equals("")) {
         return;
     } else if (incomingStuff.equals("HELP")) {
-        Serial.println("DI, AI, DATADIR, DATADIR=, DO, DO=");
+        Serial.println("DI, AI, DATADIR, DATADIR=, DO, DO=, SERVO, SERVO=");
     } else if (incomingStuff.equals("DI")) {
         Serial.print("DI: ");
         for (int pin = 19; pin >= 0; pin--) {
