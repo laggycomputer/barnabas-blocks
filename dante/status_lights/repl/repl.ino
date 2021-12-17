@@ -1,10 +1,13 @@
 #include <limits.h>
+#include <Servo.h>
 
 #define SERIAL_POLL_RATE 75
 
 // 0 is input to Ardiuno, 1 is output from Arduino, 2 is servo control
 int data_directions[20] = {0};
 int io_outputs[20] = {0};
+
+Servo servos[20];
 
 String incomingStuff = "";
 
@@ -21,15 +24,23 @@ void enforceState() {
     for (int i = 0; i < 14; i++) {
         switch (data_directions[i]) {
             case 0:
+                if (servos[i].attached()) {
+                    servos[i].detach();
+                }
                 pinMode(i, INPUT);
                 digitalWrite(i, LOW);
                 break;
             case 1:
+                if (servos[i].attached()) {
+                    servos[i].detach();
+                }
                 pinMode(i, OUTPUT);
                 digitalWrite(i, io_outputs[i]);
                 break;
             case 2:
-                // nop for now
+                if (!servos[i].attached()) {
+                    servos[i].attach(i);
+                }
                 break;
         }
     }
@@ -79,10 +90,29 @@ void loop() {
             if (working_pin < 2 || working_pin > 13) {
                 continue;
             }
-            if (working_char == '0') {
-                io_states[working_pin] = 0;
-            } else {
-                io_states[working_pin] = 1;
+
+            switch (working_char) {
+                case '0':
+                    data_directions[working_pin] = 0;
+                    break;
+                case '1':
+                    data_directions[working_pin] = 1;
+                    break;
+                case '2':
+                    switch (working_pin) {
+                        case 3:
+                        case 5:
+                        case 6:
+                        case 9:
+                        case 10:
+                        case 11:
+                            data_directions[working_pin] = 2;
+                            break;
+                        default:
+                            // this is not a PWM pin, reject!
+                            break;
+                    }
+                    break;
             }
         }
         Serial.println("OK");
@@ -105,12 +135,61 @@ void loop() {
             if (working_pin < 2 || working_pin > 13 || data_directions[working_pin] != 1) {
                 continue;
             }
-            if (working_char == '0') {
-                io_outputs[working_pin] = 0;
-            } else {
-                io_outputs[working_pin] = 1;
-            }
+            io_outputs[working_pin] = working_char == '1' ? 1 : 0;
         }
+        Serial.println("OK");
+    } else if (incomingStuff.equals("SERVO")) {
+        Serial.print("SERVO: ");
+        for (int pin = 19; pin >= 0; pin--) {
+            switch (data_directions[pin]) {
+                case 0:
+                case 1:
+                    Serial.print("?");
+                    break;
+                case 2:
+                    if (servos[pin].attached()) {
+                        Serial.print(servos[pin].read());
+                    } else {
+                        Serial.print("?");
+                    }
+                    break;
+            }
+            Serial.print(" ");
+        }
+
+        Serial.print("\n");
+    } else if (incomingStuff.startsWith("SERVO=")) {
+        String arg = incomingStuff.substring(6);
+        int currentCutoff = 0;
+        bool willBreak = false;
+
+        for (int pin = 19; pin >= 0; pin--) {
+            if (willBreak) { break; }
+
+            String currentArgSection = arg.substring(currentCutoff);
+            int nextSpaceInd = currentArgSection.indexOf(' ');
+
+            willBreak = nextSpaceInd == -1;
+
+            char thisPinAngle[4];
+            currentArgSection.substring(0, currentArgSection.indexOf(' ')).toCharArray(thisPinAngle, sizeof(thisPinAngle) / sizeof(char));
+
+            unsigned int totalAngle = 0;
+
+            for (int ind = 0; thisPinAngle[ind] != '\0'; ind++) {
+                if (thisPinAngle[ind] >= '0' && thisPinAngle[ind] <= '9') {
+                    totalAngle *= 10;
+                    totalAngle += thisPinAngle[ind] - '0';
+                }
+            }
+
+            if (data_directions[pin] == 2) {
+                servos[pin].write(min(max(totalAngle, 0), 180));
+            }
+
+            currentCutoff += nextSpaceInd + 1;
+        }
+
         Serial.println("OK");
     }
 }
