@@ -212,7 +212,7 @@ void loop() {
     const pins = Array.from(new Array(20)).map((_e, i) => i)
     const pinTooltips = pins.map(pinNum => `Pin ${pinNum}${PWMPins.includes(pinNum) ? "~" : ""}${addlPinInfo[pinNum] ? " (" + addlPinInfo[pinNum] + ")" : ""}`)
 
-    const statesGrid = document.getElementById("statesGrid")
+    const modesGrid = document.getElementById("modesGrid")
     const inputStatesGrid = document.getElementById("inputStatesGrid")
     const digitalOutputsGrid = document.getElementById("digitalOutputsGrid")
 
@@ -222,7 +222,7 @@ void loop() {
         img.title = pinTooltips[pinNum]
         img.id = `state${pinNum}`
         img.onclick = () => toggleState(pinNum)
-        statesGrid.appendChild(img)
+        modesGrid.appendChild(img)
 
         img = new Image(32)
         img.src = "assets/unknown.svg"
@@ -238,7 +238,7 @@ void loop() {
         digitalOutputsGrid.appendChild(img)
 
         if (pinNum > 0 && pinNum % 5 == 4) {
-            statesGrid.appendChild(document.createElement("br"))
+            modesGrid.appendChild(document.createElement("br"))
             inputStatesGrid.appendChild(document.createElement("br"))
             digitalOutputsGrid.appendChild(document.createElement("br"))
         }
