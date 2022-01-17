@@ -264,12 +264,11 @@ document.addEventListener("DOMContentLoaded", () => {
     butConnect.addEventListener("click", clickConnect)
     butRefresh.addEventListener("click", clickRefresh)
 
-    // CODELAB: Add feature detection here.
     const notSupported = document.getElementById("notSupported")
     notSupported.classList.toggle("hidden", "serial" in navigator)
 })
 
-async function clickRefresh() {
+function clickRefresh() {
     if (port) {
         writeToStream("DO\n")
         writeToStream("DI\n")
