@@ -9,7 +9,7 @@ const arduinoSideCode = `
 #define SERIAL_POLL_RATE 75
 
 // 0 is input to Ardiuno, 1 is output from Arduino, 2 is servo control
-int data_directions[20] = {0};
+int pin_modes[20] = {0};
 int io_outputs[20] = {0};
 
 Servo servos[20];
@@ -27,7 +27,7 @@ void setup() {
 
 void enforceState() {
     for (int i = 0; i < 14; i++) {
-        switch (data_directions[i]) {
+        switch (pin_modes[i]) {
             case 0:
                 if (servos[i].attached()) {
                     servos[i].detach();
@@ -60,11 +60,11 @@ void loop() {
     if (incomingStuff.equals("")) {
         return;
     } else if (incomingStuff.equals("HELP")) {
-        Serial.println("DI, AI, DATADIR, DATADIR=, DO, DO=, SERVO, SERVO=");
+        Serial.println("DI, AI, PINMODES, PINMODES=, DO, DO=, SERVO, SERVO=");
     } else if (incomingStuff.equals("DI")) {
         Serial.print("DI: ");
         for (int pin = 19; pin >= 0; pin--) {
-            if (data_directions[pin] == 0) {
+            if (pin_modes[pin] == 0) {
                 Serial.print(digitalRead(pin));
             } else {
                 Serial.print("?");
@@ -80,14 +80,14 @@ void loop() {
         }
         Serial.print(analogRead(14));
         Serial.print("\\n");
-    } else if (incomingStuff.equals("DATADIR")) {
-        Serial.print("DATADIR: ");
+    } else if (incomingStuff.equals("PINMODES")) {
+        Serial.print("PINMODES: ");
         for (int pin = 19; pin >= 0; pin--) {
-            Serial.print(data_directions[pin]);
+            Serial.print(pin_modes[pin]);
         }
         Serial.print("\\n");
-    } else if (incomingStuff.startsWith("DATADIR=")) {
-        String arg = incomingStuff.substring(8);
+    } else if (incomingStuff.startsWith("PINMODES=")) {
+        String arg = incomingStuff.substring(10);
         char working_char;
         for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
@@ -98,10 +98,10 @@ void loop() {
 
             switch (working_char) {
                 case '0':
-                    data_directions[working_pin] = 0;
+                    pin_modes[working_pin] = 0;
                     break;
                 case '1':
-                    data_directions[working_pin] = 1;
+                    pin_modes[working_pin] = 1;
                     break;
                 case '2':
                     switch (working_pin) {
@@ -111,7 +111,7 @@ void loop() {
                         case 9:
                         case 10:
                         case 11:
-                            data_directions[working_pin] = 2;
+                            pin_modes[working_pin] = 2;
                             break;
                         default:
                             // this is not a PWM pin, reject!
@@ -124,7 +124,7 @@ void loop() {
     } else if (incomingStuff.equals("DO")) {
         Serial.print("DO: ");
         for (int pin = 19; pin >= 0; pin--) {
-            if (data_directions[pin] == 1) {
+            if (pin_modes[pin] == 1) {
                 Serial.print(io_outputs[pin]);
             } else {
                 Serial.print("?");
@@ -137,7 +137,7 @@ void loop() {
         for (unsigned int i = 0; i < arg.length(); i++) {
             working_char = arg.charAt(i);
             int working_pin = 19 - i;
-            if (working_pin < 2 || working_pin > 13 || data_directions[working_pin] != 1) {
+            if (working_pin < 2 || working_pin > 13 || pin_modes[working_pin] != 1) {
                 continue;
             }
             io_outputs[working_pin] = working_char == '1' ? 1 : 0;
@@ -146,7 +146,7 @@ void loop() {
     } else if (incomingStuff.equals("SERVO")) {
         Serial.print("SERVO: ");
         for (int pin = 19; pin >= 0; pin--) {
-            switch (data_directions[pin]) {
+            switch (pin_modes[pin]) {
                 case 0:
                 case 1:
                     Serial.print("?");
@@ -188,7 +188,7 @@ void loop() {
                 }
             }
 
-            if (data_directions[pin] == 2) {
+            if (pin_modes[pin] == 2) {
                 servos[pin].write(min(max(totalAngle, 0), 180));
             }
 
@@ -274,15 +274,16 @@ async function clickRefresh() {
         writeToStream("DO\n")
         writeToStream("DI\n")
         writeToStream("AI\n")
-        writeToStream("DATADIR\n")
+        writeToStream("PINMODES\n")
     }
 }
 
-async function toggleState(pin) {
-    if (port && latestDataDirs != undefined) {
-        let newDataDrits = latestDataDirs.split("")
-        newDataDrits[pin] = (latestDataDirs[pin] == "1") ? "0" : "1"
-        writeToStream("DATADIR=" + newDataDrits.reverse().join("") + "\n")
+async function updatePinMode(pin, modeTo) {
+    if (port && latestPinModes != undefined) {
+        let newPinModes = latestPinModes.split("")
+        // hope this is valid?
+        newPinModes[pin] = modeTo.toString()
+        writeToStream("PINMODES=" + newPinModes.reverse().join("") + "\n")
         clickRefresh()
     }
 }
@@ -492,23 +493,16 @@ async function readLoop() {
                 elem = document.getElementById("A" + index + "V")
                 elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
             })
-        } else if (value.startsWith("DATADIR: ")) {
-            let outputs = value.trim().slice(9).split("").reverse().join("")
-            latestDataDirs = outputs
+        } else if (value.startsWith("PINMODES: ")) {
+            let outputs = value.trim().slice(10).split("").reverse().join("")
+            latestPinModes = outputs
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("state" + index)
                 let newImageSource
                 if (state == "?") {
                     newImageSource = "assets/unknown.svg"
-                } else {
-                    state = parseInt(state)
-                    if (state) {
-                        newImageSource = "assets/output.svg"
-                    } else {
-                        newImageSource = "assets/input.svg"
-                    }
                 }
-                elem.src = newImageSource
+                elem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
             })
         } else if (value.startsWith("DO: ")) {
             let outputs = value.trim().slice(4).split("").reverse().join("")
