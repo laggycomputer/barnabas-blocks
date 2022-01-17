@@ -590,8 +590,6 @@ function toggleUIConnected(connected) {
 // bound to onclick
 // eslint-disable-next-line no-unused-vars
 function handleAutoRefreshChange() {
-    console.log("consciousness")
-
     const isNowChecked = document.getElementById("butAutoRefresh").checked
 
     // if we want this on, it was previously off and we need an interval (clear the old one just in case)
