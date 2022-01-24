@@ -354,8 +354,14 @@ async function toggleDigitalOutput(pin) {
  * output stream.
  */
 async function connect() {
-    port = await navigator.serial.requestPort()
-    await port.open({ baudRate: 19200 })
+    try {
+        port = await navigator.serial.requestPort()
+        await port.open({ baudRate: 19200 })
+    } catch (err) {
+        // probably a locked port or a user hitting "cancel" on the port selection dialog.
+        // meh, no issue, just report this back to caller
+        return false
+    }
 
     const encoder = new TextEncoderStream()
     outputDone = encoder.readable.pipeTo(port.writable)
@@ -367,6 +373,8 @@ async function connect() {
     inputDone = port.readable.pipeTo(decoder.writable)
     reader = inputStream.getReader()
     readLoop()
+
+    return true
 }
 
 /**
@@ -472,9 +480,10 @@ async function clickConnect() {
         toggleUIConnected(false)
         return
     }
-    await connect()
 
-    toggleUIConnected(true)
+    if (await connect()) {
+        toggleUIConnected(true)
+    }
 }
 
 
