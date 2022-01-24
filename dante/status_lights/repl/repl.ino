@@ -87,10 +87,9 @@ void loop() {
         }
         Serial.print("\n");
     } else if (incomingStuff.startsWith("PINMODES=")) {
-        String arg = incomingStuff.substring(10);
-        char working_char;
+        String arg = incomingStuff.substring(9);
         for (unsigned int ind = 0; ind < arg.length(); ind++) {
-            working_char = arg.charAt(ind);
+            char working_char = arg.charAt(ind);
             // analog pin or pin 1/2
             // assume analog pins are mapped together
             if (ind < 2 || (ind >= analogInputToDigitalPin(0) && ind <= analogInputToDigitalPin(NUM_ANALOG_INPUTS - 1))) {
