@@ -1,6 +1,6 @@
 "use strict"
 
-/* global AvrgirlArduino, TextEncoderStream, TextDecoderStream, TransformStream, Uint8Array */
+/* global AvrgirlArduino, TextEncoderStream, TextDecoderStream, TransformStream */
 
 const arduinoSideCode = `
 #include <limits.h>
