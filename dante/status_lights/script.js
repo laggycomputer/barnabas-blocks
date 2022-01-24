@@ -390,11 +390,10 @@ async function disconnect() {
     port = null
 }
 
-var str2ab = function (str) {
-    var encodedString = str
-    var bytes = new Uint8Array(encodedString.length)
-    for (var i = 0; i < encodedString.length; ++i) {
-        bytes[i] = encodedString.charCodeAt(i)
+function str2ab(str) {
+    const bytes = new Uint8Array(str.length)
+    for (let i = 0; i < str.length; ++i) {
+        bytes[i] = str.charCodeAt(i)
     }
     return bytes.buffer
 }
@@ -408,7 +407,7 @@ function flashCode(nano = false, code = "", options = {}) {
 
     code = code == "" ? arduinoSideCode : code
 
-    var data = { sketch: code, board: boardForAPI }
+    const data = { sketch: code, board: boardForAPI }
 
     if (port) {
         disconnect()
@@ -421,39 +420,41 @@ function flashCode(nano = false, code = "", options = {}) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
-    }).then(response => response.json()).then(data => {
-        console.log(data)
-        if (!data.success) {
-            if (data.stderr.length > 0) {
-                const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
-                const message = data.stderr.replace(regex, "")
-                alert(`Compilation error:\n${message}\n`)
-            }
-        } else {
-            return { data: atob(data.hex), msg: data.stdout }
-        }
-    }).then(hex => {
-        if (hex) {
-            try {
-                var avrgirl = new AvrgirlArduino({
-                    board: boardToUpload,
-                    debug: true
-                })
-
-                avrgirl.flash(str2ab(hex.data), (error) => {
-                    if (error) {
-                        alert(`Upload error:\n${error}\n`)
-                        avrgirl.connection.serialPort.close()
-                    } else {
-                        alert("Upload successful.\n")
-                    }
-                }, options)
-            } catch (error) {
-                alert(`AVR error:\n${error}\n`)
-                avrgirl.connection.serialPort.close()
-            }
-        }
     })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            if (!data.success) {
+                if (data.stderr.length > 0) {
+                    const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
+                    const message = data.stderr.replace(regex, "")
+                    alert(`Compilation error:\n${message}\n`)
+                }
+            } else {
+                return { data: atob(data.hex), msg: data.stdout }
+            }
+        }).then(hex => {
+            if (hex) {
+                try {
+                    var avrgirl = new AvrgirlArduino({
+                        board: boardToUpload,
+                        debug: true
+                    })
+
+                    avrgirl.flash(str2ab(hex.data), (error) => {
+                        if (error) {
+                            alert(`Upload error:\n${error}\n`)
+                            avrgirl.connection.serialPort.close()
+                        } else {
+                            alert("Upload successful.\n")
+                        }
+                    }, options)
+                } catch (error) {
+                    alert(`AVR error:\n${error}\n`)
+                    avrgirl.connection.serialPort.close()
+                }
+            }
+        })
 }
 
 /**
