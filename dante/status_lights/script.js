@@ -523,8 +523,8 @@ async function readLoop() {
                 elem.src = newImageSource
             })
         } else {
-            // Why are we here?
-            return
+            // nothing to do or supposedly invalid message
+            continue
         }
 
         if (done) {
