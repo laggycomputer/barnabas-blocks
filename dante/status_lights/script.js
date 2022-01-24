@@ -198,13 +198,13 @@ void loop() {
 `
 
 const PIN_MODE_REGISTRY = [
-    {name: "input", img: "input.svg"},
-    {name: "output", img: "output.svg"},
-    {name: "servo", img: "servo.png"},
-]
+    { name: "input", img: "input.svg" },
+    { name: "output", img: "output.svg" },
+    { name: "servo", img: "servo.png" },
+];
 
 // IIFE for GC
-;(() => {
+(() => {
     const addlPinInfo = {
         0: "Serial RX", 1: "Serial TX", 13: "Built-in LED",
         14: "A0", 15: "A1", 16: "A2", 17: "A3", 18: "A4", 19: "A5"
@@ -223,7 +223,7 @@ const PIN_MODE_REGISTRY = [
     for (const pinNum in pins) {
         const modeSelectRow = document.createElement("tr")
         const modeSelectCell = document.createElement("td")
-        PIN_MODE_REGISTRY.forEach(({name: mode}, ind) => {
+        PIN_MODE_REGISTRY.forEach(({ name: mode }, ind) => {
             const button = document.createElement("input")
             button.type = "radio"
             button.name = `setMode${pinNum}`
