@@ -227,7 +227,7 @@ const PIN_MODE_REGISTRY = [
             const button = document.createElement("input")
             button.type = "radio"
             button.name = `setMode${pinNum}`
-            button.id = `setMode${mode}${pinNum}`
+            button.id = `setMode${pinNum}${mode}`
             button.value = ind.toString()
             button.onclick = () => updatePinMode(pinNum, button.value)
 
