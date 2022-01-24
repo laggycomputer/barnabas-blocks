@@ -282,7 +282,7 @@ async function updatePinMode(pin, modeTo) {
         let newPinModes = latestPinModes.split("")
         // hope this is valid?
         newPinModes[pin] = modeTo.toString()
-        writeToStream("PINMODES=" + newPinModes.reverse().join("") + "\n")
+        writeToStream(`PINMODES=${newPinModes.join("")}\n`)
         clickRefresh()
     }
 }
@@ -301,10 +301,10 @@ async function toggleDigitalOutput(pin) {
             break
         case "?":
             toggleState(pin)
-            newDOState[20 - pin] = "1"
+            newDOState[pin] = "1"
             break
         }
-        writeToStream("DO=" + newDOState.reverse().join("") + "\n")
+        writeToStream(`DO=${newDOState.join("")}\n`)
         clickRefresh()
     }
 }
@@ -468,7 +468,7 @@ async function readLoop() {
         if (value.trim() == "OK") {
             continue
         } else if (value.startsWith("DI: ")) {
-            let outputs = value.trim().slice(4).split("").reverse().join("")
+            let outputs = value.trim().slice(4)
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("input" + index)
                 let newImageSource
@@ -485,15 +485,15 @@ async function readLoop() {
                 elem.src = newImageSource
             })
         } else if (value.startsWith("AI: ")) {
-            let outputs = value.trim().slice(4).split(" ").reverse()
-            outputs.forEach((state, index) => {
+            let outputs = value.trim().slice(4)
+            outputs.split(" ").forEach((state, index) => {
                 let elem = document.getElementById("A" + index)
                 elem.textContent = state.toString()
                 elem = document.getElementById("A" + index + "V")
                 elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
             })
         } else if (value.startsWith("PINMODES: ")) {
-            let outputs = value.trim().slice(10).split("").reverse().join("")
+            let outputs = value.trim().slice(10)
             latestPinModes = outputs
             outputs.split("").forEach((state, index) => {
                 let elem = document.getElementById("state" + index)
@@ -504,7 +504,7 @@ async function readLoop() {
                 elem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
             })
         } else if (value.startsWith("DO: ")) {
-            let outputs = value.trim().slice(4).split("").reverse().join("")
+            let outputs = value.trim().slice(4)
             latestDOState = outputs
 
             outputs.split("").forEach((state, index) => {
