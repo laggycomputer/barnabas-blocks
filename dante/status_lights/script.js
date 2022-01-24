@@ -317,7 +317,7 @@ function clickRefresh() {
 
 async function updatePinMode(pin, modeTo) {
     if (port && latestPinModes != undefined) {
-        let newPinModes = latestPinModes.split("")
+        const newPinModes = latestPinModes.split("")
         // hope this is valid?
         newPinModes[pin] = modeTo.toString()
         writeToStream(`PINMODES=${newPinModes.join("")}\n`)
@@ -329,7 +329,7 @@ async function updatePinMode(pin, modeTo) {
 // eslint-disable-next-line no-unused-vars
 async function toggleDigitalOutput(pin) {
     if (port && latestDOState != undefined) {
-        let newDOState = latestDOState.split("")
+        const newDOState = latestDOState.split("")
         switch (latestDOState[pin]) {
         case "1":
             newDOState[pin] = "0"
@@ -364,7 +364,7 @@ async function connect() {
     outputDone = encoder.readable.pipeTo(port.writable)
     outputStream = encoder.writable
     // CODELAB: Add code to read the stream here.
-    let decoder = new TextDecoderStream()
+    const decoder = new TextDecoderStream()
     inputStream = decoder.readable
         .pipeThrough(new TransformStream(new LineBreakTransformer()))
     inputDone = port.readable.pipeTo(decoder.writable)
@@ -436,14 +436,12 @@ function flashCode(nano = false, code = "", options = {}) {
         if (!data.success) {
             // can only run below if arduino compile error I can still get response with garbage body
             if (data.stderr.length > 0) {
-                let regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
-                let message = data.stderr.replace(regex, "")
+                const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
+                const message = data.stderr.replace(regex, "")
                 alert("Compilation error:\n" + message + "\n")
-                regex = /\d+:\d+/g
             }
         } else {
-            let hexstring = atob(data.hex)
-            return { "data": hexstring, "msg": data.stdout }
+            return { data: atob(data.hex), msg: data.stdout }
         }
     }).then(hex => {
         if (hex) {
@@ -506,59 +504,54 @@ async function readLoop() {
         if (value.trim() == "OK") {
             continue
         } else if (value.startsWith("DI: ")) {
-            let outputs = value.trim().slice(4)
-            outputs.split("").forEach((state, index) => {
-                let elem = document.getElementById("input" + index)
-                let newImageSource
+            const withoutPrefix = value.trim().slice(4)
+            withoutPrefix.split("").forEach((state, index) => {
+                const elem = document.getElementById("input" + index)
                 if (state == "?") {
-                    newImageSource = "assets/unknown.svg"
+                    elem.src = "assets/unknown.svg"
                 } else {
                     state = parseInt(state)
                     if (state) {
-                        newImageSource = "assets/on.svg"
+                        elem.src = "assets/on.svg"
                     } else {
-                        newImageSource = "assets/off.svg"
+                        elem.src = "assets/off.svg"
                     }
                 }
-                elem.src = newImageSource
             })
         } else if (value.startsWith("AI: ")) {
-            let outputs = value.trim().slice(4)
-            outputs.split(" ").forEach((state, index) => {
-                let elem = document.getElementById("A" + index)
-                elem.textContent = state.toString()
-                elem = document.getElementById("A" + index + "V")
-                elem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
+            const withoutPrefix = value.trim().slice(4)
+            withoutPrefix.split(" ").forEach((state, index) => {
+                const rawValElem = document.getElementById("A" + index)
+                rawValElem.textContent = state.toString()
+                const voltageElem = document.getElementById("A" + index + "V")
+                voltageElem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
             })
         } else if (value.startsWith("PINMODES: ")) {
-            let outputs = value.trim().slice(10)
-            latestPinModes = outputs
-            outputs.split("").forEach((state, index) => {
-                let elem = document.getElementById("state" + index)
+            const withoutPrefix = value.trim().slice(10)
+            latestPinModes = withoutPrefix
+            withoutPrefix.split("").forEach((state, index) => {
+                const tableElem = document.getElementById("state" + index)
                 if (state != "?") {
-                    elem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
+                    tableElem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
                 } else {
-                    elem.src = "assets/unknown.svg"
+                    tableElem.src = "assets/unknown.svg"
                 }
             })
         } else if (value.startsWith("DO: ")) {
-            let outputs = value.trim().slice(4)
-            latestDOState = outputs
+            const withoutPrefix = value.trim().slice(4)
+            latestDOState = withoutPrefix
 
-            outputs.split("").forEach((state, index) => {
-                let elem = document.getElementById("output" + index)
-                let newImageSource
+            withoutPrefix.split("").forEach((state, index) => {
+                const elem = document.getElementById("output" + index)
                 if (state == "?") {
-                    newImageSource = "assets/unknown.svg"
+                    elem.src = "assets/unknown.svg"
                 } else {
-                    state = parseInt(state)
-                    if (state) {
-                        newImageSource = "assets/outputhigh.png"
+                    if (parseInt(state)) {
+                        elem.src = "assets/outputhigh.png"
                     } else {
-                        newImageSource = "assets/outputlow.png"
+                        elem.src = "assets/outputlow.png"
                     }
                 }
-                elem.src = newImageSource
             })
         } else {
             // nothing to do or supposedly invalid message
@@ -612,16 +605,8 @@ class LineBreakTransformer {
     }
 }
 
-/**
- * The code below is mostly UI code and is provided to simplify the codelab.
- */
-
 function toggleUIConnected(connected) {
-    let lbl = "Connect"
-    if (connected) {
-        lbl = "Disconnect"
-    }
-    butConnect.textContent = lbl
+    butConnect.textContent = connected ? "Disconnect" : "Connect"
 }
 
 // bound to onclick
