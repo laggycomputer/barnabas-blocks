@@ -354,24 +354,19 @@ async function toggleDigitalOutput(pin) {
  * output stream.
  */
 async function connect() {
-    // CODELAB: Add code to request & open port here.
-    // - Request a port and open a connection.
     port = await navigator.serial.requestPort()
-    // - Wait for the port to open.
     await port.open({ baudRate: 19200 })
-    // CODELAB: Add code setup the output stream here.
+
     const encoder = new TextEncoderStream()
     outputDone = encoder.readable.pipeTo(port.writable)
     outputStream = encoder.writable
-    // CODELAB: Add code to read the stream here.
+
     const decoder = new TextDecoderStream()
     inputStream = decoder.readable
         .pipeThrough(new TransformStream(new LineBreakTransformer()))
     inputDone = port.readable.pipeTo(decoder.writable)
     reader = inputStream.getReader()
     readLoop()
-    // The codelab wants us to decode via JSON as well, though that isn't needed here
-    // .pipeThrough(new TransformStream(new JSONTransformer()));
 }
 
 /**
@@ -379,21 +374,20 @@ async function connect() {
  * Closes the Web Serial connection.
  */
 async function disconnect() {
-    // CODELAB: Close the input stream (reader).
     if (reader) {
         await reader.cancel()
         await inputDone.catch(() => { })
         reader = null
         inputDone = null
     }
-    // CODELAB: Close the output stream.
+
     if (outputStream) {
         await outputStream.getWriter().close()
         await outputDone
         outputStream = null
         outputDone = null
     }
-    // CODELAB: Close the port.
+
     await port.close()
     port = null
 }
@@ -423,7 +417,6 @@ function flashCode(nano = false, code = "", options = {}) {
         disconnect()
         toggleUIConnected(false)
     }
-    // CODELAB: Add connect code here.
 
     fetch("https://compile.barnabasrobotics.com/compile", {
         method: "POST",
@@ -474,13 +467,11 @@ function flashCode(nano = false, code = "", options = {}) {
  * Click handler for the connect/disconnect button.
  */
 async function clickConnect() {
-    // CODELAB: Add disconnect code here.
     if (port) {
         await disconnect()
         toggleUIConnected(false)
         return
     }
-    // CODELAB: Add connect code here.
     await connect()
 
     toggleUIConnected(true)
@@ -492,8 +483,6 @@ async function clickConnect() {
  * Reads data from the input stream and displays it on screen.
  */
 async function readLoop() {
-    // CODELAB: Add read loop here.
-
     // eslint be quiet
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -568,11 +557,10 @@ async function readLoop() {
 
 /**
  * @name writeToStream
- * Gets a writer from the output stream and send the lines to the micro:bit.
- * @param  {...string} lines lines to send to the micro:bit
+ * Gets a writer from the output stream and send the lines along the serial connection.
+ * @param  {...string} lines lines to send on serial, with line endings
  */
 function writeToStream(...lines) {
-    // CODELAB: Write to output stream
     const writer = outputStream.getWriter()
     lines.forEach((line) => {
         console.log("[SEND]", line)
@@ -592,7 +580,6 @@ class LineBreakTransformer {
     }
 
     transform(chunk, controller) {
-        // CODELAB: Handle incoming chunk
         this.container += chunk
         const lines = this.container.split("\n")
         this.container = lines.pop()
@@ -600,7 +587,6 @@ class LineBreakTransformer {
     }
 
     flush(controller) {
-        // CODELAB: Flush the stream.
         controller.enqueue(this.container)
     }
 }
