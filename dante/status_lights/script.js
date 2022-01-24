@@ -215,7 +215,6 @@ const PIN_MODE_REGISTRY = [
     const pinTooltips = pins.map(pinNum => `Pin ${pinNum}${PWMPins.includes(pinNum) ? "~" : ""}${addlPinInfo[pinNum] ? " (" + addlPinInfo[pinNum] + ")" : ""}`)
 
     const setModes = document.getElementById("setModes")
-    const modesGrid = document.getElementById("modesGrid")
     const inputStatesGrid = document.getElementById("inputStatesGrid")
     const digitalOutputsGrid = document.getElementById("digitalOutputsGrid")
 
@@ -257,12 +256,6 @@ const PIN_MODE_REGISTRY = [
         let img = new Image(32)
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
-        img.id = `state${pinNum}`
-        modesGrid.appendChild(img)
-
-        img = new Image(32)
-        img.src = "assets/unknown.svg"
-        img.title = pinTooltips[pinNum]
         img.id = `input${pinNum}`
         inputStatesGrid.appendChild(img)
 
@@ -274,7 +267,6 @@ const PIN_MODE_REGISTRY = [
         digitalOutputsGrid.appendChild(img)
 
         if (pinNum > 0 && pinNum % 5 == 4) {
-            modesGrid.appendChild(document.createElement("br"))
             inputStatesGrid.appendChild(document.createElement("br"))
             digitalOutputsGrid.appendChild(document.createElement("br"))
         }
@@ -527,16 +519,12 @@ async function readLoop() {
             const withoutPrefix = value.trim().slice(10)
             latestPinModes = withoutPrefix
             withoutPrefix.split("").forEach((state, index) => {
-                const tableElem = document.getElementById(`state${index}`)
                 if (state != "?") {
-                    tableElem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
                     Array(...document.getElementsByName(`setMode${index}`)).forEach((elem, ind) => {
                         // if this element governs state x and the pin is also in state x (where x is in PIN_MODE_REGISTRY),
                         // check this button for the user. otherwise, uncheck it.
                         elem.checked = parseInt(state) == ind
                     })
-                } else {
-                    tableElem.src = "assets/unknown.svg"
                 }
             })
         } else if (value.startsWith("DO: ")) {
