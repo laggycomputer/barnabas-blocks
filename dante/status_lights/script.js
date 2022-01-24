@@ -246,7 +246,6 @@ const PIN_MODE_REGISTRY = [
 
         const rowLabel = document.createElement("td")
         const rowLabelCode = document.createElement("code")
-        // rowLabelCode.innerText = `Pin ${pinNum.padStart(2, "0")}: `
         rowLabelCode.innerText = pinTooltips[pinNum]
         rowLabel.appendChild(rowLabelCode)
         modeSelectRow.appendChild(rowLabel)
@@ -392,7 +391,6 @@ async function disconnect() {
 }
 
 var str2ab = function (str) {
-    // var encodedString = unescape(encodeURIComponent(str));
     var encodedString = str
     var bytes = new Uint8Array(encodedString.length)
     for (var i = 0; i < encodedString.length; ++i) {
@@ -426,7 +424,6 @@ function flashCode(nano = false, code = "", options = {}) {
     }).then(response => response.json()).then(data => {
         console.log(data)
         if (!data.success) {
-            // can only run below if arduino compile error I can still get response with garbage body
             if (data.stderr.length > 0) {
                 const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
                 const message = data.stderr.replace(regex, "")
@@ -444,8 +441,6 @@ function flashCode(nano = false, code = "", options = {}) {
                 })
 
                 avrgirl.flash(str2ab(hex.data), (error) => {
-                    // gear.classList.remove('spinning');
-                    // progress.textContent = "done!";
                     if (error) {
                         alert(`Upload error:\n${error}\n`)
                         avrgirl.connection.serialPort.close()
@@ -576,7 +571,6 @@ function writeToStream(...lines) {
  */
 class LineBreakTransformer {
     constructor() {
-        // A container for holding stream data until a new line.
         this.container = ""
     }
 
@@ -601,9 +595,6 @@ function toggleUIConnected(connected) {
 function handleAutoRefreshChange() {
     const isNowChecked = document.getElementById("butAutoRefresh").checked
 
-    // if we want this on, it was previously off and we need an interval (clear the old one just in case)
-    // if we want this off, we need an interval
-    // therefore unconditionally clear
     if (autoRefreshIntervalID !== undefined) {
         clearInterval(autoRefreshIntervalID)
     }
