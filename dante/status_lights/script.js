@@ -530,6 +530,11 @@ async function readLoop() {
                 const tableElem = document.getElementById(`state${index}`)
                 if (state != "?") {
                     tableElem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
+                    Array(...document.getElementsByName(`setMode${index}`)).forEach((elem, ind) => {
+                        // if this element governs state x and the pin is also in state x (where x is in PIN_MODE_REGISTRY),
+                        // check this button for the user. otherwise, uncheck it.
+                        elem.checked = parseInt(state) == ind
+                    })
                 } else {
                     tableElem.src = "assets/unknown.svg"
                 }
