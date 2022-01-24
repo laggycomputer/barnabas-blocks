@@ -438,7 +438,7 @@ function flashCode(nano = false, code = "", options = {}) {
             if (data.stderr.length > 0) {
                 const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
                 const message = data.stderr.replace(regex, "")
-                alert("Compilation error:\n" + message + "\n")
+                alert(`Compilation error:\n${message}\n`)
             }
         } else {
             return { data: atob(data.hex), msg: data.stdout }
@@ -455,14 +455,14 @@ function flashCode(nano = false, code = "", options = {}) {
                     // gear.classList.remove('spinning');
                     // progress.textContent = "done!";
                     if (error) {
-                        alert("Upload error:\n" + error + "\n")
+                        alert(`Upload error:\n${error}\n`)
                         avrgirl.connection.serialPort.close()
                     } else {
                         alert("Upload successful.\n")
                     }
                 }, options)
             } catch (error) {
-                alert("AVR error:\n" + error + "\n")
+                alert(`AVR error:\n${error}\n`)
                 avrgirl.connection.serialPort.close()
             }
         }
@@ -499,14 +499,14 @@ async function readLoop() {
     while (true) {
         const { value, done } = await reader.read()
 
-        console.log("[RECEIVED] " + value)
+        console.log(`[RECEIVED] ${value}`)
 
         if (value.trim() == "OK") {
             continue
         } else if (value.startsWith("DI: ")) {
             const withoutPrefix = value.trim().slice(4)
             withoutPrefix.split("").forEach((state, index) => {
-                const elem = document.getElementById("input" + index)
+                const elem = document.getElementById(`input${index}`)
                 if (state == "?") {
                     elem.src = "assets/unknown.svg"
                 } else {
@@ -521,16 +521,16 @@ async function readLoop() {
         } else if (value.startsWith("AI: ")) {
             const withoutPrefix = value.trim().slice(4)
             withoutPrefix.split(" ").forEach((state, index) => {
-                const rawValElem = document.getElementById("A" + index)
+                const rawValElem = document.getElementById(`A${index}`)
                 rawValElem.textContent = state.toString()
-                const voltageElem = document.getElementById("A" + index + "V")
+                const voltageElem = document.getElementById(`A${index}V`)
                 voltageElem.textContent = (Math.round((state / 1023 * 5) * 100) / 100).toString()
             })
         } else if (value.startsWith("PINMODES: ")) {
             const withoutPrefix = value.trim().slice(10)
             latestPinModes = withoutPrefix
             withoutPrefix.split("").forEach((state, index) => {
-                const tableElem = document.getElementById("state" + index)
+                const tableElem = document.getElementById(`state${index}`)
                 if (state != "?") {
                     tableElem.src = `assets/${PIN_MODE_REGISTRY[parseInt(state)].img}`
                 } else {
@@ -542,7 +542,7 @@ async function readLoop() {
             latestDOState = withoutPrefix
 
             withoutPrefix.split("").forEach((state, index) => {
-                const elem = document.getElementById("output" + index)
+                const elem = document.getElementById(`output${index}`)
                 if (state == "?") {
                     elem.src = "assets/unknown.svg"
                 } else {
