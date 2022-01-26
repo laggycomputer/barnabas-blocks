@@ -217,6 +217,7 @@ const PIN_MODE_REGISTRY = [
     const setModes = document.getElementById("setModes")
     const inputStatesGrid = document.getElementById("inputStatesGrid")
     const digitalOutputsGrid = document.getElementById("digitalOutputsGrid")
+    const setServos = document.getElementById("setServos")
 
     for (const pinNum of pins) {
         const modeSelectRow = document.createElement("tr")
@@ -269,6 +270,31 @@ const PIN_MODE_REGISTRY = [
             inputStatesGrid.appendChild(document.createElement("br"))
             digitalOutputsGrid.appendChild(document.createElement("br"))
         }
+
+        if (PWMPins.includes(pinNum)) {
+            const thisRow = document.createElement("tr")
+            const rowLabelCell = document.createElement("td")
+            rowLabelCell.innerText = pinTooltips[pinNum]
+            const rowSliderCell = document.createElement("td")
+            const slider = document.createElement("input")
+            slider.type = "range"
+            slider.min = (0).toString()
+            slider.max = (180).toString()
+            slider.step = (1).toString()  // technically unneeded, this is default
+            slider.onchange = () => updateServoAngle(pinNum)
+            slider.disabled = true  // enable when we confirm the pinmode is actually servo mode
+            const sliderLabel = document.createElement("label")
+            sliderLabel.for = slider.id = `setServoAngle${pinNum}`
+            sliderLabel.id = `setServoAngleLabel${pinNum}`
+
+            rowSliderCell.appendChild(slider)
+            rowSliderCell.appendChild(sliderLabel)
+
+            thisRow.appendChild(rowLabelCell)
+            thisRow.appendChild(rowSliderCell)
+
+            setServos.appendChild(thisRow)
+        }
     }
 })()
 
@@ -281,6 +307,7 @@ let inputStream
 let outputStream
 let latestPinModes
 let latestDOState
+let latestServoAngles
 let autoRefreshIntervalID
 
 const butConnect = document.getElementById("butConnect")
@@ -337,6 +364,20 @@ function toggleDigitalOutput(pin) {
     }
 }
 
+function updateServoAngle(pin) {
+    if (port && latestServoAngles != undefined && latestPinModes != undefined) {
+        if (latestPinModes[pin] != "2") {
+            // someone used the console to change this, this slider is disabled
+            return
+        } else {
+            const newServoAngles = new Array(latestServoAngles)
+            newServoAngles[pin] = parseInt(document.getElementById(`setServoAngle${pin}`).value)
+
+            writeToStream(`SERVO=${newServoAngles.join(" ")}\n`)
+            clickRefresh()
+        }
+    }
+}
 
 /**
  * @name connect
@@ -536,6 +577,21 @@ async function readLoop() {
                     } else {
                         elem.src = "assets/outputlow.png"
                     }
+                }
+            })
+        } else if (value.startsWith("SERVO: ")) {
+            const withoutPrefix = value.trim().slice(7)
+            latestServoAngles = withoutPrefix.split(" ").map(a => isNaN(parseInt(a)) ? a : parseInt(a))
+
+            withoutPrefix.split(" ").forEach((angle, pinNum) => {
+                const correspondingSlider = document.getElementById(`setServoAngle${pinNum}`)
+                if (correspondingSlider == null) {
+                    return
+                }
+                correspondingSlider.disabled = angle === "?"
+
+                if (!isNaN(parseInt(angle))) {
+                    document.getElementById(`setServoAngleLabel${pinNum}`).innerText = correspondingSlider.value = angle
                 }
             })
         } else {
