@@ -305,7 +305,7 @@ function clickRefresh() {
     }
 }
 
-async function updatePinMode(pin, modeTo) {
+function updatePinMode(pin, modeTo) {
     if (port && latestPinModes != undefined) {
         const newPinModes = latestPinModes.split("")
         // hope this is valid?
@@ -317,7 +317,7 @@ async function updatePinMode(pin, modeTo) {
 
 // Bound to an onclick which eslint cannot detect
 // eslint-disable-next-line no-unused-vars
-async function toggleDigitalOutput(pin) {
+function toggleDigitalOutput(pin) {
     if (port && latestDOState != undefined) {
         const newDOState = latestDOState.split("")
         switch (latestDOState[pin]) {
@@ -340,8 +340,7 @@ async function toggleDigitalOutput(pin) {
 
 /**
  * @name connect
- * Opens a Web Serial connection to a micro:bit and sets up the input and
- * output stream.
+ * Opens a Web Serial connection and initialize input and output.
  */
 async function connect() {
     try {
