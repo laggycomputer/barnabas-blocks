@@ -112,3 +112,11 @@ table {
 table, th, td {
   border: 1px solid black;
 }
+
+#setModes, #setModes td, #setServos, #setServos td {
+  border: none;
+}
+
+img + img {
+  margin-left: 6px;
+}

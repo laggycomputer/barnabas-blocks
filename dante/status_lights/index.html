@@ -14,191 +14,123 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Web Serial Code Lab</title>
-        <meta charset="utf-8">
-        <meta name="codelab" content="getting-started-w-web-serial">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script>
-            // Redirect to HTTPS if HTTP is requested.
-            if (window.location.protocol === 'http:') {
-                window.location.href = 'https:' + window.location.href.substring(5);
-            }
-        </script>
-        <link rel="stylesheet" href="style.css">
-        <script src="./avrgirl-arduino.js"></script>
-        <script src="script.js" defer></script>
-    </head>
-    <body>
-        <header class="header">
-            <h1>Getting Started with Web Serial</h1>
-        </header>
-        <main class="main">
-            <div id="notSupported" class="hidden">
-                Sorry, <b>Web Serial</b> is not supported on this device, make sure you're
-                running Chrome 78 or later and have enabled the
-                <code>#enable-experimental-web-platform-features</code> flag in
-                <code>chrome://flags</code>
-            </div>
-            <br>
-            <button type="button" onclick="flashCode(nano=false)">Upload code (Uno)</button>
-            <button type="button" onclick="flashCode(nano=true)">Upload code (Nano)</button>
-            <button id="butConnect" type="button">Connect</button>
-            <button id="butRefresh" type="button">Refresh (it updates automatically but have a button)</button>
-            <br>
-            <br>
-            <p>Pin states:</p>
-            <p>
-                <img src="assets/unknown.svg" width="32" id="state0" onclick="toggleState(0)">
-                <img src="assets/unknown.svg" width="32" id="state1" onclick="toggleState(1)">
-                <img src="assets/unknown.svg" width="32" id="state2" onclick="toggleState(2)">
-                <img src="assets/unknown.svg" width="32" id="state3" onclick="toggleState(3)">
-                <img src="assets/unknown.svg" width="32" id="state4" onclick="toggleState(4)">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="state5" onclick="toggleState(5)">
-                <img src="assets/unknown.svg" width="32" id="state6" onclick="toggleState(6)">
-                <img src="assets/unknown.svg" width="32" id="state7" onclick="toggleState(7)">
-                <img src="assets/unknown.svg" width="32" id="state8" onclick="toggleState(8)">
-                <img src="assets/unknown.svg" width="32" id="state9" onclick="toggleState(9)">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="state10" onclick="toggleState(10)">
-                <img src="assets/unknown.svg" width="32" id="state11" onclick="toggleState(11)">
-                <img src="assets/unknown.svg" width="32" id="state12" onclick="toggleState(12)">
-                <img src="assets/unknown.svg" width="32" id="state13" onclick="toggleState(13)">
-                <img src="assets/unknown.svg" width="32" id="state14" onclick="toggleState(14)">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="state15" onclick="toggleState(15)">
-                <img src="assets/unknown.svg" width="32" id="state16" onclick="toggleState(16)">
-                <img src="assets/unknown.svg" width="32" id="state17" onclick="toggleState(17)">
-                <img src="assets/unknown.svg" width="32" id="state18" onclick="toggleState(18)">
-                <img src="assets/unknown.svg" width="32" id="state19" onclick="toggleState(19)">
-            </p>
 
-            <p>Inputs:</p>
-            <p>
-                <img src="assets/unknown.svg" width="32" id="input0">
-                <img src="assets/unknown.svg" width="32" id="input1">
-                <img src="assets/unknown.svg" width="32" id="input2">
-                <img src="assets/unknown.svg" width="32" id="input3">
-                <img src="assets/unknown.svg" width="32" id="input4">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="input5">
-                <img src="assets/unknown.svg" width="32" id="input6">
-                <img src="assets/unknown.svg" width="32" id="input7">
-                <img src="assets/unknown.svg" width="32" id="input8">
-                <img src="assets/unknown.svg" width="32" id="input9">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="input10">
-                <img src="assets/unknown.svg" width="32" id="input11">
-                <img src="assets/unknown.svg" width="32" id="input12">
-                <img src="assets/unknown.svg" width="32" id="input13">
-                <img src="assets/unknown.svg" width="32" id="input14">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="input15">
-                <img src="assets/unknown.svg" width="32" id="input16">
-                <img src="assets/unknown.svg" width="32" id="input17">
-                <img src="assets/unknown.svg" width="32" id="input18">
-                <img src="assets/unknown.svg" width="32" id="input19">
-            </p>
+<head>
+    <title>Web Serial Code Lab</title>
+    <meta charset="utf-8">
+    <meta name="codelab" content="getting-started-w-web-serial">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        // Redirect to HTTPS if HTTP is requested.
+        if (window.location.protocol === 'http:') {
+            window.location.href = 'https:' + window.location.href.substring(5);
+        }
+    </script>
+    <script src="./avrgirl-arduino.js"></script>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-            <table>
-                <tr>
-                    <td>Pin</td>
-                    <td>Voltage (0-1023)</td>
-                    <td>Voltage (0-5 volts)</td>
-                </tr>
-                <tr>
-                    <td><code>A0</code></td>
-                    <td><div id="A0"></div></td>
-                    <td><div id="A0V"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A1</code></td>
-                    <td><div id="A1"></div></td>
-                    <td><div id="A1V"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A2</code></td>
-                    <td><div id="A2"></div></td>
-                    <td><div id="A2V"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A3</code></td>
-                    <td><div id="A3"></div>
-                    <td><div id="A3V"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A4</code></td>
-                    <td><div id="A4"></div></td>
-                    <td><div id="A4V"></div></td>
-                </tr>
-                <tr>
-                    <td><code>A5</code></td>
-                    <td><div id="A5"></div></td>
-                    <td><div id="A5V"></div></td>
-                </tr>
-            </table>
+<body>
+    <header class="header">
+        <h1>Getting Started with Web Serial</h1>
+    </header>
+    <main class="main">
+        <div id="notSupported" class="hidden">
+            Sorry, <b>Web Serial</b> is not supported on this device, make sure you're
+            running Chrome 78 or later and have enabled the
+            <code>#enable-experimental-web-platform-features</code> flag in
+            <code>chrome://flags</code>
+        </div>
+        <br>
+        <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
+        <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
+        <button id="butConnect" type="button">Connect</button>
+        <br>
+        <br>
+        <label for="butAutoRefresh">Automatically refresh?</label>
+        <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
+        <button id="butRefresh" type="button">Refresh</button>
+        <hr>
 
-            <p>Outputs:</p>
-            <p>
-                <img src="assets/unknown.svg" width="32" id="output0" onClick="toggleDigitalOutput(0)">
-                <img src="assets/unknown.svg" width="32" id="output1" onClick="toggleDigitalOutput(1)">
-                <img src="assets/unknown.svg" width="32" id="output2" onClick="toggleDigitalOutput(2)">
-                <img src="assets/unknown.svg" width="32" id="output3" onClick="toggleDigitalOutput(3)">
-                <img src="assets/unknown.svg" width="32" id="output4" onClick="toggleDigitalOutput(4)">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="output5" onClick="toggleDigitalOutput(5)">
-                <img src="assets/unknown.svg" width="32" id="output6" onClick="toggleDigitalOutput(6)">
-                <img src="assets/unknown.svg" width="32" id="output7" onClick="toggleDigitalOutput(7)">
-                <img src="assets/unknown.svg" width="32" id="output8" onClick="toggleDigitalOutput(8)">
-                <img src="assets/unknown.svg" width="32" id="output9" onClick="toggleDigitalOutput(9)">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="output10" onClick="toggleDigitalOutput(10)">
-                <img src="assets/unknown.svg" width="32" id="output11" onClick="toggleDigitalOutput(11)">
-                <img src="assets/unknown.svg" width="32" id="output12" onClick="toggleDigitalOutput(12)">
-                <img src="assets/unknown.svg" width="32" id="output13" onClick="toggleDigitalOutput(13)">
-                <img src="assets/unknown.svg" width="32" id="output14" onClick="toggleDigitalOutput(14)">
-                <br>
-                <img src="assets/unknown.svg" width="32" id="output15" onClick="toggleDigitalOutput(15)">
-                <img src="assets/unknown.svg" width="32" id="output16" onClick="toggleDigitalOutput(16)">
-                <img src="assets/unknown.svg" width="32" id="output17" onClick="toggleDigitalOutput(17)">
-                <img src="assets/unknown.svg" width="32" id="output18" onClick="toggleDigitalOutput(18)">
-                <img src="assets/unknown.svg" width="32" id="output19" onClick="toggleDigitalOutput(19)">
-            </p>
-            <br>
-            <p>Pins, for reference:</p>
-            <table width="30%">
-                <tr>
-                    <td><code>0 (TX)</code></td>
-                    <td><code>1 (RX)</code></td>
-                    <td><code>2</code></td>
-                    <td><code>3~</code></td>
-                    <td><code>4</code></td>
-                </tr>
-                <tr>
-                    <td><code>5~</code></td>
-                    <td><code>6~</code></td>
-                    <td><code>7</code></td>
-                    <td><code>8</code></td>
-                    <td><code>9~</code></td>
-                </tr>
-                <tr>
-                    <td><code>10~</code></td>
-                    <td><code>11~</code></td>
-                    <td><code>12</code></td>
-                    <td><code>13 (X1 LED)</code></td>
-                    <td><code>A0</code></td>
-                </tr>
-                <tr>
-                    <td><code>A1</code></td>
-                    <td><code>A2</code></td>
-                    <td><code>A3</code></td>
-                    <td><code>A4</code></td>
-                    <td><code>A5</code></td>
-                </tr>
-            </table>
-            <pre id="log"></pre>
-        </main>
-    </body>
+        <p>Set pin modes:</p>
+        <table id="setModes"></table>
+        <br>
+
+        <p>Inputs:</p>
+        <p id="inputStatesGrid"></p>
+
+        <table>
+            <tr>
+                <td>Pin</td>
+                <td>Voltage (0-1023)</td>
+                <td>Voltage (0-5 volts)</td>
+            </tr>
+            <tr>
+                <td><code>A0</code></td>
+                <td>
+                    <div id="A0"></div>
+                </td>
+                <td>
+                    <div id="A0V"></div>
+                </td>
+            </tr>
+            <tr>
+                <td><code>A1</code></td>
+                <td>
+                    <div id="A1"></div>
+                </td>
+                <td>
+                    <div id="A1V"></div>
+                </td>
+            </tr>
+            <tr>
+                <td><code>A2</code></td>
+                <td>
+                    <div id="A2"></div>
+                </td>
+                <td>
+                    <div id="A2V"></div>
+                </td>
+            </tr>
+            <tr>
+                <td><code>A3</code></td>
+                <td>
+                    <div id="A3"></div>
+                <td>
+                    <div id="A3V"></div>
+                </td>
+            </tr>
+            <tr>
+                <td><code>A4</code></td>
+                <td>
+                    <div id="A4"></div>
+                </td>
+                <td>
+                    <div id="A4V"></div>
+                </td>
+            </tr>
+            <tr>
+                <td><code>A5</code></td>
+                <td>
+                    <div id="A5"></div>
+                </td>
+                <td>
+                    <div id="A5V"></div>
+                </td>
+            </tr>
+        </table>
+
+        <p>Outputs:</p>
+        <p id="digitalOutputsGrid"></p>
+        <br>
+        <p>Servos:</p>
+        <table id="setServos">
+        </table>
+        <br>
+        <pre id="log"></pre>
+    </main>
+</body>
+
 </html>

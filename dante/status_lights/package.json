@@ -1,0 +1,12 @@
+{
+  "name": "status_lights",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {},
+  "author": "laggycomputer",
+  "license": "",
+  "devDependencies": {
+    "eslint": "^8.7.0"
+  }
+}
