@@ -20,10 +20,3 @@ __pycache__/
 
 # Python virtual environments
 venv
-
-# Arduino build artifacts
-*.ino.eep
-*.ino.elf
-*.ino.hex
-*.ino.with_bootloader.bin
-*.ino.with_bootloader.hex
