@@ -218,7 +218,7 @@ const PIN_MODE_REGISTRY = [
     const inputStatesGrid = document.getElementById("inputStatesGrid")
     const digitalOutputsGrid = document.getElementById("digitalOutputsGrid")
 
-    for (const pinNum in pins) {
+    for (const pinNum of pins) {
         const modeSelectRow = document.createElement("tr")
         const modeSelectCell = document.createElement("td")
         PIN_MODE_REGISTRY.forEach(({ name: mode }, ind) => {
@@ -232,7 +232,7 @@ const PIN_MODE_REGISTRY = [
             if (pinNum <= 1 || pinNum > 13) {
                 // cannot change this pin's state at all
                 button.disabled = true
-            } else if (mode == "servo" && !PWMPins.includes(parseInt(pinNum))) {
+            } else if (mode == "servo" && !PWMPins.includes(pinNum)) {
                 // cannot use servo on this pin!
                 button.disabled = true
             }
