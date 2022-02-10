@@ -105,6 +105,14 @@ body {
   margin-bottom: 1em;
 }
 
+.stepText {
+  font-weight: bolder;
+}
+
+#newArduinoCodeAside {
+  font-size: 12px;
+}
+
 table {
   border-collapse: collapse;
 }
@@ -123,7 +131,8 @@ table {
 }
 
 #hudRowSettings {
-  width: 25%;
+  width: 30%;
+  padding-right: 5px;
 }
 
 table, th, td {
@@ -142,6 +151,6 @@ table, th, td {
   border: none;
 }
 
-img + img {
+img+img {
   margin-left: 8px;
 }

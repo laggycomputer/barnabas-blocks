@@ -47,16 +47,27 @@
         <table id="hudBox">
             <tr>
                 <td id="hudRowSettings">
+                    <p class="stepText" id="headerUploadStep">1. Upload Arduino-side code</p>
+                    <p id="newArduinoCode" class="newArduinoCode stepText hidden">The latest version of the Arduino-side code doesn't match the version you last uploaded (or you've never been here before). Please make sure you do this step!</p>
+                    <p id="newArduinoCodeAside" class="newArduinoCode stepText hidden">If this is a mistake, press this button to suppress this warning:</p>
+                    <button class="newArduinoCode stepText hidden" type="button" onclick="suppressNewCodeWarning()">Hide warning</button>
+                    <br class="newArduinoCode hidden">
+                    <br class="newArduinoCode hidden">
                     <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
                     <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
                     <br>
                     <br>
+                    <p class="stepText">2. Connect to Arduino</p>
                     <button id="butConnect" type="button">Connect</button>
                     <br>
                     <br>
-                    <label for="butAutoRefresh">Automatically refresh?</label>
+                    <p class="stepText">3. Use panel (to the right)</p>
+                    <label for="butAutoRefresh">Automatically refresh data?</label>
                     <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
-                    <button id="butRefresh" type="button">Refresh</button>
+                    <br>
+                    <br>
+                    <button id="butRefresh" type="button">Manually refresh</button>
+                    <br>
                 </td>
                 <td id="hudRowControls">
                     <p>Set pin modes:</p>

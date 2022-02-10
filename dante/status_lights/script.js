@@ -196,6 +196,22 @@ void loop() {
 }
 `
 
+/**
+ * @name getArduinoCodeHash
+ * Get the SHA-1 of the latest version of the Arduino side code.
+ * 
+ * @returns The SHA-1 hash as a hex string, `null` if this browser does not natively support hashing via `window.crypto.subtle`.
+ */
+async function getArduinoCodeHash() {
+    if ("subtle" in window.crypto) {
+        // encoded arduino code in utf-8, send to a buffer, digest with SHA-1, encode in hex
+        const encoded = (new TextEncoder()).encode(arduinoSideCode).buffer
+        return Array.from(new Uint8Array(await window.crypto.subtle.digest("SHA-1", encoded))).map(b => b.toString(16).padStart(2, "0")).join("")
+    } else {
+        return null
+    }
+}
+
 const PIN_MODE_REGISTRY = [
     { name: "input", img: "input.svg" },
     { name: "output", img: "output.svg" },
@@ -295,6 +311,18 @@ const PIN_MODE_REGISTRY = [
             setServos.appendChild(thisRow)
         }
     }
+
+    const lastCodeHash = localStorage.getItem("lastCodeHash")
+    if (lastCodeHash === null) {
+        Array.from(document.getElementsByClassName("newArduinoCode")).forEach(elem => elem.classList.toggle("hidden", false))
+    }
+
+    // there is some key from a previous visit. try to create a new hash and compare with the stored one
+    getArduinoCodeHash().then(latestHash => {
+        if (latestHash != lastCodeHash) {
+            Array.from(document.getElementsByClassName("newArduinoCode")).forEach(elem => elem.classList.toggle("hidden", false))
+        }
+    })
 })()
 
 
@@ -320,6 +348,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const notSupported = document.getElementById("notSupported")
     notSupported.classList.toggle("hidden", "serial" in navigator)
 })
+
+/**
+ * @name suppressNewCodeWarning
+ * Hide the warning which shows when the saved latest hash of the Arduino-side code does not match the latest hash (or the saved hash is missing).
+ */
+function suppressNewCodeWarning() {
+    Array.from(document.getElementsByClassName("newArduinoCode")).forEach(elem => elem.classList.toggle("hidden", true))
+}
 
 function clickRefresh() {
     if (port) {
@@ -453,6 +489,12 @@ function flashCode(nano = false, code = "", options = {}) {
         toggleUIConnected(false)
     }
 
+    // even if upload is cancelled, hide warning
+    suppressNewCodeWarning()
+    getArduinoCodeHash().then(hash => localStorage.setItem("lastCodeHash", hash))
+    const inProgressAside = " (uploading, please wait...)"
+    document.getElementById("headerUploadStep").innerHTML += inProgressAside
+
     fetch("https://compile.barnabasrobotics.com/compile", {
         method: "POST",
         headers: {
@@ -465,6 +507,7 @@ function flashCode(nano = false, code = "", options = {}) {
             console.log(data)
             if (!data.success) {
                 if (data.stderr.length > 0) {
+                    document.getElementById("headerUploadStep").innerHTML = document.getElementById("headerUploadStep").innerHTML.replace(inProgressAside, "")
                     const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
                     const message = data.stderr.replace(regex, "")
                     alert(`Compilation error:\n${message}\n`)
@@ -481,6 +524,7 @@ function flashCode(nano = false, code = "", options = {}) {
                     })
 
                     avrgirl.flash(str2ab(hex.data), (error) => {
+                        document.getElementById("headerUploadStep").innerHTML = document.getElementById("headerUploadStep").innerHTML.replace(inProgressAside, "")
                         if (error) {
                             alert(`Upload error:\n${error}\n`)
                             avrgirl.connection.serialPort.close()
@@ -489,6 +533,7 @@ function flashCode(nano = false, code = "", options = {}) {
                         }
                     }, options)
                 } catch (error) {
+                    document.getElementById("headerUploadStep").innerHTML = document.getElementById("headerUploadStep").innerHTML.replace(inProgressAside, "")
                     alert(`AVR error:\n${error}\n`)
                     avrgirl.connection.serialPort.close()
                 }
