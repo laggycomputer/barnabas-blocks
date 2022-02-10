@@ -348,16 +348,16 @@ function toggleDigitalOutput(pin) {
     if (port && latestDOState != undefined) {
         const newDOState = latestDOState.split("")
         switch (latestDOState[pin]) {
-        case "1":
-            newDOState[pin] = "0"
-            break
-        case "0":
-            newDOState[pin] = "1"
-            break
-        case "?":
-            updatePinMode(pin)
-            newDOState[pin] = "1"
-            break
+            case "1":
+                newDOState[pin] = "0"
+                break
+            case "0":
+                newDOState[pin] = "1"
+                break
+            case "?":
+                updatePinMode(pin)
+                newDOState[pin] = "1"
+                break
         }
         writeToStream(`DO=${newDOState.join("")}\n`)
         clickRefresh()
