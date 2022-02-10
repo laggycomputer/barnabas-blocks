@@ -220,38 +220,37 @@ const PIN_MODE_REGISTRY = [
     const setServos = document.getElementById("setServos")
 
     for (const pinNum of pins) {
-        const modeSelectRow = document.createElement("tr")
-        const modeSelectCell = document.createElement("td")
-        PIN_MODE_REGISTRY.forEach(({ name: mode }, ind) => {
-            const button = document.createElement("input")
-            button.type = "radio"
-            button.name = `setMode${pinNum}`
-            button.id = `setMode${pinNum}${mode}`
-            button.value = ind.toString()
-            button.onclick = () => updatePinMode(pinNum, button.value)
+        if (pinNum > 1 && pinNum < 14) {
 
-            if (pinNum <= 1 || pinNum > 13) {
-                // cannot change this pin's state at all
-                button.disabled = true
-            } else if (mode == "servo" && !PWMPins.includes(pinNum)) {
-                // cannot use servo on this pin!
-                button.disabled = true
-            }
+            const modeSelectRow = document.createElement("tr")
+            const modeSelectCell = document.createElement("td")
+            PIN_MODE_REGISTRY.forEach(({ name: mode }, ind) => {
+                const button = document.createElement("input")
+                button.type = "radio"
+                button.name = `setMode${pinNum}`
+                button.id = `setMode${pinNum}${mode}`
+                button.value = ind.toString()
+                button.onclick = () => updatePinMode(pinNum, button.value)
 
-            const label = document.createElement("label")
-            label.for = button.id
-            label.innerText = mode
-            modeSelectCell.appendChild(button)
-            modeSelectCell.appendChild(label)
-        })
+                if (mode == "servo" && !PWMPins.includes(pinNum)) {
+                    // cannot use servo on this pin!
+                    button.disabled = true
+                }
 
-        const rowLabel = document.createElement("td")
-        const rowLabelCode = document.createElement("code")
-        rowLabelCode.innerText = pinTooltips[pinNum]
-        rowLabel.appendChild(rowLabelCode)
-        modeSelectRow.appendChild(rowLabel)
-        modeSelectRow.appendChild(modeSelectCell)
-        setModes.appendChild(modeSelectRow)
+                const label = document.createElement("label")
+                label.for = button.id
+                label.innerText = mode
+                modeSelectCell.appendChild(button)
+                modeSelectCell.appendChild(label)
+            })
+            const rowLabel = document.createElement("td")
+            const rowLabelCode = document.createElement("code")
+            rowLabelCode.innerText = pinTooltips[pinNum]
+            rowLabel.appendChild(rowLabelCode)
+            modeSelectRow.appendChild(rowLabel)
+            modeSelectRow.appendChild(modeSelectCell)
+            setModes.appendChild(modeSelectRow)
+        }
 
         let img = new Image(32)
         img.src = "assets/unknown.svg"
