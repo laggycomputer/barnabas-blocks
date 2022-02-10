@@ -43,92 +43,97 @@
             <code>chrome://flags</code>
         </div>
         <br>
-        <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
-        <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
-        <button id="butConnect" type="button">Connect</button>
-        <br>
-        <br>
-        <label for="butAutoRefresh">Automatically refresh?</label>
-        <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
-        <button id="butRefresh" type="button">Refresh</button>
-        <hr>
 
-        <p>Set pin modes:</p>
-        <table id="setModes"></table>
-        <br>
+        <table id="hudBox">
+            <tr>
+                <td id="hudRowSettings">
+                    <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
+                    <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
+                    <br>
+                    <br>
+                    <button id="butConnect" type="button">Connect</button>
+                    <br>
+                    <br>
+                    <label for="butAutoRefresh">Automatically refresh?</label>
+                    <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
+                    <button id="butRefresh" type="button">Refresh</button>
+                </td>
+                <td id="hudRowControls">
+                    <p>Set pin modes:</p>
+                    <table id="setModes"></table>
+                    <p>Servos:</p>
+                    <table id="setServos">
+                    </table>
+                </td>
+                <td id="hudRowRedings">
+                    <p>Inputs:</p>
+                    <p id="inputStatesGrid"></p>
 
-        <p>Inputs:</p>
-        <p id="inputStatesGrid"></p>
-
-        <table>
-            <tr>
-                <td>Pin</td>
-                <td>Voltage (0-1023)</td>
-                <td>Voltage (0-5 volts)</td>
-            </tr>
-            <tr>
-                <td><code>A0</code></td>
-                <td>
-                    <div id="A0"></div>
-                </td>
-                <td>
-                    <div id="A0V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A1</code></td>
-                <td>
-                    <div id="A1"></div>
-                </td>
-                <td>
-                    <div id="A1V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A2</code></td>
-                <td>
-                    <div id="A2"></div>
-                </td>
-                <td>
-                    <div id="A2V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A3</code></td>
-                <td>
-                    <div id="A3"></div>
-                <td>
-                    <div id="A3V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A4</code></td>
-                <td>
-                    <div id="A4"></div>
-                </td>
-                <td>
-                    <div id="A4V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A5</code></td>
-                <td>
-                    <div id="A5"></div>
-                </td>
-                <td>
-                    <div id="A5V"></div>
+                    <table id="analogOutputsGrid">
+                        <thead>
+                            <th>Pin</th>
+                            <th>Voltage (0-1023)</th>
+                            <th>Voltage (0-5 volts)</th>
+                        </thead>
+                        <tr>
+                            <td><code>A0</code></td>
+                            <td>
+                                <div id="A0"></div>
+                            </td>
+                            <td>
+                                <div id="A0V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A1</code></td>
+                            <td>
+                                <div id="A1"></div>
+                            </td>
+                            <td>
+                                <div id="A1V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A2</code></td>
+                            <td>
+                                <div id="A2"></div>
+                            </td>
+                            <td>
+                                <div id="A2V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A3</code></td>
+                            <td>
+                                <div id="A3"></div>
+                            <td>
+                                <div id="A3V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A4</code></td>
+                            <td>
+                                <div id="A4"></div>
+                            </td>
+                            <td>
+                                <div id="A4V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A5</code></td>
+                            <td>
+                                <div id="A5"></div>
+                            </td>
+                            <td>
+                                <div id="A5V"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>Outputs:</p>
+                    <p id="digitalOutputsGrid"></p>
                 </td>
             </tr>
         </table>
-
-        <p>Outputs:</p>
-        <p id="digitalOutputsGrid"></p>
-        <br>
-        <p>Servos:</p>
-        <table id="setServos">
-        </table>
-        <br>
-        <pre id="log"></pre>
     </main>
 </body>
 

@@ -252,13 +252,13 @@ const PIN_MODE_REGISTRY = [
             setModes.appendChild(modeSelectRow)
         }
 
-        let img = new Image(32)
+        let img = new Image(30)
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
         img.id = `input${pinNum}`
         inputStatesGrid.appendChild(img)
 
-        img = new Image(32)
+        img = new Image(30)
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
         img.id = `output${pinNum}`
