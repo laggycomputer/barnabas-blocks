@@ -16,9 +16,8 @@
 <html lang="en">
 
 <head>
-    <title>Web Serial Code Lab</title>
+    <title>Barnabas PLC</title>
     <meta charset="utf-8">
-    <meta name="codelab" content="getting-started-w-web-serial">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
@@ -34,7 +33,7 @@
 
 <body>
     <header class="header">
-        <h1>Getting Started with Web Serial</h1>
+        <h1>Arduino PLC</h1>
     </header>
     <main class="main">
         <div id="notSupported" class="hidden">
@@ -44,92 +43,109 @@
             <code>chrome://flags</code>
         </div>
         <br>
-        <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
-        <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
-        <button id="butConnect" type="button">Connect</button>
-        <br>
-        <br>
-        <label for="butAutoRefresh">Automatically refresh?</label>
-        <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
-        <button id="butRefresh" type="button">Refresh</button>
-        <hr>
 
-        <p>Set pin modes:</p>
-        <table id="setModes"></table>
-        <br>
+        <table id="hudBox">
+            <tr>
+                <td id="hudRowSettings">
+                    <p class="stepText" id="headerUploadStep">1. Upload Arduino-side code</p>
+                    <p class="stepText hidden" id="uploadingNotify">(uploading, please wait...)</p>
+                    <p id="newArduinoCode" class="newArduinoCode stepText hidden">The latest version of the Arduino-side code doesn't match the version you last uploaded (or you've never been here before). Please make sure you do this step!</p>
+                    <p id="newArduinoCodeAside" class="newArduinoCode stepText hidden">If this is a mistake, press this button to suppress this warning:</p>
+                    <button class="newArduinoCode stepText hidden" type="button" onclick="suppressNewCodeWarning()">Hide warning</button>
+                    <br class="newArduinoCode hidden">
+                    <br class="newArduinoCode hidden">
+                    <button type="button" onclick="flashCode(false)">Upload code (Uno)</button>
+                    <button type="button" onclick="flashCode(true)">Upload code (Nano)</button>
+                    <br>
+                    <br>
+                    <p class="stepText">2. Connect to Arduino</p>
+                    <button id="butConnect" type="button">Connect</button>
+                    <br>
+                    <br>
+                    <p class="stepText">3. Use panel (to the right)</p>
+                    <label for="butAutoRefresh">Automatically refresh data?</label>
+                    <input type="checkbox" id="butAutoRefresh" onchange="handleAutoRefreshChange()" checked=true>
+                    <br>
+                    <br>
+                    <button id="butRefresh" type="button">Manually refresh</button>
+                    <br>
+                </td>
+                <td id="hudRowControls">
+                    <p>Set pin modes:</p>
+                    <table id="setModes"></table>
+                    <p>Servos:</p>
+                    <table id="setServos">
+                    </table>
+                </td>
+                <td id="hudRowRedings">
+                    <p>Inputs:</p>
+                    <p id="inputStatesGrid"></p>
 
-        <p>Inputs:</p>
-        <p id="inputStatesGrid"></p>
-
-        <table>
-            <tr>
-                <td>Pin</td>
-                <td>Voltage (0-1023)</td>
-                <td>Voltage (0-5 volts)</td>
-            </tr>
-            <tr>
-                <td><code>A0</code></td>
-                <td>
-                    <div id="A0"></div>
-                </td>
-                <td>
-                    <div id="A0V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A1</code></td>
-                <td>
-                    <div id="A1"></div>
-                </td>
-                <td>
-                    <div id="A1V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A2</code></td>
-                <td>
-                    <div id="A2"></div>
-                </td>
-                <td>
-                    <div id="A2V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A3</code></td>
-                <td>
-                    <div id="A3"></div>
-                <td>
-                    <div id="A3V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A4</code></td>
-                <td>
-                    <div id="A4"></div>
-                </td>
-                <td>
-                    <div id="A4V"></div>
-                </td>
-            </tr>
-            <tr>
-                <td><code>A5</code></td>
-                <td>
-                    <div id="A5"></div>
-                </td>
-                <td>
-                    <div id="A5V"></div>
+                    <table id="analogOutputsGrid">
+                        <thead>
+                            <th>Pin</th>
+                            <th>Voltage (0-1023)</th>
+                            <th>Voltage (0-5 volts)</th>
+                        </thead>
+                        <tr>
+                            <td><code>A0</code></td>
+                            <td>
+                                <div id="A0"></div>
+                            </td>
+                            <td>
+                                <div id="A0V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A1</code></td>
+                            <td>
+                                <div id="A1"></div>
+                            </td>
+                            <td>
+                                <div id="A1V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A2</code></td>
+                            <td>
+                                <div id="A2"></div>
+                            </td>
+                            <td>
+                                <div id="A2V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A3</code></td>
+                            <td>
+                                <div id="A3"></div>
+                            <td>
+                                <div id="A3V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A4</code></td>
+                            <td>
+                                <div id="A4"></div>
+                            </td>
+                            <td>
+                                <div id="A4V"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>A5</code></td>
+                            <td>
+                                <div id="A5"></div>
+                            </td>
+                            <td>
+                                <div id="A5V"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>Outputs:</p>
+                    <p id="digitalOutputsGrid"></p>
                 </td>
             </tr>
         </table>
-
-        <p>Outputs:</p>
-        <p id="digitalOutputsGrid"></p>
-        <br>
-        <p>Servos:</p>
-        <table id="setServos">
-        </table>
-        <br>
-        <pre id="log"></pre>
     </main>
 </body>
 

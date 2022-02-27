@@ -196,14 +196,49 @@ void loop() {
 }
 `
 
+/**
+ * @name getArduinoCodeHash
+ * Get the SHA-1 of the latest version of the Arduino side code.
+ * 
+ * @returns The SHA-1 hash as a hex string, `null` if this browser does not natively support hashing via `window.crypto.subtle`.
+ */
+async function getArduinoCodeHash() {
+    if ("subtle" in window.crypto) {
+        // encoded arduino code in utf-8, send to a buffer, digest with SHA-1, encode in hex
+        const encoded = (new TextEncoder()).encode(arduinoSideCode).buffer
+        return Array.from(new Uint8Array(await window.crypto.subtle.digest("SHA-1", encoded))).map(b => b.toString(16).padStart(2, "0")).join("")
+    } else {
+        return null
+    }
+}
+
 const PIN_MODE_REGISTRY = [
     { name: "input", img: "input.svg" },
     { name: "output", img: "output.svg" },
     { name: "servo", img: "servo.png" },
 ];
 
-// IIFE for GC
-(() => {
+let port
+let reader
+let inputDone
+let outputDone
+let inputStream
+let outputStream
+let latestPinModes
+let latestDOState
+let latestServoAngles
+let autoRefreshIntervalID
+
+const butConnect = document.getElementById("butConnect")
+const butRefresh = document.getElementById("butRefresh")
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    butConnect.addEventListener("click", clickConnect)
+    butRefresh.addEventListener("click", clickRefresh)
+
+    document.getElementById("notSupported").classList.toggle("hidden", "serial" in navigator)
+
     const addlPinInfo = {
         0: "Serial RX", 1: "Serial TX", 13: "Built-in LED",
         14: "A0", 15: "A1", 16: "A2", 17: "A3", 18: "A4", 19: "A5"
@@ -220,46 +255,45 @@ const PIN_MODE_REGISTRY = [
     const setServos = document.getElementById("setServos")
 
     for (const pinNum of pins) {
-        const modeSelectRow = document.createElement("tr")
-        const modeSelectCell = document.createElement("td")
-        PIN_MODE_REGISTRY.forEach(({ name: mode }, ind) => {
-            const button = document.createElement("input")
-            button.type = "radio"
-            button.name = `setMode${pinNum}`
-            button.id = `setMode${pinNum}${mode}`
-            button.value = ind.toString()
-            button.onclick = () => updatePinMode(pinNum, button.value)
+        if (pinNum > 1 && pinNum < 14) {
 
-            if (pinNum <= 1 || pinNum > 13) {
-                // cannot change this pin's state at all
-                button.disabled = true
-            } else if (mode == "servo" && !PWMPins.includes(pinNum)) {
-                // cannot use servo on this pin!
-                button.disabled = true
-            }
+            const modeSelectRow = document.createElement("tr")
+            const modeSelectCell = document.createElement("td")
+            PIN_MODE_REGISTRY.forEach(({ name: mode }, ind) => {
+                const button = document.createElement("input")
+                button.type = "radio"
+                button.name = `setMode${pinNum}`
+                button.id = `setMode${pinNum}${mode}`
+                button.value = ind.toString()
+                button.onclick = () => updatePinMode(pinNum, button.value)
 
-            const label = document.createElement("label")
-            label.for = button.id
-            label.innerText = mode
-            modeSelectCell.appendChild(button)
-            modeSelectCell.appendChild(label)
-        })
+                if (mode == "servo" && !PWMPins.includes(pinNum)) {
+                    // cannot use servo on this pin!
+                    button.disabled = true
+                }
 
-        const rowLabel = document.createElement("td")
-        const rowLabelCode = document.createElement("code")
-        rowLabelCode.innerText = pinTooltips[pinNum]
-        rowLabel.appendChild(rowLabelCode)
-        modeSelectRow.appendChild(rowLabel)
-        modeSelectRow.appendChild(modeSelectCell)
-        setModes.appendChild(modeSelectRow)
+                const label = document.createElement("label")
+                label.for = button.id
+                label.innerText = mode
+                modeSelectCell.appendChild(button)
+                modeSelectCell.appendChild(label)
+            })
+            const rowLabel = document.createElement("td")
+            const rowLabelCode = document.createElement("code")
+            rowLabelCode.innerText = pinTooltips[pinNum]
+            rowLabel.appendChild(rowLabelCode)
+            modeSelectRow.appendChild(rowLabel)
+            modeSelectRow.appendChild(modeSelectCell)
+            setModes.appendChild(modeSelectRow)
+        }
 
-        let img = new Image(32)
+        let img = new Image(30)
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
         img.id = `input${pinNum}`
         inputStatesGrid.appendChild(img)
 
-        img = new Image(32)
+        img = new Image(30)
         img.src = "assets/unknown.svg"
         img.title = pinTooltips[pinNum]
         img.id = `output${pinNum}`
@@ -296,31 +330,25 @@ const PIN_MODE_REGISTRY = [
             setServos.appendChild(thisRow)
         }
     }
-})()
 
+    const lastCodeHash = localStorage.getItem("lastCodeHash")
 
-let port
-let reader
-let inputDone
-let outputDone
-let inputStream
-let outputStream
-let latestPinModes
-let latestDOState
-let latestServoAngles
-let autoRefreshIntervalID
-
-const butConnect = document.getElementById("butConnect")
-const butRefresh = document.getElementById("butRefresh")
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    butConnect.addEventListener("click", clickConnect)
-    butRefresh.addEventListener("click", clickRefresh)
-
-    const notSupported = document.getElementById("notSupported")
-    notSupported.classList.toggle("hidden", "serial" in navigator)
+    getArduinoCodeHash().then(latestHash => {
+        // if there is a hash in storage and it is wrong, complain
+        // don't complain if we are up to date (hashes match) or if first visit (stored hash is null)
+        if ((latestHash ?? lastCodeHash) != lastCodeHash) {
+            Array.from(document.getElementsByClassName("newArduinoCode")).forEach(elem => elem.classList.toggle("hidden", false))
+        }
+    })
 })
+
+/**
+ * @name suppressNewCodeWarning
+ * Hide the warning which shows when the saved latest hash of the Arduino-side code does not match the latest hash (or the saved hash is missing).
+ */
+function suppressNewCodeWarning() {
+    Array.from(document.getElementsByClassName("newArduinoCode")).forEach(elem => elem.classList.toggle("hidden", true))
+}
 
 function clickRefresh() {
     if (port) {
@@ -348,16 +376,16 @@ function toggleDigitalOutput(pin) {
     if (port && latestDOState != undefined) {
         const newDOState = latestDOState.split("")
         switch (latestDOState[pin]) {
-        case "1":
-            newDOState[pin] = "0"
-            break
-        case "0":
-            newDOState[pin] = "1"
-            break
-        case "?":
-            updatePinMode(pin)
-            newDOState[pin] = "1"
-            break
+            case "1":
+                newDOState[pin] = "0"
+                break
+            case "0":
+                newDOState[pin] = "1"
+                break
+            case "?":
+                updatePinMode(pin)
+                newDOState[pin] = "1"
+                break
         }
         writeToStream(`DO=${newDOState.join("")}\n`)
         clickRefresh()
@@ -454,6 +482,11 @@ function flashCode(nano = false, code = "", options = {}) {
         toggleUIConnected(false)
     }
 
+    // even if upload is cancelled, hide warning
+    suppressNewCodeWarning()
+    getArduinoCodeHash().then(hash => localStorage.setItem("lastCodeHash", hash))
+    document.getElementById("uploadingNotify").classList.remove("hidden")
+
     fetch("https://compile.barnabasrobotics.com/compile", {
         method: "POST",
         headers: {
@@ -466,6 +499,7 @@ function flashCode(nano = false, code = "", options = {}) {
             console.log(data)
             if (!data.success) {
                 if (data.stderr.length > 0) {
+                    document.getElementById("uploadingNotify").classList.add("hidden")
                     const regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g
                     const message = data.stderr.replace(regex, "")
                     alert(`Compilation error:\n${message}\n`)
@@ -482,6 +516,7 @@ function flashCode(nano = false, code = "", options = {}) {
                     })
 
                     avrgirl.flash(str2ab(hex.data), (error) => {
+                        document.getElementById("uploadingNotify").classList.add("hidden")
                         if (error) {
                             alert(`Upload error:\n${error}\n`)
                             avrgirl.connection.serialPort.close()
@@ -490,6 +525,7 @@ function flashCode(nano = false, code = "", options = {}) {
                         }
                     }, options)
                 } catch (error) {
+                    document.getElementById("uploadingNotify").classList.add("hidden")
                     alert(`AVR error:\n${error}\n`)
                     avrgirl.connection.serialPort.close()
                 }
