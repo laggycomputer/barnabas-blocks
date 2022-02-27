@@ -135,6 +135,10 @@ table {
   padding-right: 5px;
 }
 
+#uploadingNotify {
+  color: #3f51b5;
+}
+
 table, th, td {
   border: 1px solid black;
 }
