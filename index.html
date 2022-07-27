@@ -12,9 +12,7 @@
   <script src="./js/blocks_compressed.js"></script>
   <script src="./js/arduino_compressed.js"></script>
   <script src="./js/typedVarModal.js"></script>
-  <script src="./blocks/custom_blocks.js"></script>
-  <script src="./js/md5-2.18.0.min.js"></script>
-  <script src="./generators/custom_generators.js"></script>
+  <script src="./blocks/custom/arduino.js"></script>
   <link rel="icon" href="faviconGear.ico" type="image/x-icon">
   <link rel="shortcut icon" href="faviconGear.ico" type="image/x-icon">
 </head>
@@ -53,7 +51,6 @@
           <select id="boardSelect" class="">
             <option value="nano">Noggin</option>
             <option value="uno">Uno</option>
-            <option value="ezDisplay">ezDisplay</option>
           </select>
         </span>
         <span>
@@ -61,20 +58,16 @@
           <select id="lessonSelect" class="">
             <option value="bot">Barnabas Bot</option>
             <option value="racer">Advanced</option>
-            <option value="ezDisplay">ezDisplay</option>
           </select>
         </span>
         <button id="linkButton" class="notext" title="...">
-          <img src='media/1x1.gif' class="link icon21">
+          <img src='../../media/1x1.gif' class="link icon21">
         </button>
         <button id="runButton" class="" title="...">
           UPLOAD
         </button>
         <button id="compileButton" class="" title="...">
           COMPILE
-        </button>
-        <button id="img2hex" onclick="window.open('img2hex.html')" class="hide">
-          IMAGE MAKER
         </button>
       </td>
       <td class="farSide">
@@ -180,7 +173,6 @@
       <block type="logic_operation"></block>
       <block type="logic_negate"></block>
       <block type="logic_boolean"></block>
-      <block type="extra_logic"></block>
       <block type="logic_null"></block>
       <block type="logic_ternary"></block>
     </category>
@@ -198,7 +190,7 @@
         </value>
       </block>
       <block type="math_single">
-        <value name="NUM"> 
+        <value name="NUM">
           <block type="math_number">
             <field name="NUM">9</field>
           </block>
@@ -340,23 +332,6 @@
           </block>
         </value>
       </block>
-      <block type="pulsein">
-        <value name="pin">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="type">
-          <block type="boolean_hilo">
-            <field name="BOOL">HIGH</field>
-          </block>
-        </value>
-        <value name="timeout">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-      </block>
     </category>
   </xml>
 
@@ -430,201 +405,6 @@
           </block>
         </value>
       </block>
-    </category>
-  </xml>
-
-  <xml xmlns="https://developers.google.com/blockly/xml" id="ezDisplay_toolbox" style="display: none">
-    <category id="ezDisplay_controls" name="Controls" categorystyle="controls" >
-      <block type="controls_setup" class="ezDisplay"></block>
-      <block type="controls_wait">
-        <value name="DELAY_TIME">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-      </block>
-      <block type="controls_repeat_times">
-        <value name="TIMES">
-          <block type="math_number">
-            <field name="NUM">5</field>
-          </block>
-        </value>
-      </block>
-      <block type="controls_delay" class="ezDisplay">
-        <value name="DELAY_TIME">
-          <block type="math_number">
-            <field name="NUM">1000</field>
-          </block>
-        </value>
-      </block>
-      <block type="controls_if" colour="60"></block>
-      <block type="controls_if">
-        <mutation else="1"></mutation>
-      </block>
-      <block type="controls_if">
-        <mutation elseif="1" else="1"></mutation>
-      </block>
-      <block type="controls_whileUntil" class="ezDisplay"></block>
-      <block type="controls_flow_statements" class="ezDisplay"></block>
-      <category name="Subroutines" colour="60" custom="PROCEDURE" class="ezDisplay"></category>
-    </category>
-    <category id="ezDisplay_test" name="Tests" categorystyle="tests" class="ezDisplay">
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
-      <block type="extra_logic"></block>
-      <block type="logic_null"></block>
-      <block type="logic_ternary"></block>
-    </category>
-    <category name="Math Operators" categorystyle="math" class="ezDisplay">
-      <block type="math_arithmetic">
-        <value name="A">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="B">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-      </block>
-      <block type="math_single">
-        <value name="NUM">
-          <block type="math_number">
-            <field name="NUM">9</field>
-          </block>
-        </value>
-      </block>
-      <block type="math_trig">
-        <value name="NUM">
-          <block type="math_number">
-            <field name="NUM">45</field>
-          </block>
-        </value>
-      </block>
-      <block type="math_constrain">
-        <value name="VALUE">
-          <block type="math_number">
-            <field name="NUM">50</field>
-          </block>
-        </value>
-        <value name="LOW">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="HIGH">
-          <block type="math_number">
-            <field name="NUM">100</field>
-          </block>
-        </value>
-      </block>
-      <block type="math_random_int">
-        <value name="FROM">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="TO">
-          <block type="math_number">
-            <field name="NUM">100</field>
-          </block>
-        </value>
-      </block>
-      <block type="operators_map"></block>
-    </category>
-    <category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="CREATE_TYPED_VARIABLE" class="ezDisplay"></category>
-    <category name="Constants" categorystyle="constants" class="ezDisplay">
-      <block type="math_number">
-        <field name="NUM">123</field>
-      </block>
-      <block type="math_constant"></block>
-      <block type="boolean_onoff"></block>
-      <block type="text"></block>
-    </category>
-    <category name="Sensors" categorystyle="sensors" class="ezDisplay">
-      <block type="logic_compare" inputsInline="false">
-        <value name="A">
-          <block type="boolean_button">
-            <field name="PIN">4</field>
-          </block>
-        </value>
-        <value name="B">
-          <block type="boolean_pressed"></block>
-        </value>
-      </block>
-      <block type="pulsein">
-        <value name="pin">
-          <block type="math_number">
-            <field name="NUM">4</field>
-          </block>
-        </value>
-        <value name="type">
-          <block type="boolean_hilo">
-            <field name="BOOL">LOW</field>
-          </block>
-        </value>
-        <value name="timeout">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-      </block>
-    </category>
-    <category name="ezDisplay" categorystyle="ezDisplay" class="ezDisplay">
-      <block type="SSD1306_clear"></block>
-      <block type="SSD1306_print">
-        <value name="CONTENT">
-          <block type="text"></block>
-        </value>
-      </block>
-      <block type="SSD1306_set_font">
-        <value name="FONT">
-          <block type="SSD1306_font"> </block>
-        </value>
-      </block>
-      <block type="SSD1306_set_cursor">
-        <value name="X">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-        <value name="Y">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-      </block>
-      <block type="SSD1306_print_image">
-        <value name="CONTENT">
-          <block type="text"></block>
-        </value>
-        <value name="X">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-        <value name="Y">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-        <value name="W">
-          <block type="math_number">
-            <field name="NUM">128</field>
-          </block>
-        </value>
-        <value name="H">
-          <block type="math_number">
-            <field name="NUM">8</field>
-          </block>
-        </value>
-      </block>
-      <block type="SSD1306_framebuffer_render"></block>
-      <block type="SSD1306_framebuffer_display"></block>
-      <block type="SSD1306_framebuffer_both"></block>
     </category>
   </xml>
 
