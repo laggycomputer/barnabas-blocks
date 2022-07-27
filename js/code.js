@@ -615,6 +615,7 @@ Code.init = function () {
   Code.bindClick('newButton', Code.new);
   Code.bindClick('runButton', Code.flash);
   Code.bindClick('compileButton', Code.compile);
+  Code.bindClick('img2hex', () => window.open('img2hex.html'))
   Code.bindClick('saveButton', Code.save);
   Code.bindClick('editButton', Code.editText);
   Code.bindClick('monitorButton', Code.monitor);
