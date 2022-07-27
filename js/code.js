@@ -36,6 +36,8 @@ Code.LANGUAGE_RTL = ['ar', 'fa', 'he', 'lki'];
  */
 Code.workspace = null;
 
+Code.hasConfirmedBoard = false;
+
 /**
  * Extracts a parameter from the URL.
  * If the parameter is absent default_value is returned.
@@ -360,7 +362,7 @@ Code.tabClick = function (clickedName) {
     if (!port) connect();
   } else {
     if (port) disconnect();
-  } 
+  }
 
   Blockly.svgResize(Code.workspace);
 };
@@ -377,9 +379,9 @@ Code.renderContent = function () {
     var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
     xmlTextarea.value = xmlText;
     xmlTextarea.focus();
-  } else if (content.id == 'content_arduino' && Code.getEditor()=='blocks') {
+  } else if (content.id == 'content_arduino' && Code.getEditor() == 'blocks') {
     Code.attemptCodeGeneration(Blockly.Arduino);
-  } else if (content.id == 'content_editor' && Code.getEditor()=='blocks') {
+  } else if (content.id == 'content_editor' && Code.getEditor() == 'blocks') {
     Code.attemptCodeGeneration(Blockly.Arduino);
   }
   if (typeof PR == 'object') {
@@ -449,9 +451,7 @@ Code.checkAllGeneratorFunctionsDefined = function (generator) {
 Code.checkRoots = function () {
 
   let lesson = Code.getLesson();
-  let blocks = Code.workspace.getBlocksByType('controls_loop');
-  if (lesson == 'racer')
-    blocks = Code.workspace.getBlocksByType('controls_setup');
+  let blocks = lesson == 'bot' ? Code.workspace.getBlocksByType('controls_loop') : Code.workspace.getBlocksByType('controls_setup');
 
   let roots = blocks.length;
   let singleRoot = roots == 1;
@@ -569,6 +569,14 @@ Code.init = function () {
     function () {
       localStorage.setItem('board', this.value);
       document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
+
+      if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
+        document.getElementById("img2hex").classList.remove("hide")
+      } else {
+        document.getElementById("img2hex").classList.add("hide")
+      }
+
+      onresize()
     });
 
   Code.bindClick('lessonSelect',
@@ -579,13 +587,21 @@ Code.init = function () {
         // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
         let newTree = Code.buildToolbox(this.value);
         Code.workspace.updateToolbox(newTree);
-        if (prev === 'racer') {
+        console.log(this.value)
+        if (prev != 'bot' && this.value === 'bot') {
           document.getElementById('title').textContent = "BOT";
           Code.discard();
         } else {
           document.getElementById('title').textContent = "Advanced";
           Code.switchLoops();
         }
+
+        if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
+          document.getElementById("img2hex").classList.remove("hide")
+        } else {
+          document.getElementById("img2hex").classList.add("hide")
+        }
+
         onresize();
       }
     });
@@ -598,7 +614,7 @@ Code.init = function () {
   Code.bindClick('saveButton', Code.save);
   Code.bindClick('editButton', Code.editText);
   Code.bindClick('monitorButton', Code.monitor);
-  Code.bindClick('clearMonitor', 
+  Code.bindClick('clearMonitor',
     function () {
       document.getElementById('content_monitor').textContent = '';
     }
@@ -645,31 +661,32 @@ Code.init = function () {
       // Prevent clicks on child codeMenu from triggering a tab click.
       return;
     }
-    Code.changeCodingLanguage();  
+    Code.changeCodingLanguage();
   });
 
   onresize();
   Blockly.svgResize(Code.workspace);
 
   // Lazy-load the syntax-highlighting.
-  window.setTimeout(Code.importPrettify, 1);
+  window.setTimeout(Code.importPrettify, 0);
 
   // old init loadxml();
   Code.initEditor();
 
   // prepare for variable types
-  const varTypes = [['Int', "Int"],
-                    ['Long','Long'],
-                    ['Float','Float'],
-                    ['Boolean','Boolean'],
-                    ['String','String'],
-                  ];
+  const varTypes = [
+    ['Int', "Int"],
+    ['Long', 'Long'],
+    ['Float', 'Float'],
+    ['Boolean', 'Boolean'],
+    ['String', 'String'],
+  ];
   Code.workspace.registerToolboxCategoryCallback('CREATE_TYPED_VARIABLE', createFlyout);
-  const typedVarModal = new TypedVariableModal(Code.workspace, 'callbackName', varTypes); 
+  const typedVarModal = new TypedVariableModal(Code.workspace, 'callbackName', varTypes);
   typedVarModal.init();
 };
 
-const createFlyout = function(workspace) {
+const createFlyout = function (workspace) {
   let xmlList = [];
   // Add your button and give it a callback name.
   const button = document.createElement('button');
@@ -788,14 +805,42 @@ Code.initSelects = function () {
  * 
  */
 Code.getHex = function (flash = false) {
+  if (!Code.hasConfirmedBoard) {
+    if (!confirm("Please check your board and press OK to dismiss this warning forever. To change your board, press Cancel.")) {
+      return
+    }
+    Code.hasConfirmedBoard = true;
+  }
 
   let code = Code.getINO();
 
   let board = Code.getBoard();
-  if (board == 'uno') {
-    var avr = 'arduino:avr:uno';
-  } else {
-    var avr = 'arduino:avr:nano:cpu=atmega328';
+
+  if (flash && board === 'ezDisplay') {
+    alert("Uploading is not implemented for ezDisplay.");
+    return;
+  }
+
+  if (Code.getEditor() === 'blocks') {
+    if (!(Code.getLesson() === 'ezDisplay') != !(board === 'ezDisplay')) {
+      alert('You must use both the ezDisplay board and lesson, not only one or the other.');
+      return;
+    }
+  }
+
+  switch (board) {
+    case 'uno':
+      var avr = 'arduino:avr:uno';
+      break;
+    case 'nano':
+      var avr = 'arduino:avr:nano:cpu=atmega328';
+      break;
+    case 'ezDisplay':
+      var avr = 'ATTinyCore:avr:attinyx5';
+      break;
+    default:
+      alert('Invalid board.');
+      return;
   }
 
   let data = { sketch: code, board: avr };
@@ -816,12 +861,13 @@ Code.getHex = function (flash = false) {
         // // can only run below if arduino compile error I can still get response with garbage body
         if (data.stderr.length > 0) {
           let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
-          let message = data.stderr.replace(regex, "");
+          let other_regex = /\/tmp\/waca\-(.*?)\/waca\-(.*?)\.ino\:/g;
+          let message = data.stderr.replace(regex, "").replace(other_regex, "");
           console.error(message);
           upload_result(message, false)
           regex = /\d+\:\d+/g;
           let rowcol = message.match(regex);
-          let row = rowcol[0].substring(0,rowcol[0].indexOf(':'));
+          let row = rowcol[0].substring(0, rowcol[0].indexOf(':'));
           Code.ace.gotoLine(row);
         }
       } else {
@@ -870,7 +916,7 @@ Code.flash = function () {
   if (Code.getINO().includes('void setup')) {
     Code.getHex(true);
   } else {
-    let msg ='To Flash a program on to your device you need some primary functions.';
+    let msg = 'To Flash a program on to your device you need some primary functions.';
     if (Code.selected == 'blocks') {
       msg += '\nTry adding a starting block';
     } else {
@@ -884,7 +930,7 @@ Code.compile = function () {
   if (Code.getINO().includes('void setup')) {
     Code.getHex();
   } else {
-    let msg ='Before we Compile be sure to add some primary functions.';
+    let msg = 'Before we Compile be sure to add some primary functions.';
     if (Code.selected == 'blocks') {
       msg += '\nTry adding a starting block';
     } else {
@@ -899,13 +945,12 @@ Code.getINO = function () {
     return Blockly.Arduino.workspaceToCode()
   // return document.getElementById("content_arduino").value;
   return Code.ace.getValue();
-  return document.getElementById("content_arduino").value;
 }
 
 Code.switchLoops = function () {
   let blocks = Code.workspace.getBlocksByType('controls_loop');
 
-  if (blocks.length ==1) {
+  if (blocks.length == 1) {
     let racerLoop = Code.workspace.newBlock('controls_setup');
     racerLoop.initSvg();
     racerLoop.render();
@@ -962,32 +1007,32 @@ Code.new = function () {
  */
 Code.save = function () {
   let data = '';
-    let defaultName = 'myBlocks';
-    let fileType = 'text/xml';
-    let extension = '.xml';
+  let defaultName = 'myBlocks';
+  let fileType = 'text/xml';
+  let extension = '.xml';
 
-    let editor = Code.getEditor();
-    if (editor == 'blocks'){
-      var xml = Blockly.Xml.workspaceToDom(Code.workspace);
-      data = Blockly.Xml.domToText(xml);
-    } else {
-      data = Code.ace.getValue();
-      defaultName = 'mySketch';
-      fileType = 'text/plain;charset=utf-8';
-      extension = '.ino';
-    }
+  let editor = Code.getEditor();
+  if (editor == 'blocks') {
+    var xml = Blockly.Xml.workspaceToDom(Code.workspace);
+    data = Blockly.Xml.domToText(xml);
+  } else {
+    data = Code.ace.getValue();
+    defaultName = 'mySketch';
+    fileType = 'text/plain;charset=utf-8';
+    extension = '.ino';
+  }
 
-    var fileName = window.prompt('What would you like to name your file?', defaultName);
-  
-    // Store data in blob.
-    // var builder = new BlobBuilder();
-    // builder.append(data);
-    // saveAs(builder.getBlob('text/plain;charset=utf-8'), 'blockduino.xml');
-    if(fileName){
-      var blob = new Blob([data], {type: fileType});
-      saveAs(blob, fileName + extension);
-    } 
-  };
+  var fileName = window.prompt('What would you like to name your file?', defaultName);
+
+  // Store data in blob.
+  // var builder = new BlobBuilder();
+  // builder.append(data);
+  // saveAs(builder.getBlob('text/plain;charset=utf-8'), 'blockduino.xml');
+  if (fileName) {
+    var blob = new Blob([data], { type: fileType });
+    saveAs(blob, fileName + extension);
+  }
+};
 
 /**
  * Save blocks to local file.
@@ -1000,48 +1045,51 @@ Code.editText = function () {
   var arduinoTab = document.getElementById('tab_arduino');//className = 'taboff hide';
   let editor = Code.getEditor();
 
-    // onresize();
-    if (editor == 'blocks') {
-      Code.setEditor();
-      editButton.innerHTML="BLOCK CODE"
-      blocksTab.classList.add("hide");
-      textarea.readOnly = false;
-      Code.ace.setReadOnly(false);
-      // arduinoTab.classList.toggle("hide");
-      Code.tabClick('editor');
-    }
-    else if (confirm("Going back to blocks will remove any custom edits\n" + 
-                      "Do you wish to continue?")){
-      Code.setEditor();
-      editButton.innerHTML="TEXT CODE"
-      blocksTab.classList.remove("hide");
-      // arduinoTab.classList.toggle("hide");
-      textarea.readOnly = true;
-      Code.ace.setReadOnly(true);
-      Code.tabClick('blocks');
-      
-    }
+  // onresize();
+  if (editor == 'blocks') {
+    Code.setEditor();
+    editButton.innerHTML = "BLOCK CODE"
+    blocksTab.classList.add("hide");
+    textarea.readOnly = false;
+    Code.ace.setReadOnly(false);
+    // arduinoTab.classList.toggle("hide");
+    Code.tabClick('editor');
+  }
+  else if (confirm("Going back to blocks will remove any custom edits\n" +
+    "Do you wish to continue?")) {
+    Code.setEditor();
+    editButton.innerHTML = "TEXT CODE"
+    blocksTab.classList.remove("hide");
+    // arduinoTab.classList.toggle("hide");
+    textarea.readOnly = true;
+    Code.ace.setReadOnly(true);
+    Code.tabClick('blocks');
+
+  }
 };
 
 Code.ace = ace.edit("content_editor");
 
-Code.initEditor = function(init = true) {
+Code.initEditor = function (init = true) {
   // Code.selected = Code.EDITOR;
   Code.ace.setTheme("ace/theme/textmate");
   Code.ace.session.setMode("ace/mode/c_cpp");
   Code.ace.setShowPrintMargin(false);
   // Code.ace.session.setUseSoftTabs(true);
   Code.ace.session.setTabSize(2);
-  document.getElementById('content_editor').style.fontSize='14px';
+  document.getElementById('content_editor').style.fontSize = '14px';
 
   if (Code.EDITOR == 'editor') {
-    document.getElementById("editButton").innerHTML="BLOCK CODE"
+    document.getElementById("editButton").innerHTML = "BLOCK CODE"
     document.getElementById("tab_blocks").classList.add("hide");
     document.getElementById("content_arduino").readOnly = false;
     Code.ace.setReadOnly(false);
     Code.tabClick('editor');
+    if (Code.getLesson() != "ezDisplay" || Code.getBoard() != "ezDisplay") {
+      document.getElementById("img2hex").classList.add("hide")
+    }
   } else {
-    document.getElementById("editButton").innerHTML="TEXT CODE"
+    document.getElementById("editButton").innerHTML = "TEXT CODE"
     document.getElementById("content_arduino").readOnly = true;
     Code.ace.setReadOnly(true);
   }
@@ -1113,8 +1161,9 @@ const blockStyles =
   "math_blocks": { "colourPrimary": "#759749" },
   "procedure_blocks": { "colourPrimary": 60 },
   "control_blocks": { "colourPrimary": 60 },
-  "logic_blocks": { "colourPrimary": "#ffa555"},
+  "logic_blocks": { "colourPrimary": "#ffa555" },
   "loop_blocks": { "colourPrimary": 60 },
+  "ezDisplay_blocks": { "colourPrimary": "#530b77" },
 }
 
 const categoryStyles =
@@ -1129,6 +1178,7 @@ const categoryStyles =
   "sounds": { "colour": "#ff6900" },
   "motors": { "colour": 240 },
   "sensors": { "colour": 180 },
+  "ezDisplay": { "colour": "#530b77" },
 }
 
 Blockly.Themes.Barnabas = Blockly.Theme.defineTheme('barnabas', {

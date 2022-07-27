@@ -137,6 +137,9 @@ async function disconnect() {
  */
 async function connectUSB() {
     if ('serial' in navigator) {
+        if (port && port.readable === null && port.writable == null) {
+            port = null;
+        }
         if (port) {
             await disconnect();
             btnMonitor.innerText = 'CONNECT';

@@ -22,21 +22,16 @@ The core was started as a fork from [BlocklyDuino](https://github.com/makewithar
 This is a web tool for teaching [Barnabas Robotics Curriculum](https://lessons.barnabasrobotics.com). You can give it a try at https://code.barnabasrobotics.com.
 
 ### Creating New Blocks
-1. While old chromeduino blocks still exist in blocks a new directory blocks/custom has been added.
-you can create new files and add them to the index file or simply append them to the arduino.js file. 
-1. For code generation you can also append that to arduino.js in blocks/custom but it is recommended to add your new generator in the generators/arduino directory and insert that to your index file.
-
-Uploading the code to an arduino is currently a work in progress with eyes on [WebUSB](https://wicg.github.io/webusb/) or [WebSerial](https://github.com/WICG/serial)
-With special thanks to @noopkat https://github.com/noopkat/avrgirl-arduino we can now flash to our Barnabas Noggin
+1. Creating a new block has three parts - creating a block definition, creating a generator, and adding the block to a drawer. 
+2. Old blocks from Chromeduino are still used as a base layer of definitions. These should not be touched without good reason.
+3. New block definitions should be placed in `blocks/custom_blocks.js`.
+4. New generators should be added to `generators/custom_generators.js`. These are named to match block names. For example, the serial print block is defined with the name `print_ln`, and its generator has the same name.
+5. Finally, two XML trees in `index.html` defines how blocks appear in the simple and advanced "lessons" (accessible via the dropdown at the top of the page). If your block is simple enough to add to the simple lesson (this is quite rare), then it should be added to the simple lesson tree (labeled `bot_toolbox`). All new blocks should be added to the advanced lesson (labled `racer_toolbox`), which is designed to provide full access to available blocks.
 
 ### Authors and Contributors
 Fred Lin @gasolin is the creator of BlocklyDuino.
 
 Suz Hinton @noopkat for avrgirl.
-
-BlocklyDuino is a **web-based visual programming editor for [Arduino](http://www.arduino.cc/)**.
-
-BlocklyDuino is based on [Blockly](https://developers.google.com/blockly/), the web-based, graphical programming editor. Provide static type language blocks and code generators for Arduino programming.
 
 Thanks Neil Fraser, Q.Neutron from [Blockly](https://developers.google.com/blockly/)
 
@@ -45,32 +40,3 @@ The project is also inspired by [ardublock](https://github.com/taweili/ardublock
 [makewitharduino](https://github.com/makewitharduino/Online-BlocklyDuinoEditor) is work by @okhiroyuki
 
 There has been some interesting [chatter on Chromeduino](https://github.com/spaceneedle/Chromeduino/issues/12) perhaps some of these projects find a way to merge together.
-
-### License
-
-Copyright (C) 2020
-
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
-
-# Blockly [![Build Status]( https://travis-ci.org/google/blockly.svg?branch=master)](https://travis-ci.org/google/blockly)
-
-Google's Blockly is a web-based, visual programming editor.  Users can drag
-blocks together to build programs.  All code is free and open source.
-
-**The project page is https://developers.google.com/blockly/**
-
-![](https://developers.google.com/blockly/images/sample.png)
-
-Blockly has an active [developer forum](https://groups.google.com/forum/#!forum/blockly). Please drop by and say hello. Show us your prototypes early; collectively we have a lot of experience and can offer hints which will save you time.
-
-Help us focus our development efforts by telling us [what you are doing with
-Blockly](https://developers.google.com/blockly/registration). The questionnaire only takes
-a few minutes and will help us better support the Blockly community.
-
-Want to contribute? Great! First, read [our guidelines for contributors](https://developers.google.com/blockly/guides/modify/contributing).
-
-
