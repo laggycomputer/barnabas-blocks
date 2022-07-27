@@ -572,8 +572,10 @@ Code.init = function () {
 
       if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
         document.getElementById("img2hex").classList.remove("hide")
+        document.getElementById("compileButton").classList.add("hide")
       } else {
         document.getElementById("img2hex").classList.add("hide")
+        document.getElementById("compileButton").classList.remove("hide")
       }
 
       onresize()
@@ -598,8 +600,10 @@ Code.init = function () {
 
         if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
           document.getElementById("img2hex").classList.remove("hide")
+          document.getElementById("compileButton").classList.add("hide")
         } else {
           document.getElementById("img2hex").classList.add("hide")
+          document.getElementById("compileButton").classList.remove("hide")
         }
 
         onresize();
@@ -1087,6 +1091,7 @@ Code.initEditor = function (init = true) {
     Code.tabClick('editor');
     if (Code.getLesson() != "ezDisplay" || Code.getBoard() != "ezDisplay") {
       document.getElementById("img2hex").classList.add("hide")
+      document.getElementById("compileButton").classList.remove("hide")
     }
   } else {
     document.getElementById("editButton").innerHTML = "TEXT CODE"
