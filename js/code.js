@@ -578,7 +578,7 @@ Code.init = function () {
         document.getElementById("compileButton").classList.remove("hide")
       }
 
-      onresize()
+      onresize();
     });
 
   Code.bindClick('lessonSelect',
