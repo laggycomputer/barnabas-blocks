@@ -30,6 +30,27 @@ Blockly.Arduino.pulsein = function () {
     return [code, Blockly.Arduino.ORDER_ATOMIC];
 };
 
+Blockly.Arduino.sensors_sonic = function (block) {
+    const echoPin = Blockly.Arduino.valueToCode(block, "ECHO", Blockly.Arduino.ORDER_ATOMIC) || "3";
+    const triggerPin = Blockly.Arduino.valueToCode(block, "TRIGGER", Blockly.Arduino.ORDER_ATOMIC) || "4";
+    Blockly.Arduino.setups_["setup_output_" + triggerPin] = `pinMode(${triggerPin}, OUTPUT);`;
+    Blockly.Arduino.setups_["setup_output_" + echoPin] = `pinMode(${echoPin}, INPUT);`;
+    Blockly.Arduino.definitions_.define_Sonic_Timing = `
+long ultrasonic() {
+  digitalWrite(${triggerPin}, LOW);
+  delayMicroseconds(5);
+  digitalWrite(${triggerPin}, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(${triggerPin}, LOW);
+  float duration_ms = pulseIn(${echoPin}, HIGH);
+  float duration = duration_ms / 1000000;
+  float distance_meters = (343 * duration) / 2;
+  float distance_cm = distance_meters * 100;
+  return distance_cm;
+}\n`;
+    return ["ultrasonic()", Blockly.Arduino.ORDER_FUNCTION_CALL]
+};
+
 Blockly.Arduino.SSD1306_clear = function () {
     Blockly.Arduino.definitions_.define_Tiny4K = "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n";
     Blockly.Arduino.setups_.setup_SSD1306 = "oled.begin();\n"

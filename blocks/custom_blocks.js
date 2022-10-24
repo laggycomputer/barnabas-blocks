@@ -306,7 +306,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   // ultrasonic
   {
     "type": "sensors_sonic",
-    "message0": "ULTRASONIC trigger# %2 %1 echo# %3",
+    "message0": "ULTRASONIC trigger# %3 %1 echo# %2",
     "args0": [
       {
         "type": "field_image",
