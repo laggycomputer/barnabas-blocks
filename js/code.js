@@ -992,8 +992,17 @@ Code.new = function () {
   if (editor == 'blocks') {
     Code.discard(); Code.renderContent();
   } else {
-    document.getElementById("content_arduino").value = '';
-    Code.ace.setValue('');
+    const defaultCode = `void setup() {
+  
+}
+
+void loop() {
+  
+}
+`
+
+    document.getElementById("content_arduino").value = defaultCode;
+    Code.ace.setValue(defaultCode);
   }
 };
 
