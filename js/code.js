@@ -563,24 +563,22 @@ Code.init = function () {
 
   auto_backup_and_restore_blocks();
 
-  Code.bindClick('boardSelect',
-    function () {
-      localStorage.setItem('board', this.value);
-      document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
+  document.getElementById("boardSelect").addEventListener("change", function () {
+    localStorage.setItem('board', this.value);
+    document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
 
-      if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
-        document.getElementById("img2hex").classList.remove("hide")
-        document.getElementById("compileButton").classList.add("hide")
-      } else {
-        document.getElementById("img2hex").classList.add("hide")
-        document.getElementById("compileButton").classList.remove("hide")
-      }
+    if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
+      document.getElementById("img2hex").classList.remove("hide")
+      document.getElementById("compileButton").classList.add("hide")
+    } else {
+      document.getElementById("img2hex").classList.add("hide")
+      document.getElementById("compileButton").classList.remove("hide")
+    }
 
-      onresize();
-    });
+    onresize();
+  })
 
-  Code.bindClick('lessonSelect',
-    function () {
+  document.getElementById("lessonSelect").addEventListener("change", function () {
       let prev = Code.getLesson();
       localStorage.setItem('lesson', this.value);
       if (prev != this.value) {
@@ -605,7 +603,6 @@ Code.init = function () {
         }
 
         onresize();
-      }
     });
 
   Code.tabClick(Code.selected);
