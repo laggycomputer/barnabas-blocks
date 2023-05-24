@@ -579,31 +579,32 @@ Code.init = function () {
   })
 
   document.getElementById("lessonSelect").addEventListener("change", function () {
-      let prev = Code.getLesson();
-      localStorage.setItem('lesson', this.value);
-      if (prev != this.value) {
-        // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
-        let newTree = Code.buildToolbox(this.value);
-        Code.workspace.updateToolbox(newTree);
-        console.log(this.value)
-        if (prev != 'bot' && this.value === 'bot') {
-          document.getElementById('title').textContent = "BOT";
-          Code.discard();
-        } else {
-          document.getElementById('title').textContent = "Advanced";
-          Code.switchLoops();
-        }
+    let prev = Code.getLesson();
+    localStorage.setItem('lesson', this.value);
+    if (prev != this.value) {
+      // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
+      let newTree = Code.buildToolbox(this.value);
+      Code.workspace.updateToolbox(newTree);
+      console.log(this.value)
+      if (prev != 'bot' && this.value === 'bot') {
+        document.getElementById('title').textContent = "BOT";
+        Code.discard();
+      } else {
+        document.getElementById('title').textContent = "Advanced";
+        Code.switchLoops();
+      }
 
-        if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
-          document.getElementById("img2hex").classList.remove("hide")
-          document.getElementById("compileButton").classList.add("hide")
-        } else {
-          document.getElementById("img2hex").classList.add("hide")
-          document.getElementById("compileButton").classList.remove("hide")
-        }
+      if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
+        document.getElementById("img2hex").classList.remove("hide")
+        document.getElementById("compileButton").classList.add("hide")
+      } else {
+        document.getElementById("img2hex").classList.add("hide")
+        document.getElementById("compileButton").classList.remove("hide")
+      }
 
-        onresize();
-    });
+      onresize();
+    }
+  });
 
   Code.tabClick(Code.selected);
 
