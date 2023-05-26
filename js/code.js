@@ -563,12 +563,38 @@ Code.init = function () {
 
   auto_backup_and_restore_blocks();
 
-  Code.bindClick('boardSelect',
-    function () {
-      localStorage.setItem('board', this.value);
-      document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
+  document.getElementById("boardSelect").addEventListener("change", function () {
+    localStorage.setItem('board', this.value);
+    document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
 
-      if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
+    if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
+      document.getElementById("img2hex").classList.remove("hide")
+      document.getElementById("compileButton").classList.add("hide")
+    } else {
+      document.getElementById("img2hex").classList.add("hide")
+      document.getElementById("compileButton").classList.remove("hide")
+    }
+
+    onresize();
+  })
+
+  document.getElementById("lessonSelect").addEventListener("change", function () {
+    let prev = Code.getLesson();
+    localStorage.setItem('lesson', this.value);
+    if (prev != this.value) {
+      // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
+      let newTree = Code.buildToolbox(this.value);
+      Code.workspace.updateToolbox(newTree);
+      console.log(this.value)
+      if (prev != 'bot' && this.value === 'bot') {
+        document.getElementById('title').textContent = "BOT";
+        Code.discard();
+      } else {
+        document.getElementById('title').textContent = "Advanced";
+        Code.switchLoops();
+      }
+
+      if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
         document.getElementById("img2hex").classList.remove("hide")
         document.getElementById("compileButton").classList.add("hide")
       } else {
@@ -577,36 +603,8 @@ Code.init = function () {
       }
 
       onresize();
-    });
-
-  Code.bindClick('lessonSelect',
-    function () {
-      let prev = Code.getLesson();
-      localStorage.setItem('lesson', this.value);
-      if (prev != this.value) {
-        // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
-        let newTree = Code.buildToolbox(this.value);
-        Code.workspace.updateToolbox(newTree);
-        console.log(this.value)
-        if (prev != 'bot' && this.value === 'bot') {
-          document.getElementById('title').textContent = "BOT";
-          Code.discard();
-        } else {
-          document.getElementById('title').textContent = "Advanced";
-          Code.switchLoops();
-        }
-
-        if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
-          document.getElementById("img2hex").classList.remove("hide")
-          document.getElementById("compileButton").classList.add("hide")
-        } else {
-          document.getElementById("img2hex").classList.add("hide")
-          document.getElementById("compileButton").classList.remove("hide")
-        }
-
-        onresize();
-      }
-    });
+    }
+  });
 
   Code.tabClick(Code.selected);
 
