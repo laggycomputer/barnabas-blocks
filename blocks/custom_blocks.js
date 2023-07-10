@@ -719,6 +719,35 @@ Blockly.Blocks["pulsein"] = {
   }
 };
 
+Blockly.Blocks["analog_pin"] = {
+  init: function () {
+    this.setOutput(true, "AnalogPin")
+    this.setColour(230)
+
+    this.appendDummyInput().appendField(new Blockly.FieldDropdown([
+        ["A0", "A0"],
+        ["A1", "A1"],
+        ["A2", "A2"],
+        ["A3", "A3"],
+        ["A4", "A4"],
+        ["A5", "A5"],
+      ]), "PIN");
+  }
+}
+
+Blockly.Blocks["analog_read"] = {
+  init: function () {
+    this.setHelpUrl("https://www.arduino.cc/reference/en/language/functions/analog-io/analogread/");
+    this.setColour(180);
+    this.appendValueInput("PIN")
+      .setCheck(["AnalogPin"])
+      .appendField("ANALOG READ pin ");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setTooltip("Get analog voltage of a pin, 0-1023.");
+  }
+};
+
 Blockly.Blocks["SSD1306_clear"] = {
   init: function () {
     this.setTooltip("Clear the currently rendered framebuffer.");

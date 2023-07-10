@@ -30,6 +30,19 @@ Blockly.Arduino.pulsein = function () {
     return [code, Blockly.Arduino.ORDER_ATOMIC];
 };
 
+Blockly.Arduino.analog_pin = function (block) {
+    const pin = Blockly.Arduino.valueToCode(block, "PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
+
+    return [`${pin}`, Blockly.Arduino.ORDER_FUNCTION_CALL]
+}
+
+Blockly.Arduino.analog_read = function (block) {
+    const pin = block.getFieldValue("PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
+
+    Blockly.Arduino.setups_["setup_input_" + pin] = `pinMode(${pin}, INPUT);`;
+    return [`analogRead(${pin})`, Blockly.Arduino.ORDER_FUNCTION_CALL]
+}
+
 Blockly.Arduino.sensors_sonic = function (block) {
     const echoPin = Blockly.Arduino.valueToCode(block, "ECHO", Blockly.Arduino.ORDER_ATOMIC) || "3";
     const triggerPin = Blockly.Arduino.valueToCode(block, "TRIGGER", Blockly.Arduino.ORDER_ATOMIC) || "4";
