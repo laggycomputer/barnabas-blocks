@@ -39,7 +39,7 @@ Blockly.Arduino.analog_pin = function (block) {
 Blockly.Arduino.analog_read = function (block) {
     const pin = block.getFieldValue("PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
 
-    Blockly.Arduino.setups_["setup_input_" + pin] = `pinMode(${pin}, INPUT);`;
+    Blockly.Arduino.setups_["setup_output_" + pin] = `pinMode(${pin}, INPUT);`;
     return [`analogRead(${pin})`, Blockly.Arduino.ORDER_FUNCTION_CALL]
 }
 
