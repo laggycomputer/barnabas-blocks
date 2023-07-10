@@ -691,8 +691,8 @@ Blockly.Blocks["extra_logic"] = {
     this.setTooltip(function () {
       var op = thisBlock.getFieldValue("OP");
       var TOOLTIPS = {
-        "XOR": "bazinga",
-        "NOR": "bazinga"
+        "XOR": "eXclusive OR - true only if inputs differ",
+        "NOR": "neither NOR - true only if both inputs are false"
       };
       return TOOLTIPS[op];
     });
