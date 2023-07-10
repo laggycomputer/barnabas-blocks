@@ -31,13 +31,13 @@ Blockly.Arduino.pulsein = function () {
 };
 
 Blockly.Arduino.analog_pin = function (block) {
-    const pin = Blockly.Arduino.valueToCode(block, "PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
+    const pin = block.getFieldValue("PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
 
-    return [`${pin}`, Blockly.Arduino.ORDER_FUNCTION_CALL]
+    return [`${pin}`, Blockly.Arduino.ORDER_ATOMIC]
 }
 
 Blockly.Arduino.analog_read = function (block) {
-    const pin = block.getFieldValue("PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
+    const pin = Blockly.Arduino.valueToCode(block, "PIN", Blockly.Arduino.ORDER_ATOMIC) || "A0";
 
     Blockly.Arduino.setups_["setup_output_" + pin] = `pinMode(${pin}, INPUT);`;
     return [`analogRead(${pin})`, Blockly.Arduino.ORDER_FUNCTION_CALL]
