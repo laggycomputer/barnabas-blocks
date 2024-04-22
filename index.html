@@ -242,6 +242,7 @@
         <field name="NUM">123</field>
       </block>
       <block type="math_constant"></block>
+      <block type="analog_pin"></block>
       <block type="boolean_onoff"></block>
       <block type="boolean_hilo"></block>
       <block type="text"></block>
@@ -320,6 +321,13 @@
         </value>
         <value name="B">
           <block type="boolean_pressed"></block>
+        </value>
+      </block>
+      <block type="analog_read">
+        <value name="PIN">
+          <block type="analog_pin">
+            <field name="PIN">A0</field>
+          </block>
         </value>
       </block>
       <block type="sensors_sonic">
