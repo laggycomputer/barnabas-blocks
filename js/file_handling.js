@@ -1,3 +1,5 @@
+/* globals Blockly, Code */
+
 /**
  * Backup code blocks to localStorage.
  */
@@ -61,7 +63,7 @@ function load(event) {
         }
         Blockly.Xml.domToWorkspace(xml, Code.workspace);
       } else {
-        document.getElementById("content_arduino").value = target.result;
+        document.getElementById('content_arduino').value = target.result;
         Code.ace.setValue(target.result);
         Code.ace.gotoLine(1);
         Code.tabClick('editor');
@@ -77,6 +79,7 @@ function load(event) {
 /*
  * auto backup and restore blocks
  */
+// eslint-disable-next-line no-unused-vars
 function auto_backup_and_restore_blocks() {
   // Restore saved blocks in a separate thread so that subsequent
   // initialization is not affected from a failed load.

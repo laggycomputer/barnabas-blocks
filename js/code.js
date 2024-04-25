@@ -1,13 +1,5 @@
-/**
- * @license
- * Copyright 2012 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+/* global Blockly, BlocklyStorage, ace, AvrgirlArduino, TypedVariableModal, connect, disconnect, port, connectUSB, PR, auto_backup_and_restore_blocks, saveAs */
 
-/**
- * @fileoverview JavaScript for Blockly's Code demo.
- * @author fraser@google.com (Neil Fraser)
- */
 'use strict';
 
 
@@ -16,7 +8,7 @@
  */
 var Code = {};
 
-Code.COMPILE_URL = "https://compile.barnabasrobotics.com"
+Code.COMPILE_URL = 'https://compile.barnabasrobotics.com';
 /**
  * Lookup for names of supported languages.  Keys should be in ISO 639 format.
  */
@@ -67,7 +59,7 @@ Code.getLang = function () {
  */
 Code.getBoard = function () {
   var board = window.localStorage.board;
-  if (board === undefined || board == null || board === "") {
+  if (board === undefined || board == null || board === '') {
     // Default to nano.
     board = 'nano';
     localStorage.setItem('board', board);
@@ -81,14 +73,14 @@ Code.getBoard = function () {
  */
 Code.getAceFontSize = function () {
   let configuredSize = localStorage.getItem('aceFontSize');
-  if (configuredSize === undefined || configuredSize == null || configuredSize === "") {
+  if (configuredSize === undefined || configuredSize == null || configuredSize === '') {
     // nothing found.
-    configuredSize = "12";
+    configuredSize = '12';
     localStorage.setItem('aceFontSize', configuredSize);
   }
 
   return parseInt(configuredSize);
-}
+};
 
 /**
  * Get the board of this user from the URL.
@@ -96,7 +88,7 @@ Code.getAceFontSize = function () {
  */
 Code.getLesson = function () {
   let lesson = localStorage.getItem('lesson');
-  if (lesson === undefined || lesson == null || lesson === "") {
+  if (lesson === undefined || lesson == null || lesson === '') {
     // Default to bot.
     lesson = 'bot';
     localStorage.setItem('lesson', lesson);
@@ -110,7 +102,7 @@ Code.getLesson = function () {
  */
 Code.getEditor = function () {
   let editor = localStorage.getItem('editor');
-  if (editor === undefined || editor == null || editor === "") {
+  if (editor === undefined || editor == null || editor === '') {
     editor = 'blocks';
     localStorage.setItem('editor', editor);
   }
@@ -143,7 +135,7 @@ Code.loadBlocks = function (defaultXml) {
   } catch (e) {
     // Firefox sometimes throws a SecurityError when accessing sessionStorage.
     // Restarting Firefox fixes this, so it looks like a bug.
-    var loadOnce = null;
+    loadOnce = null;
   }
   if ('BlocklyStorage' in window && window.location.hash.length > 1) {
     // An href with #key trigers an AJAX call to retrieve saved blocks.
@@ -151,11 +143,11 @@ Code.loadBlocks = function (defaultXml) {
   } else if (loadOnce) {
     // Language switching stores the blocks during the reload.
     delete window.sessionStorage.loadOnceBlocks;
-    var xml = Blockly.Xml.textToDom(loadOnce);
+    const xml = Blockly.Xml.textToDom(loadOnce);
     Blockly.Xml.domToWorkspace(xml, Code.workspace);
   } else if (defaultXml) {
     // Load the editor with default starting blocks.
-    var xml = Blockly.Xml.textToDom(defaultXml);
+    const xml = Blockly.Xml.textToDom(defaultXml);
     Blockly.Xml.domToWorkspace(xml, Code.workspace);
   } else if ('BlocklyStorage' in window) {
     // Restore saved blocks in a separate thread so that subsequent
@@ -199,7 +191,7 @@ Code.changeLanguage = function () {
 Code.changeCodingLanguage = function () {
   var codeMenu = document.getElementById('code_menu');
   Code.tabClick(codeMenu.options[codeMenu.selectedIndex].value);
-}
+};
 
 /**
  * Bind a function to a button's click event.
@@ -349,7 +341,7 @@ Code.tabClick = function (clickedName) {
   // }
   // Sync the menu's value with the clicked tab value if needed.
   var codeMenu = document.getElementById('code_menu');
-  for (var i = 0; i < codeMenu.options.length; i++) {
+  for (let i = 0; i < codeMenu.options.length; i++) {
     if (codeMenu.options[i].value == clickedName) {
       codeMenu.selectedIndex = i;
       break;
@@ -389,17 +381,17 @@ Code.renderContent = function () {
   var clrMonitor = document.getElementById('clearMonitor');
   var textToSend = document.getElementById('textToSend');
   var sendButton = document.getElementById('sendButton');
-  btnMonitor.style.display = (content.id == 'content_monitor') ? "" : "none";
-  clrMonitor.style.display = (content.id == 'content_monitor') ? "" : "none";
-  textToSend.style.display = (content.id == 'content_monitor') ? "" : "none";
-  sendButton.style.display = (content.id == 'content_monitor') ? "" : "none";
+  btnMonitor.style.display = (content.id == 'content_monitor') ? '' : 'none';
+  clrMonitor.style.display = (content.id == 'content_monitor') ? '' : 'none';
+  textToSend.style.display = (content.id == 'content_monitor') ? '' : 'none';
+  sendButton.style.display = (content.id == 'content_monitor') ? '' : 'none';
 
   var butEditorSizeReset = document.getElementById('editorFontReset');
   var butEditorSizeUp = document.getElementById('editorFontUp');
   var butEditorSizeDown = document.getElementById('editorFontDown');
-  butEditorSizeReset.style.display = (content.id == 'content_editor') ? "" : "none";
-  butEditorSizeUp.style.display = (content.id == 'content_editor') ? "" : "none";
-  butEditorSizeDown.style.display = (content.id == 'content_editor') ? "" : "none";
+  butEditorSizeReset.style.display = (content.id == 'content_editor') ? '' : 'none';
+  butEditorSizeUp.style.display = (content.id == 'content_editor') ? '' : 'none';
+  butEditorSizeDown.style.display = (content.id == 'content_editor') ? '' : 'none';
 };
 
 /**
@@ -455,7 +447,7 @@ Code.checkRoots = function () {
   let singleRoot = roots == 1;
 
   if (roots > 1) {
-    Blockly.alert(`You have more than one LOOP block!\n\nTry removing a block`);
+    Blockly.alert('You have more than one LOOP block!\n\nTry removing a block');
     let smallest = 999;
     let identifier = 0;
     for (const [key, value] of Object.entries(blocks)) {
@@ -469,7 +461,7 @@ Code.checkRoots = function () {
       }
     }
     Code.tabClick('blocks');
-    Blockly.alert(`This Block has the least amount of calls`);
+    Blockly.alert('This Block has the least amount of calls');
     blocks[identifier].select();
     Code.workspace.centerOnBlock(blocks[identifier].id);
   } else if (roots < 1) {
@@ -477,16 +469,16 @@ Code.checkRoots = function () {
     Blockly.alert('YOU NEED A LOOP BLOCK');
   }
   return singleRoot;
-}
+};
 
 /**
  * Initialize Blockly.  Called on page load.
  */
 Code.init = function () {
   window.onclick = function (event) {
-    let modal = document.getElementById("arduinoOutput");
+    let modal = document.getElementById('arduinoOutput');
     if (event.target == modal) {
-      modal.style.display = "none";
+      modal.style.display = 'none';
     }
   };
   Code.initSerial();
@@ -563,43 +555,43 @@ Code.init = function () {
 
   auto_backup_and_restore_blocks();
 
-  document.getElementById("boardSelect").addEventListener("change", function () {
+  document.getElementById('boardSelect').addEventListener('change', function () {
     localStorage.setItem('board', this.value);
     document.getElementById('board').textContent = document.getElementById('boardSelect').value;//MSG['title'];
 
-    if (this.value == "ezDisplay" || Code.getLesson() == "ezDisplay") {
-      document.getElementById("img2hex").classList.remove("hide")
-      document.getElementById("compileButton").classList.add("hide")
+    if (this.value == 'ezDisplay' || Code.getLesson() == 'ezDisplay') {
+      document.getElementById('img2hex').classList.remove('hide');
+      document.getElementById('compileButton').classList.add('hide');
     } else {
-      document.getElementById("img2hex").classList.add("hide")
-      document.getElementById("compileButton").classList.remove("hide")
+      document.getElementById('img2hex').classList.add('hide');
+      document.getElementById('compileButton').classList.remove('hide');
     }
 
     onresize();
-  })
+  });
 
-  document.getElementById("lessonSelect").addEventListener("change", function () {
+  document.getElementById('lessonSelect').addEventListener('change', function () {
     let prev = Code.getLesson();
     localStorage.setItem('lesson', this.value);
     if (prev != this.value) {
       // document.getElementById('title').textContent = document.getElementById('lessonSelect').value;//MSG['title'];
       let newTree = Code.buildToolbox(this.value);
       Code.workspace.updateToolbox(newTree);
-      console.log(this.value)
+      console.log(this.value);
       if (prev != 'bot' && this.value === 'bot') {
-        document.getElementById('title').textContent = "BOT";
+        document.getElementById('title').textContent = 'BOT';
         Code.discard();
       } else {
-        document.getElementById('title').textContent = "Advanced";
+        document.getElementById('title').textContent = 'Advanced';
         Code.switchLoops();
       }
 
-      if (this.value == "ezDisplay" || Code.getBoard() == "ezDisplay") {
-        document.getElementById("img2hex").classList.remove("hide")
-        document.getElementById("compileButton").classList.add("hide")
+      if (this.value == 'ezDisplay' || Code.getBoard() == 'ezDisplay') {
+        document.getElementById('img2hex').classList.remove('hide');
+        document.getElementById('compileButton').classList.add('hide');
       } else {
-        document.getElementById("img2hex").classList.add("hide")
-        document.getElementById("compileButton").classList.remove("hide")
+        document.getElementById('img2hex').classList.add('hide');
+        document.getElementById('compileButton').classList.remove('hide');
       }
 
       onresize();
@@ -611,7 +603,7 @@ Code.init = function () {
   Code.bindClick('newButton', Code.new);
   Code.bindClick('runButton', Code.flash);
   Code.bindClick('compileButton', Code.compile);
-  Code.bindClick('img2hex', () => window.open('img2hex.html'))
+  Code.bindClick('img2hex', () => window.open('img2hex.html'));
   Code.bindClick('saveButton', Code.save);
   Code.bindClick('editButton', Code.editText);
   Code.bindClick('monitorButton', Code.monitor);
@@ -623,21 +615,21 @@ Code.init = function () {
   Code.bindClick('editorFontReset',
     function () {
       // do not specify the actual default here, defer to Code.getAceFontSize
-      localStorage.removeItem("aceFontSize");
+      localStorage.removeItem('aceFontSize');
       Code.ace.setFontSize(Code.getAceFontSize());
-    })
+    });
   Code.bindClick('editorFontUp',
     function () {
-      Code.ace.setFontSize(Code.ace.getOption("fontSize") + 1);
-      localStorage.setItem("aceFontSize", Code.ace.getOption("fontSize"));
+      Code.ace.setFontSize(Code.ace.getOption('fontSize') + 1);
+      localStorage.setItem('aceFontSize', Code.ace.getOption('fontSize'));
     }
   );
   Code.bindClick('editorFontDown',
-  function () {
-    Code.ace.setFontSize(Code.ace.getOption("fontSize") - 1);
-    localStorage.setItem("aceFontSize", Code.ace.getOption("fontSize"));
-  }
-);
+    function () {
+      Code.ace.setFontSize(Code.ace.getOption('fontSize') - 1);
+      localStorage.setItem('aceFontSize', Code.ace.getOption('fontSize'));
+    }
+  );
 
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
@@ -676,7 +668,7 @@ Code.init = function () {
 
   // prepare for variable types
   const varTypes = [
-    ['Int', "Int"],
+    ['Int', 'Int'],
     ['Long', 'Long'],
     ['Float', 'Float'],
     ['Boolean', 'Boolean'],
@@ -709,10 +701,10 @@ Code.buildToolbox = function () {
   let lesson = Code.getLesson();
   let toolboxText = document.getElementById(lesson + '_toolbox').outerHTML; // or ajax? ||
   toolboxText = toolboxText.replace(/(^|[^%]){(\w+)}/g,
-    function (m, p1, p2) { return p1 + MSG[p2]; });
+    function (_m, p1, p2) { return p1 + MSG[p2]; });
   let toolboxXml = Blockly.Xml.textToDom(toolboxText);
   return toolboxXml;
-}
+};
 
 /**
  * Test for Serial Support
@@ -720,15 +712,15 @@ Code.buildToolbox = function () {
 Code.initSerial = function () {
   if (!('serial' in navigator)) {
     // Get the modal
-    let modal = document.getElementById("notSupported");
-    modal.style.display = "block";
+    let modal = document.getElementById('notSupported');
+    modal.style.display = 'block';
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
       if (event.target == modal) {
-        modal.style.display = "none";
+        modal.style.display = 'none';
       }
-    }
+    };
   }
 };
 
@@ -743,7 +735,7 @@ Code.initLanguage = function () {
 
   // Sort languages alphabetically.
   var languages = [];
-  for (var lang in Code.LANGUAGE_NAME) {
+  for (const lang in Code.LANGUAGE_NAME) {
     languages.push([Code.LANGUAGE_NAME[lang], lang]);
   }
   var comp = function (a, b) {
@@ -770,7 +762,7 @@ Code.initLanguage = function () {
   // Populate the coding language selection menu.
   var codeMenu = document.getElementById('code_menu');
   codeMenu.options.length = 0;
-  for (var i = 1; i < Code.TABS_.length; i++) {
+  for (let i = 1; i < Code.TABS_.length; i++) {
     codeMenu.options.add(new Option(Code.TABS_DISPLAY_[i], Code.TABS_[i]));
   }
   codeMenu.addEventListener('change', Code.changeCodingLanguage);
@@ -811,7 +803,7 @@ Code.getHex = function (flash = false) {
   let board = Code.getBoard();
 
   if (flash && board === 'ezDisplay') {
-    alert("Uploading is not implemented for ezDisplay.");
+    alert('Uploading is not implemented for ezDisplay.');
     return;
   }
 
@@ -821,26 +813,22 @@ Code.getHex = function (flash = false) {
       return;
     }
   }
+  
+  const boardFQBN = {
+    uno: 'arduino:avr:uno',
+    nano: 'arduino:avr:nano:cpu=atmega328',
+    ezDisplay: 'ATTinyCore:avr:attinyx5',
+  }?.[board];
 
-  switch (board) {
-    case 'uno':
-      var avr = 'arduino:avr:uno';
-      break;
-    case 'nano':
-      var avr = 'arduino:avr:nano:cpu=atmega328';
-      break;
-    case 'ezDisplay':
-      var avr = 'ATTinyCore:avr:attinyx5';
-      break;
-    default:
-      alert('Invalid board.');
-      return;
+  if (!boardFQBN) {
+    alert('Invalid board.');
+    return;
   }
 
-  let data = { sketch: code, board: avr };
+  let data = { sketch: code, board: boardFQBN };
 
   // console.log(JSON.stringify(data));
-  fetch(Code.COMPILE_URL + "/compile", {
+  fetch(Code.COMPILE_URL + '/compile', {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     headers: {
       'Content-Type': 'application/json'
@@ -854,12 +842,12 @@ Code.getHex = function (flash = false) {
         console.warn(0, data.msg, true);
         // // can only run below if arduino compile error I can still get response with garbage body
         if (data.stderr.length > 0) {
-          let regex = /\/tmp\/chromeduino\-(.*?)\/chromeduino\-(.*?)\.ino\:/g;
-          let other_regex = /\/tmp\/waca\-(.*?)\/waca\-(.*?)\.ino\:/g;
-          let message = data.stderr.replace(regex, "").replace(other_regex, "");
+          let regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g;
+          let other_regex = /\/tmp\/waca-(.*?)\/waca-(.*?)\.ino:/g;
+          let message = data.stderr.replace(regex, '').replace(other_regex, '');
           console.error(message);
-          upload_result(message, false)
-          regex = /\d+\:\d+/g;
+          upload_result(message, false);
+          regex = /\d+:\d+/g;
           let rowcol = message.match(regex);
           let row = rowcol[0].substring(0, rowcol[0].indexOf(':'));
           Code.ace.gotoLine(row);
@@ -882,27 +870,27 @@ Code.getHex = function (flash = false) {
             // gear.classList.remove('spinning');
             // progress.textContent = "done!";
             if (error) {
-              console.error("Flash ERROR:", error);
+              console.error('Flash ERROR:', error);
               //typicall wrong board
               // avrgirl.connection.serialPort.close();
               upload_result(error + '\n' + hex.msg, false);
             } else {
               console.info('done correctly.');
-              upload_result(hex.msg)
+              upload_result(hex.msg);
             }
           });
         } catch (error) {
-          console.error("AVR ERROR:", error);
+          console.error('AVR ERROR:', error);
           upload_result(error, false);
         }
 
       } else {
-        console.log("HEX:", hex);
+        console.log('HEX:', hex);
         upload_result(hex.msg);
       }
     })
     .catch(e => {
-      console.error("Fetch Error:", e);
+      console.error('Fetch Error:', e);
     });
 };
 
@@ -918,7 +906,7 @@ Code.flash = function () {
     }
     Blockly.alert(msg);
   }
-}
+};
 
 Code.compile = function () {
   if (Code.getINO().includes('void setup')) {
@@ -932,14 +920,14 @@ Code.compile = function () {
     }
     Blockly.alert(msg);
   }
-}
+};
 
 Code.getINO = function () {
   if (Code.selected == 'blocks' && Code.checkRoots())
-    return Blockly.Arduino.workspaceToCode()
+    return Blockly.Arduino.workspaceToCode();
   // return document.getElementById("content_arduino").value;
   return Code.ace.getValue();
-}
+};
 
 Code.switchLoops = function () {
   let blocks = Code.workspace.getBlocksByType('controls_loop');
@@ -962,7 +950,7 @@ Code.switchLoops = function () {
     botloop.dispose();
     Code.workspace.centerOnBlock(racerLoop.id);
   }
-}
+};
 
 /**
  * 
@@ -979,8 +967,8 @@ function upload_result(msg, success = true) {
     icon = '<i class="material-icons" style="font-size:48px;color:red">error</i>';
   }
   output = `<pre>${msg}</pre>`;
-  document.getElementById("response").innerHTML = icon + output;
-  document.getElementById("arduinoOutput").style.display = "block";
+  document.getElementById('response').innerHTML = icon + output;
+  document.getElementById('arduinoOutput').style.display = 'block';
 }
 
 Code.monitor = connectUSB;
@@ -997,9 +985,9 @@ Code.new = function () {
 void loop() {
   
 }
-`
+`;
 
-    document.getElementById("content_arduino").value = defaultCode;
+    document.getElementById('content_arduino').value = defaultCode;
     Code.ace.setValue(defaultCode);
   }
 };
@@ -1042,27 +1030,27 @@ Code.save = function () {
  * better include Blob and FileSaver for browser compatibility
  */
 Code.editText = function () {
-  var editButton = document.getElementById("editButton");
-  var textarea = document.getElementById("content_arduino");
+  var editButton = document.getElementById('editButton');
+  var textarea = document.getElementById('content_arduino');
   var blocksTab = document.getElementById('tab_blocks');//className = 'taboff hide';
-  var arduinoTab = document.getElementById('tab_arduino');//className = 'taboff hide';
+  // var arduinoTab = document.getElementById('tab_arduino');//className = 'taboff hide';
   let editor = Code.getEditor();
 
   // onresize();
   if (editor == 'blocks') {
     Code.setEditor();
-    editButton.innerHTML = "BLOCK CODE"
-    blocksTab.classList.add("hide");
+    editButton.innerHTML = 'BLOCK CODE';
+    blocksTab.classList.add('hide');
     textarea.readOnly = false;
     Code.ace.setReadOnly(false);
     // arduinoTab.classList.toggle("hide");
     Code.tabClick('editor');
   }
-  else if (confirm("Going back to blocks will remove any custom edits\n" +
-    "Do you wish to continue?")) {
+  else if (confirm('Going back to blocks will remove any custom edits\n' +
+    'Do you wish to continue?')) {
     Code.setEditor();
-    editButton.innerHTML = "TEXT CODE"
-    blocksTab.classList.remove("hide");
+    editButton.innerHTML = 'TEXT CODE';
+    blocksTab.classList.remove('hide');
     // arduinoTab.classList.toggle("hide");
     textarea.readOnly = true;
     Code.ace.setReadOnly(true);
@@ -1071,35 +1059,35 @@ Code.editText = function () {
   }
 };
 
-Code.ace = ace.edit("content_editor");
+Code.ace = ace.edit('content_editor');
 
-Code.initEditor = function (init = true) {
+Code.initEditor = function () {
   // Code.selected = Code.EDITOR;
-  Code.ace.setTheme("ace/theme/textmate");
-  Code.ace.session.setMode("ace/mode/c_cpp");
+  Code.ace.setTheme('ace/theme/textmate');
+  Code.ace.session.setMode('ace/mode/c_cpp');
   Code.ace.setShowPrintMargin(false);
   // Code.ace.session.setUseSoftTabs(true);
   Code.ace.session.setTabSize(2);
   document.getElementById('content_editor').style.fontSize = '14px';
 
   if (Code.EDITOR == 'editor') {
-    document.getElementById("editButton").innerHTML = "BLOCK CODE"
-    document.getElementById("tab_blocks").classList.add("hide");
-    document.getElementById("content_arduino").readOnly = false;
+    document.getElementById('editButton').innerHTML = 'BLOCK CODE';
+    document.getElementById('tab_blocks').classList.add('hide');
+    document.getElementById('content_arduino').readOnly = false;
     Code.ace.setReadOnly(false);
     Code.tabClick('editor');
-    if (Code.getLesson() != "ezDisplay" || Code.getBoard() != "ezDisplay") {
-      document.getElementById("img2hex").classList.add("hide")
-      document.getElementById("compileButton").classList.remove("hide")
+    if (Code.getLesson() != 'ezDisplay' || Code.getBoard() != 'ezDisplay') {
+      document.getElementById('img2hex').classList.add('hide');
+      document.getElementById('compileButton').classList.remove('hide');
     }
   } else {
-    document.getElementById("editButton").innerHTML = "TEXT CODE"
-    document.getElementById("content_arduino").readOnly = true;
+    document.getElementById('editButton').innerHTML = 'TEXT CODE';
+    document.getElementById('content_arduino').readOnly = true;
     Code.ace.setReadOnly(true);
   }
 
   Code.ace.setFontSize(Code.getAceFontSize());
-}
+};
 
 /**
  * Discard all blocks from the workspace.
@@ -1137,53 +1125,53 @@ const componentStyles =
   'insertionMarkerOpacity': 0.3,
   'scrollbarOpacity': 0.4,
   'cursorColour': '#d0d0d0'
-}
+};
 
 const fontStyle =
 {
   // "family": "Georgia, serif",
   // "weight": "bold",
-  "size": 12
-}
+  'size': 12
+};
 
 const sampleColours =
 {
-  "colourPrimary": "#4a148c",
-  "colourSecondary": "#AD7BE9",
-  "colourTertiary": "#CDB6E9"
-}
+  'colourPrimary': '#4a148c',
+  'colourSecondary': '#AD7BE9',
+  'colourTertiary': '#CDB6E9'
+};
 
 const blockStyles =
 {
-  "list_blocks": sampleColours,
+  'list_blocks': sampleColours,
   // "logic_blocks": {
   //   "colourPrimary": "#01579b",
   //   "colourSecondary": "#64C7FF",
   //   "colourTertiary": "#C5EAFF"
   // },
-  "operators_blocks": { "colourPrimary": "#759749" },
-  "math_blocks": { "colourPrimary": "#759749" },
-  "procedure_blocks": { "colourPrimary": 60 },
-  "control_blocks": { "colourPrimary": 60 },
-  "logic_blocks": { "colourPrimary": "#ffa555" },
-  "loop_blocks": { "colourPrimary": 60 },
-  "ezDisplay_blocks": { "colourPrimary": "#530b77" },
-}
+  'operators_blocks': { 'colourPrimary': '#759749' },
+  'math_blocks': { 'colourPrimary': '#759749' },
+  'procedure_blocks': { 'colourPrimary': 60 },
+  'control_blocks': { 'colourPrimary': 60 },
+  'logic_blocks': { 'colourPrimary': '#ffa555' },
+  'loop_blocks': { 'colourPrimary': 60 },
+  'ezDisplay_blocks': { 'colourPrimary': '#530b77' },
+};
 
 const categoryStyles =
 {
-  "controls": { "colour": "#ffff00" },
-  "tests": { "colour": "#ffa555" },
-  "math": { "colour": "#759749" },
-  "variables": { "colour": "#fff" },
-  "constants": { "colour": "#efa199" },
-  "comm": { "colour": "#fff" },
-  "lights": { "colour": "#00ce00" },
-  "sounds": { "colour": "#ff6900" },
-  "motors": { "colour": 240 },
-  "sensors": { "colour": 180 },
-  "ezDisplay": { "colour": "#530b77" },
-}
+  'controls': { 'colour': '#ffff00' },
+  'tests': { 'colour': '#ffa555' },
+  'math': { 'colour': '#759749' },
+  'variables': { 'colour': '#fff' },
+  'constants': { 'colour': '#efa199' },
+  'comm': { 'colour': '#fff' },
+  'lights': { 'colour': '#00ce00' },
+  'sounds': { 'colour': '#ff6900' },
+  'motors': { 'colour': 240 },
+  'sensors': { 'colour': 180 },
+  'ezDisplay': { 'colour': '#530b77' },
+};
 
 Blockly.Themes.Barnabas = Blockly.Theme.defineTheme('barnabas', {
   'base': Blockly.Themes.Classic,
@@ -1198,7 +1186,6 @@ Blockly.Themes.Barnabas = Blockly.Theme.defineTheme('barnabas', {
 var ab2str = function (buf) {
   var bufView = new Uint8Array(buf);
   var encodedString = String.fromCharCode.apply(null, bufView);
-  if (verbose_logging) console.log(encodedString);
   return decodeURIComponent(encodeURIComponent(encodedString));
 };
 
@@ -1214,42 +1201,42 @@ var str2ab = function (str) {
 };
 
 Code.close = function (parentModal) {
-  document.getElementById(parentModal).style.display = "none";
-}
+  document.getElementById(parentModal).style.display = 'none';
+};
 
-const getMethods = (obj) => {
-  let properties = new Set()
-  let currentObj = obj
-  do {
-    Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-  } while ((currentObj = Object.getPrototypeOf(currentObj)))
-  return [...properties.keys()].filter(item => typeof obj[item] === 'function')
-}
+// const getMethods = (obj) => {
+//   let properties = new Set();
+//   let currentObj = obj;
+//   do {
+//     Object.getOwnPropertyNames(currentObj).map(item => properties.add(item));
+//   } while ((currentObj = Object.getPrototypeOf(currentObj)));
+//   return [...properties.keys()].filter(item => typeof obj[item] === 'function');
+// };
 
 // console.log(getMethods(Blockly.Variables))
 
 // en custom MSG
 var MSG = {
-  title: "Code",
-  blocks: "Blocks",
-  linkTooltip: "Save and link to blocks.",
-  runTooltip: "Run the program defined by the blocks in the workspace.",
-  badCode: "Program error:\n%1",
-  timeout: "Maximum execution iterations exceeded.",
-  trashTooltip: "Discard all blocks.",
-  catLogic: "Logic",
-  catLoops: "Loops",
-  catMath: "Math",
-  catText: "Text",
-  catLists: "Lists",
-  catColour: "Colour",
-  catVariables: "Variables",
-  catFunctions: "Functions",
-  listVariable: "list",
-  textVariable: "text",
-  httpRequestError: "There was a problem with the request.",
-  linkAlert: "Share your blocks with this link:\n\n%1",
-  hashError: "Sorry, '%1' doesn't correspond with any saved program.",
-  xmlError: "Could not load your saved file. Perhaps it was created with a different version of Blockly?",
-  badXml: "Error parsing XML:\n%1\n\nSelect 'OK' to abandon your changes or 'Cancel' to further edit the XML."
+  title: 'Code',
+  blocks: 'Blocks',
+  linkTooltip: 'Save and link to blocks.',
+  runTooltip: 'Run the program defined by the blocks in the workspace.',
+  badCode: 'Program error:\n%1',
+  timeout: 'Maximum execution iterations exceeded.',
+  trashTooltip: 'Discard all blocks.',
+  catLogic: 'Logic',
+  catLoops: 'Loops',
+  catMath: 'Math',
+  catText: 'Text',
+  catLists: 'Lists',
+  catColour: 'Colour',
+  catVariables: 'Variables',
+  catFunctions: 'Functions',
+  listVariable: 'list',
+  textVariable: 'text',
+  httpRequestError: 'There was a problem with the request.',
+  linkAlert: 'Share your blocks with this link:\n\n%1',
+  hashError: 'Sorry, \'%1\' doesn\'t correspond with any saved program.',
+  xmlError: 'Could not load your saved file. Perhaps it was created with a different version of Blockly?',
+  badXml: 'Error parsing XML:\n%1\n\nSelect \'OK\' to abandon your changes or \'Cancel\' to further edit the XML.'
 };
