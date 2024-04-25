@@ -32,7 +32,7 @@ const textToSend = document.getElementById('textToSend');
 document.addEventListener('DOMContentLoaded', () => {
   btnSend.addEventListener('click', sendText);
 
-  textToSend.addEventListener("keydown", function(event) {
+  textToSend.addEventListener('keydown', function(event) {
     // Number 13 is the "Enter" key on the keyboard
     if (event.key === 'Enter') {
       // Cancel the default action, if needed
@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function sendText() {
   if (port) {
-      writeToStream(textToSend.value);
-      textToSend.value = "";
+    writeToStream(textToSend.value);
+    textToSend.value = '';
   }
 }
 
@@ -80,20 +80,20 @@ async function connect() {
 
   // *******************************************************************
   // CODELAB: Send CTRL-C and turn off echo on REPL
-//   writeToStream('\x03', 'echo(false);');
+  //   writeToStream('\x03', 'echo(false);');
 
   // CODELAB: Add code to read the stream here.
   let decoder = new TextDecoderStream();
   inputDone = port.readable.pipeTo(decoder.writable);
   inputStream = decoder.readable;
-    // .pipeThrough(new TransformStream(new LineBreakTransformer()));
-    // .pipeThrough(new TransformStream(new JSONTransformer()));
+  // .pipeThrough(new TransformStream(new LineBreakTransformer()));
+  // .pipeThrough(new TransformStream(new JSONTransformer()));
 
   reader = inputStream.getReader();
   btnMonitor.innerText = 'CONNECTED';
   btnMonitor.classList.add('ready');
   btnMonitor.title = 'Click to DISCONNECT';
-  monitor.textContent = 'Connected!...\n'
+  monitor.textContent = 'Connected!...\n';
   readLoop();
 
 }
@@ -136,25 +136,25 @@ async function disconnect() {
  * Click handler for the connect/disconnect button.
  */
 async function connectUSB() {
-    if ('serial' in navigator) {
-        if (port && port.readable === null && port.writable == null) {
-            port = null;
-        }
-        if (port) {
-            await disconnect();
-            btnMonitor.innerText = 'CONNECT';
-            btnMonitor.classList.remove('ready');
-            btnMonitor.title = 'Click to CONNECT';
-            return;
-          }
-          // CODELAB: Add connect code here.
-          await connect();
-          btnMonitor.innerText = 'CONNECTED';
-          btnMonitor.classList.add('ready');
-          btnMonitor.title = 'Click to DISCONNECT';
-    } else {
-        console.error('Browser does not support Web Serial');
+  if ('serial' in navigator) {
+    if (port && port.readable === null && port.writable == null) {
+      port = null;
     }
+    if (port) {
+      await disconnect();
+      btnMonitor.innerText = 'CONNECT';
+      btnMonitor.classList.remove('ready');
+      btnMonitor.title = 'Click to CONNECT';
+      return;
+    }
+    // CODELAB: Add connect code here.
+    await connect();
+    btnMonitor.innerText = 'CONNECTED';
+    btnMonitor.classList.add('ready');
+    btnMonitor.title = 'Click to DISCONNECT';
+  } else {
+    console.error('Browser does not support Web Serial');
+  }
 }
 
 
@@ -170,7 +170,7 @@ async function readLoop() {
 
     if (value) {
 
-      console.log("[RECEIVED] " + value);
+      console.log('[RECEIVED] ' + value);
 
       monitor.textContent += value + '';
       //monitor.textContent += value + 'asdfasdf';
