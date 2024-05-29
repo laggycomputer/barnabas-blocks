@@ -6,7 +6,7 @@
 /**
  * Create a namespace for the application.
  */
-var Code = {};
+const Code = {};
 
 Code.COMPILE_URL = 'https://compile.barnabasrobotics.com';
 /**
@@ -36,7 +36,7 @@ Code.workspace = null;
  * @return {string} The parameter value or the default value if not found.
  */
 Code.getStringParamFromUrl = function (name, defaultValue) {
-  var val = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+  const val = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
   return val ? decodeURIComponent(val[1].replace(/\+/g, '%20')) : defaultValue;
 };
 
@@ -45,7 +45,7 @@ Code.getStringParamFromUrl = function (name, defaultValue) {
  * @return {string} User's language.
  */
 Code.getLang = function () {
-  var lang = Code.getStringParamFromUrl('lang', '');
+  let lang = Code.getStringParamFromUrl('lang', '');
   if (Code.LANGUAGE_NAME[lang] === undefined) {
     // Default to English.
     lang = 'en';
@@ -58,7 +58,7 @@ Code.getLang = function () {
  * @return {string} User's board.
  */
 Code.getBoard = function () {
-  var board = window.localStorage.board;
+  let board = window.localStorage.board;
   if (board === undefined || board == null || board === '') {
     // Default to nano.
     board = 'nano';
@@ -130,8 +130,9 @@ Code.isRtl = function () {
  * @param {string} defaultXml Text representation of default blocks.
  */
 Code.loadBlocks = function (defaultXml) {
+  let loadOnce;
   try {
-    var loadOnce = window.sessionStorage.loadOnceBlocks;
+    loadOnce = window.sessionStorage.loadOnceBlocks;
   } catch (e) {
     // Firefox sometimes throws a SecurityError when accessing sessionStorage.
     // Restarting Firefox fixes this, so it looks like a bug.
@@ -163,15 +164,14 @@ Code.changeLanguage = function () {
   // Store the blocks for the duration of the reload.
   // MSIE 11 does not support sessionStorage on file:// URLs.
   if (window.sessionStorage) {
-    var xml = Blockly.Xml.workspaceToDom(Code.workspace);
-    var text = Blockly.Xml.domToText(xml);
+    const xml = Blockly.Xml.workspaceToDom(Code.workspace);
+    const text = Blockly.Xml.domToText(xml);
     window.sessionStorage.loadOnceBlocks = text;
   }
 
-  var languageMenu = document.getElementById('languageMenu');
-  var newLang = encodeURIComponent(
-    languageMenu.options[languageMenu.selectedIndex].value);
-  var search = window.location.search;
+  const languageMenu = document.getElementById('languageMenu');
+  const newLang = encodeURIComponent(languageMenu.options[languageMenu.selectedIndex].value);
+  let search = window.location.search;
   if (search.length <= 1) {
     search = '?lang=' + newLang;
   } else if (search.match(/[?&]lang=[^&]*/)) {
@@ -189,7 +189,7 @@ Code.changeLanguage = function () {
  * the selected language in the codeMenu.
  */
 Code.changeCodingLanguage = function () {
-  var codeMenu = document.getElementById('code_menu');
+  const codeMenu = document.getElementById('code_menu');
   Code.tabClick(codeMenu.options[codeMenu.selectedIndex].value);
 };
 
@@ -211,7 +211,7 @@ Code.bindClick = function (el, func) {
  * Load the Prettify CSS and JavaScript.
  */
 Code.importPrettify = function () {
-  var script = document.createElement('script');
+  const script = document.createElement('script');
   script.setAttribute('src', 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js');
   document.head.appendChild(script);
 };
@@ -223,10 +223,10 @@ Code.importPrettify = function () {
  * @private
  */
 Code.getBBox_ = function (element) {
-  var height = element.offsetHeight;
-  var width = element.offsetWidth;
-  var x = 0;
-  var y = 0;
+  const height = element.offsetHeight;
+  const width = element.offsetWidth;
+  let x = 0;
+  let y = 0;
   do {
     x += element.offsetLeft;
     y += element.offsetTop;
@@ -286,15 +286,13 @@ Code.selected = Code.EDITOR;
 Code.tabClick = function (clickedName) {
   // If the XML tab was open, save and render the content.
   if (document.getElementById('tab_xml').classList.contains('tabon')) {
-    var xmlTextarea = document.getElementById('content_xml');
-    var xmlText = xmlTextarea.value;
-    var xmlDom = null;
+    const xmlTextarea = document.getElementById('content_xml');
+    const xmlText = xmlTextarea.value;
+    let xmlDom = null;
     try {
       xmlDom = Blockly.Xml.textToDom(xmlText);
     } catch (e) {
-      var q =
-        window.confirm(MSG['badXml'].replace('%1', e));
-      if (!q) {
+      if (!window.confirm(MSG['badXml'].replace('%1', e))) {
         // Leave the user on the XML tab.
         return;
       }
@@ -309,9 +307,8 @@ Code.tabClick = function (clickedName) {
     Code.workspace.setVisible(false);
   }
   // Deselect all tabs and hide all panes.
-  for (var i = 0; i < Code.TABS_.length; i++) {
-    var name = Code.TABS_[i];
-    var tab = document.getElementById('tab_' + name);
+  for (const name of Code.TABS_) {
+    const tab = document.getElementById('tab_' + name);
     tab.classList.add('taboff');
     tab.classList.remove('tabon');
     document.getElementById('content_' + name).style.visibility = 'hidden';
@@ -319,7 +316,7 @@ Code.tabClick = function (clickedName) {
 
   // Select the active tab.
   Code.selected = clickedName;
-  var selectedTab = document.getElementById('tab_' + clickedName);
+  const selectedTab = document.getElementById('tab_' + clickedName);
   selectedTab.classList.remove('taboff');
   selectedTab.classList.add('tabon');
   // Show the selected pane.
@@ -327,7 +324,7 @@ Code.tabClick = function (clickedName) {
     'visible';
   Code.renderContent();
   // The code menu tab is on if the blocks tab is off.
-  var codeMenuTab = document.getElementById('tab_code');
+  const codeMenuTab = document.getElementById('tab_code');
   if (clickedName == 'blocks') {
     Code.workspace.setVisible(true);
     codeMenuTab.className = 'taboff';
@@ -340,7 +337,7 @@ Code.tabClick = function (clickedName) {
 
   // }
   // Sync the menu's value with the clicked tab value if needed.
-  var codeMenu = document.getElementById('code_menu');
+  const codeMenu = document.getElementById('code_menu');
   for (let i = 0; i < codeMenu.options.length; i++) {
     if (codeMenu.options[i].value == clickedName) {
       codeMenu.selectedIndex = i;
@@ -361,12 +358,12 @@ Code.tabClick = function (clickedName) {
  * Populate the currently selected pane with content generated from the blocks.
  */
 Code.renderContent = function () {
-  var content = document.getElementById('content_' + Code.selected);
+  const content = document.getElementById('content_' + Code.selected);
   // Initialize the pane.
   if (content.id == 'content_xml') {
-    var xmlTextarea = document.getElementById('content_xml');
-    var xmlDom = Blockly.Xml.workspaceToDom(Code.workspace);
-    var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+    const xmlTextarea = document.getElementById('content_xml');
+    const xmlDom = Blockly.Xml.workspaceToDom(Code.workspace);
+    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
     xmlTextarea.value = xmlText;
     xmlTextarea.focus();
   } else if (content.id == 'content_arduino' && Code.getEditor() == 'blocks') {
@@ -377,21 +374,18 @@ Code.renderContent = function () {
   if (typeof PR == 'object') {
     PR.prettyPrint();
   }
-  var btnMonitor = document.getElementById('monitorButton');
-  var clrMonitor = document.getElementById('clearMonitor');
-  var textToSend = document.getElementById('textToSend');
-  var sendButton = document.getElementById('sendButton');
-  btnMonitor.style.display = (content.id == 'content_monitor') ? '' : 'none';
-  clrMonitor.style.display = (content.id == 'content_monitor') ? '' : 'none';
-  textToSend.style.display = (content.id == 'content_monitor') ? '' : 'none';
-  sendButton.style.display = (content.id == 'content_monitor') ? '' : 'none';
 
-  var butEditorSizeReset = document.getElementById('editorFontReset');
-  var butEditorSizeUp = document.getElementById('editorFontUp');
-  var butEditorSizeDown = document.getElementById('editorFontDown');
-  butEditorSizeReset.style.display = (content.id == 'content_editor') ? '' : 'none';
-  butEditorSizeUp.style.display = (content.id == 'content_editor') ? '' : 'none';
-  butEditorSizeDown.style.display = (content.id == 'content_editor') ? '' : 'none';
+  for (const id of [
+    'monitorButton',
+    'clearMonitor',
+    'textToSend',
+    'sendButton',
+    'editorFontReset',
+    'editorFontUp',
+    'editorFontDown',
+  ]) {
+    document.getElementById(id).style.display = (content.id == 'content_monitor') ? '' : 'none';
+  }
 };
 
 /**
@@ -399,11 +393,11 @@ Code.renderContent = function () {
  * @param generator {!Blockly.Generator} The generator to use.
  */
 Code.attemptCodeGeneration = function (generator) {
-  var content = document.getElementById('content_' + Code.selected);
+  const content = document.getElementById('content_' + Code.selected);
   // content.textContent = '';
   content.value = '';
   if (Code.checkAllGeneratorFunctionsDefined(generator) && Code.checkRoots()) {
-    var code = generator.workspaceToCode(Code.workspace);
+    const code = generator.workspaceToCode(Code.workspace);
     // content.textContent = code;
     content.value = code;
     // Remove the 'prettyprinted' class, so that Prettify will recalculate.
@@ -418,10 +412,10 @@ Code.attemptCodeGeneration = function (generator) {
  * @param generator {!Blockly.Generator} The generator to use.
  */
 Code.checkAllGeneratorFunctionsDefined = function (generator) {
-  var blocks = Code.workspace.getAllBlocks(false);
-  var missingBlockGenerators = [];
-  for (var i = 0; i < blocks.length; i++) {
-    var blockType = blocks[i].type;
+  const blocks = Code.workspace.getAllBlocks(false);
+  const missingBlockGenerators = [];
+  for (const block of blocks) {
+    const blockType = block.type;
     if (!generator[blockType]) {
       if (missingBlockGenerators.indexOf(blockType) == -1) {
         missingBlockGenerators.push(blockType);
@@ -429,9 +423,9 @@ Code.checkAllGeneratorFunctionsDefined = function (generator) {
     }
   }
 
-  var valid = missingBlockGenerators.length == 0;
+  const valid = missingBlockGenerators.length == 0;
   if (!valid) {
-    var msg = 'The generator code for the following blocks not specified for ' +
+    const msg = 'The generator code for the following blocks not specified for ' +
       generator.name_ + ':\n - ' + missingBlockGenerators.join('\n - ');
     Blockly.alert(msg);  // Assuming synchronous. No callback.
   }
@@ -485,12 +479,12 @@ Code.init = function () {
   Code.initLanguage();
   Code.initSelects();
 
-  var rtl = Code.isRtl();
-  var container = document.getElementById('content_area');
-  var onresize = () => {
-    var bBox = Code.getBBox_(container);
-    for (var i = 0; i < Code.TABS_.length; i++) {
-      var el = document.getElementById('content_' + Code.TABS_[i]);
+  const rtl = Code.isRtl();
+  const container = document.getElementById('content_area');
+  const onresize = () => {
+    const bBox = Code.getBBox_(container);
+    for (const name of Code.TABS_) {
+      const el = document.getElementById('content_' + name);
       el.style.top = bBox.y + 'px';
       el.style.left = bBox.x + 'px';
       // Height and width need to be set, read back, then set again to
@@ -517,7 +511,7 @@ Code.init = function () {
   // into `Blockly.Msg`.
   // TODO: Clean up the message files so this is done explicitly instead of
   // through this for-loop.
-  for (var messageKey in MSG) {
+  for (const messageKey in MSG) {
     if (messageKey.indexOf('cat') == 0) {
       Blockly.Msg[messageKey.toUpperCase()] = MSG[messageKey];
     }
@@ -632,7 +626,7 @@ Code.init = function () {
   );
 
   // Disable the link button if page isn't backed by App Engine storage.
-  var linkButton = document.getElementById('linkButton');
+  const linkButton = document.getElementById('linkButton');
   if ('BlocklyStorage' in window) {
     BlocklyStorage['HTTPREQUEST_ERROR'] = MSG['httpRequestError'];
     BlocklyStorage['LINK_ALERT'] = MSG['linkAlert'];
@@ -644,8 +638,7 @@ Code.init = function () {
     linkButton.className = 'disabled';
   }
 
-  for (var i = 0; i < Code.TABS_.length; i++) {
-    var name = Code.TABS_[i];
+  for (const name of Code.TABS_) {
     Code.bindClick('tab_' + name,
       function (name_) { return function () { Code.tabClick(name_); }; }(name));
   }
@@ -729,29 +722,26 @@ Code.initSerial = function () {
  */
 Code.initLanguage = function () {
   // Set the HTML's language and direction.
-  var rtl = Code.isRtl();
-  document.dir = rtl ? 'rtl' : 'ltr';
+  document.dir = Code.isRtl() ? 'rtl' : 'ltr';
   document.head.parentElement.setAttribute('lang', Code.LANG);
 
   // Sort languages alphabetically.
-  var languages = [];
+  const languages = [];
   for (const lang in Code.LANGUAGE_NAME) {
     languages.push([Code.LANGUAGE_NAME[lang], lang]);
   }
-  var comp = function (a, b) {
+  languages.sort((a, b) => {
     // Sort based on first argument ('English', 'Русский', '简体字', etc).
     if (a[0] > b[0]) return 1;
     if (a[0] < b[0]) return -1;
     return 0;
-  };
-  languages.sort(comp);
+  });
   // Populate the language selection menu.
-  var languageMenu = document.getElementById('languageMenu');
+  const languageMenu = document.getElementById('languageMenu');
   languageMenu.options.length = 0;
-  for (var i = 0; i < languages.length; i++) {
-    var tuple = languages[i];
-    var lang = tuple[tuple.length - 1];
-    var option = new Option(tuple[0], lang);
+  for (const tuple of languages) {
+    const lang = tuple.at(-1);
+    const option = new Option(...tuple);
     if (lang == Code.LANG) {
       option.selected = true;
     }
@@ -760,7 +750,7 @@ Code.initLanguage = function () {
   languageMenu.addEventListener('change', Code.changeLanguage, true);
 
   // Populate the coding language selection menu.
-  var codeMenu = document.getElementById('code_menu');
+  const codeMenu = document.getElementById('code_menu');
   codeMenu.options.length = 0;
   for (let i = 1; i < Code.TABS_.length; i++) {
     codeMenu.options.add(new Option(Code.TABS_DISPLAY_[i], Code.TABS_[i]));
@@ -967,9 +957,10 @@ function upload_result(msg, success = true) {
 Code.monitor = connectUSB;
 
 Code.new = function () {
-  var editor = Code.getEditor();
+  const editor = Code.getEditor();
   if (editor == 'blocks') {
-    Code.discard(); Code.renderContent();
+    Code.discard();
+    Code.renderContent();
   } else {
     const defaultCode = `void setup() {
   
@@ -997,7 +988,7 @@ Code.save = function () {
 
   let editor = Code.getEditor();
   if (editor == 'blocks') {
-    var xml = Blockly.Xml.workspaceToDom(Code.workspace);
+    const xml = Blockly.Xml.workspaceToDom(Code.workspace);
     data = Blockly.Xml.domToText(xml);
   } else {
     data = Code.ace.getValue();
@@ -1006,14 +997,14 @@ Code.save = function () {
     extension = '.ino';
   }
 
-  var fileName = window.prompt('What would you like to name your file?', defaultName);
+  const fileName = window.prompt('What would you like to name your file?', defaultName);
 
   // Store data in blob.
   // var builder = new BlobBuilder();
   // builder.append(data);
   // saveAs(builder.getBlob('text/plain;charset=utf-8'), 'blockduino.xml');
   if (fileName) {
-    var blob = new Blob([data], { type: fileType });
+    const blob = new Blob([data], { type: fileType });
     saveAs(blob, fileName + extension);
   }
 };
@@ -1023,10 +1014,10 @@ Code.save = function () {
  * better include Blob and FileSaver for browser compatibility
  */
 Code.editText = function () {
-  var editButton = document.getElementById('editButton');
-  var textarea = document.getElementById('content_arduino');
-  var blocksTab = document.getElementById('tab_blocks');//className = 'taboff hide';
-  // var arduinoTab = document.getElementById('tab_arduino');//className = 'taboff hide';
+  const editButton = document.getElementById('editButton');
+  const textarea = document.getElementById('content_arduino');
+  const blocksTab = document.getElementById('tab_blocks');//className = 'taboff hide';
+  // const arduinoTab = document.getElementById('tab_arduino');//className = 'taboff hide';
   let editor = Code.getEditor();
 
   // onresize();
@@ -1086,9 +1077,8 @@ Code.initEditor = function () {
  * Discard all blocks from the workspace.
  */
 Code.discard = function () {
-  var count = Code.workspace.getAllBlocks(false).length;
-  if (count < 2 ||
-    window.confirm(Blockly.Msg['DELETE_ALL_BLOCKS'].replace('%1', count))) {
+  const count = Code.workspace.getAllBlocks(false).length;
+  if (count < 2 || window.confirm(Blockly.Msg['DELETE_ALL_BLOCKS'].replace('%1', count))) {
     Code.workspace.clear();
     if (window.location.hash) {
       window.location.hash = '';
@@ -1191,7 +1181,7 @@ Code.close = function (parentModal) {
 // console.log(getMethods(Blockly.Variables))
 
 // en custom MSG
-var MSG = {
+const MSG = {
   title: 'Code',
   blocks: 'Blocks',
   linkTooltip: 'Save and link to blocks.',
