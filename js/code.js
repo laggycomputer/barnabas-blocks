@@ -487,7 +487,7 @@ Code.init = function () {
 
   var rtl = Code.isRtl();
   var container = document.getElementById('content_area');
-  var onresize = function (e) {
+  var onresize = () => {
     var bBox = Code.getBBox_(container);
     for (var i = 0; i < Code.TABS_.length; i++) {
       var el = document.getElementById('content_' + Code.TABS_[i]);
@@ -797,10 +797,10 @@ Code.initSelects = function () {
  * Send code to server for hex
  * 
  */
-Code.getHex = function (flash = false) {
-  let code = Code.getINO();
+Code.getHex = async function (flash = false) {
+  const code = Code.getINO();
 
-  let board = Code.getBoard();
+  const board = Code.getBoard();
 
   if (flash && board === 'ezDisplay') {
     alert('Uploading is not implemented for ezDisplay.');
@@ -813,7 +813,7 @@ Code.getHex = function (flash = false) {
       return;
     }
   }
-  
+
   const boardFQBN = {
     uno: 'arduino:avr:uno',
     nano: 'arduino:avr:nano:cpu=atmega328',
@@ -828,70 +828,63 @@ Code.getHex = function (flash = false) {
   let data = { sketch: code, board: boardFQBN };
 
   // console.log(JSON.stringify(data));
-  fetch(Code.COMPILE_URL + '/compile', {
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+  const resp = await fetch(Code.COMPILE_URL + '/compile', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)// body data type must match "Content-Type" header    // encodeURIComponent(JSON.stringify(data));
-  })
-    .then(response => response.json())
-    .then(data => {
-      // console.log(data);
-      if (!data.success) {
-        console.warn(0, data.msg, true);
-        // // can only run below if arduino compile error I can still get response with garbage body
-        if (data.stderr.length > 0) {
-          let regex = /\/tmp\/chromeduino-(.*?)\/chromeduino-(.*?)\.ino:/g;
-          let other_regex = /\/tmp\/waca-(.*?)\/waca-(.*?)\.ino:/g;
-          let message = data.stderr.replace(regex, '').replace(other_regex, '');
-          console.error(message);
-          upload_result(message, false);
-          regex = /\d+:\d+/g;
-          let rowcol = message.match(regex);
-          let row = rowcol[0].substring(0, rowcol[0].indexOf(':'));
-          Code.ace.gotoLine(row);
-        }
-      } else {
-        let hexstring = atob(data.hex);
-        return { 'data': hexstring, 'msg': data.stdout };
-      }
+    body: JSON.stringify(data)
+  }).then(response => response.json());
+
+  if (!resp.success) {
+    console.warn(0, resp.msg, true);
+    // can only run below if arduino compile error I can still get response with garbage body
+    if (resp.stderr.length > 0) {
+      const message = resp.stderr.replace(/\/tmp\/chromeduino|waca-(.*?)\/chromeduino|waca-(.*?)\.ino:/ig, '');
+      console.error(message);
+      upload_result(message, false);
+      const rowcol = message.match(/\d+:\d+/g);
+      const row = rowcol[0].substring(0, rowcol[0].indexOf(':'));
+      Code.ace.gotoLine(row);
     }
-    )
-    .then(hex => {
-      if (hex && flash) {
-        try {
-          let avrgirl = new AvrgirlArduino({
-            board: board,
-            debug: true
-          });
+    return;
+  }
 
-          avrgirl.flash(str2ab(hex.data), (error) => {
-            // gear.classList.remove('spinning');
-            // progress.textContent = "done!";
-            if (error) {
-              console.error('Flash ERROR:', error);
-              //typicall wrong board
-              // avrgirl.connection.serialPort.close();
-              upload_result(error + '\n' + hex.msg, false);
-            } else {
-              console.info('done correctly.');
-              upload_result(hex.msg);
-            }
-          });
-        } catch (error) {
-          console.error('AVR ERROR:', error);
-          upload_result(error, false);
-        }
+  const { hex, stdout } = resp;
+  if (!hex) {
+    // what?!
+    return;
+  }
 
-      } else {
-        console.log('HEX:', hex);
-        upload_result(hex.msg);
-      }
-    })
-    .catch(e => {
-      console.error('Fetch Error:', e);
+  if (!flash) {
+    console.log('HEX:', hex);
+    upload_result(stdout);
+    return;
+  }
+
+  try {
+    const avrgirl = new AvrgirlArduino({
+      board: board,
+      debug: true
     });
+
+    avrgirl.flash(new TextEncoder().encode(atob(hex)).buffer, (error) => {
+      // gear.classList.remove('spinning');
+      // progress.textContent = "done!";
+      if (error) {
+        console.error('Flash ERROR:', error);
+        //typicall wrong board
+        // avrgirl.connection.serialPort.close();
+        upload_result(error + '\n' + stdout, false);
+      } else {
+        console.info('done correctly.');
+        upload_result(stdout);
+      }
+    });
+  } catch (error) {
+    console.error('AVR ERROR:', error);
+    upload_result(error, false);
+  }
 };
 
 Code.flash = function () {
@@ -1181,24 +1174,6 @@ Blockly.Themes.Barnabas = Blockly.Theme.defineTheme('barnabas', {
   'fontStyle': fontStyle,
   'startHats': true
 });
-
-/* Interprets an ArrayBuffer as UTF-8 encoded string data. */
-var ab2str = function (buf) {
-  var bufView = new Uint8Array(buf);
-  var encodedString = String.fromCharCode.apply(null, bufView);
-  return decodeURIComponent(encodeURIComponent(encodedString));
-};
-
-/* Converts a string to UTF-8 encoding in a Uint8Array; returns the array buffer. */
-var str2ab = function (str) {
-  // var encodedString = unescape(encodeURIComponent(str));
-  var encodedString = str;
-  var bytes = new Uint8Array(encodedString.length);
-  for (var i = 0; i < encodedString.length; ++i) {
-    bytes[i] = encodedString.charCodeAt(i);
-  }
-  return bytes.buffer;
-};
 
 Code.close = function (parentModal) {
   document.getElementById(parentModal).style.display = 'none';
