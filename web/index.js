@@ -1132,6 +1132,9 @@ export function close(parentModal) {
     document.getElementById(parentModal).style.display = "none"
 }
 
+document.querySelectorAll("#notSupported .class").forEach(e => e.addEventListener("click", () => close("notSupported")))
+document.querySelectorAll("#arduinoOutput .closeText").forEach(e => e.addEventListener("click", () => close("arduinoOutput")))
+
 // const getMethods = (obj) => {
 //   let properties = new Set();
 //   let currentObj = obj;
