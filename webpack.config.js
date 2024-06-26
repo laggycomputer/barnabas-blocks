@@ -84,7 +84,7 @@ export default {
         new MiniCssExtractPlugin(),
         new HtmlWebpackPlugin({
             template: "web/index.html",
-            chunks: ["index"],
+            excludeChunks: ["img2hex"],
         }),
         new HtmlWebpackPlugin({
             filename: "img2hex.html",
