@@ -5,10 +5,7 @@ Desktop.ini
 .vscode
 .idea
 
-# Project files
-ino_project
 .env
-launch.json
 
 # Closure library needed for uncompressed development
 /closure-library
@@ -20,3 +17,6 @@ __pycache__/
 
 # Python virtual environments
 venv
+
+node_modules/
+/dist/

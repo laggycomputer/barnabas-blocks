@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <input class="updates-image" type="file" id="file-input"><br>
+    <button class="updates-image">Force update preview</button><br>
+    <label>Background color:</label><br>
+    <input class="updates-image" type="radio" name="bgColor" value="White" id="bgColorWhite" checked="true">
+    <label for="bgColorWhite">White</label>
+    <input class="updates-image" type="radio" name="bgColor" value="Black" id="bgColorBlack">
+    <label for="bgColorBlack">Black</label><br>
+
+    <label for="invert">Invert colors</label>
+    <input class="updates-image" type="checkbox" id="invert">
+    <br>
+    <label for="threshold">Brightness threshold: </label>
+    <input class="updates-image" id="threshold" type="number" min="0" max="255" value="128" />
+    <i>0 - 255; if the brightness of a pixel is above the given level the pixel becomes
+        white, otherwise it becomes black. </i>
+    <br>
+    <label for="scale">Scaling</label>
+    <select class="updates-image" id="scale">
+        <option value="2">scale to fit, keeping proportions</option>
+        <option value="3">stretch to fill canvas</option>
+        <option value="1">original size</option>
+        <option value="4">stretch to fill canvas only horizontally</option>
+        <option value="5">stretch to fill canvas only vertically</option>
+    </select>
+    <br>
+    <label>Center:</label>
+    <input class="updates-image" id="centerHorizontally" type="checkbox" />
+    <label for="centerHorizontally">horizontally</label>
+    <input class="updates-image" id="centerVertically" type="checkbox" />
+    <label for="centerVertically">vertically</label>
+    <br>
+    <label>Flip:</label>
+    <input class="updates-image" id="flipHorizontally" type="checkbox" />
+    <label for="flipHorizontally">horizontally</label>
+    <input class="updates-image"id="flipVertically" type="checkbox" />
+    <label for="flipVertically">vertically</label>
+    <br>
+    <div id="canvasContainer"></div>
+    <button type="button" id="generate">Generate and copy</button>
+    <br>
+    <textarea id="code-output"></textarea>
+    <br>
+    <button type="button" onclick="window.close()">Close this window</button>
+</body>
+
+</html>
