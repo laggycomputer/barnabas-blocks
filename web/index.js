@@ -852,7 +852,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 },
                 enableTracing: true,
                 romBaudrate: 115200,
-                debugLogging: true,
+                // debugLogging: true,
             }
 
             const esploader = new ESPLoader(loaderOptions)
