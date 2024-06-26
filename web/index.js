@@ -767,6 +767,11 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         return
     }
 
+    let outputStream = ""
+
+    outputStream += "Compiling (don't leave the tab)...\n"
+    showCompileUploadResult(outputStream, false)
+
     const resp = await fetch(COMPILE_URL + "/compile", {
         method: "POST",
         headers: {
@@ -781,7 +786,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         if (resp.stderr.length > 0) {
             const message = resp.stderr.replace(/\/tmp\/chromeduino|waca-(.*?)\/chromeduino|waca-(.*?)\.ino:/ig, "")
             console.error(message)
-            showUploadResult(message, false)
+            showCompileUploadResult(message, false)
             const rowcol = message.match(/\d+:\d+/g)
             const row = rowcol[0].substring(0, rowcol[0].indexOf(":"))
             appState.aceObj.gotoLine(row)
@@ -797,9 +802,12 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
 
     if (!shouldUpload) {
         console.log("HEX:", bytecodeBase64)
-        showUploadResult(stdout)
+        showCompileUploadResult(stdout)
         return
     }
+
+    outputStream += "Compiled, select port above!\n"
+    showCompileUploadResult(outputStream, false)
 
     try {
         if (["nano, uno"].includes(board)) {
@@ -815,10 +823,10 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                     console.error("Flash ERROR:", error)
                     // typicall wrong board
                     // avrgirl.connection.serialPort.close();
-                    showUploadResult(error + "\n" + stdout, false)
+                    showCompileUploadResult(error + "\n" + stdout, false)
                 } else {
                     console.info("done correctly.")
-                    showUploadResult(stdout)
+                    showCompileUploadResult(stdout)
                 }
             })
         } else if (board == "wemos") {
@@ -826,22 +834,20 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
             const device = await navigator.serial.requestPort({ filters: portFilters })
             const transport = new Transport(device, true)
 
-            let uploadOutput = ""
-
             const loaderOptions = {
                 transport,
                 baudrate: 115200,
                 terminal: {
                     clean() {
-                        uploadOutput = ""
+                        outputStream = ""
                     },
                     writeLine(data) {
-                        uploadOutput += `${data}\n`
-                        showUploadResult(uploadOutput)
+                        outputStream += `${data}\n`
+                        showCompileUploadResult(outputStream, false)
                     },
                     write(data) {
-                        uploadOutput += data
-                        showUploadResult(uploadOutput)
+                        outputStream += data
+                        showCompileUploadResult(outputStream, false)
                     },
                 },
                 enableTracing: true,
@@ -850,8 +856,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
             }
 
             const esploader = new ESPLoader(loaderOptions)
-            const chip = await esploader.main()
-            console.log(chip)
+            await esploader.main()
             await esploader.flashId()
 
             const flashOptions = {
@@ -866,10 +871,11 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
             await esploader.hardReset()
 
             await device.close()
+            showCompileUploadResult(outputStream.split("\n").slice(-6).join("\n"), true)
         }
     } catch (error) {
         console.error("UPLOAD ERROR:", error)
-        showUploadResult(error, false)
+        showCompileUploadResult(error, false)
     }
 }
 
@@ -923,7 +929,7 @@ export function switchLoopBlockType() {
  * @param {boolean} success
  */
 
-function showUploadResult(msg, success = true) {
+function showCompileUploadResult(msg, success = true) {
     let icon = ""
     let output = ""
     if (success) {
