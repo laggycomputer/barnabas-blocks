@@ -5,6 +5,8 @@ import "ace-builds/src-noconflict/ext-language_tools"
 import AvrgirlArduino from "avrgirl-arduino/avrgirl-arduino-browser"
 import * as Blockly from "blockly/core"
 import * as localeEn from "blockly/msg/en"
+import CryptoJS from "crypto-js"
+import { ESPLoader, Transport } from "esptool-js/lib/index.js"
 import { saveAs } from "file-saver"
 import stripAnsi from "strip-ansi"
 
@@ -16,6 +18,7 @@ import "./style.css"
 import * as usbSerial from "./usbSerial.mjs"
 
 const COMPILE_URL = "https://compile.barnabasrobotics.com"
+
 /**
  * Lookup for names of supported languages.  Keys should be in ISO 639 format.
  */
@@ -756,6 +759,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         uno: "arduino:avr:uno",
         nano: "arduino:avr:nano:cpu=atmega328",
         ezDisplay: "ATTinyCore:avr:attinyx5",
+        wemos: "esp8266:esp8266:d1",
     }?.[board]
 
     if (!boardFQBN) {
@@ -763,15 +767,12 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         return
     }
 
-    let data = { sketch: code, board: boardFQBN }
-
-    // console.log(JSON.stringify(data));
     const resp = await fetch(COMPILE_URL + "/compile", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ sketch: code, board: boardFQBN }),
     }).then(response => response.json())
 
     if (!resp.success) {
@@ -788,39 +789,86 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         return
     }
 
-    const { hex, stdout } = resp
-    if (!hex) {
+    const { hex: bytecodeBase64, stdout } = resp
+    if (!bytecodeBase64) {
         // what?!
         return
     }
 
     if (!shouldUpload) {
-        console.log("HEX:", hex)
+        console.log("HEX:", bytecodeBase64)
         showUploadResult(stdout)
         return
     }
 
     try {
-        const avrgirl = new AvrgirlArduino({
-            board: board,
-            debug: true,
-        })
+        if (["nano, uno"].includes(board)) {
+            const avrgirl = new AvrgirlArduino({
+                board: board,
+                debug: true,
+            })
 
-        avrgirl.flash(new TextEncoder().encode(atob(hex)).buffer, (error) => {
-            // gear.classList.remove('spinning');
-            // progress.textContent = "done!";
-            if (error) {
-                console.error("Flash ERROR:", error)
-                // typicall wrong board
-                // avrgirl.connection.serialPort.close();
-                showUploadResult(error + "\n" + stdout, false)
-            } else {
-                console.info("done correctly.")
-                showUploadResult(stdout)
+            avrgirl.flash(new TextEncoder().encode(atob(bytecodeBase64)).buffer, (error) => {
+                // gear.classList.remove('spinning');
+                // progress.textContent = "done!";
+                if (error) {
+                    console.error("Flash ERROR:", error)
+                    // typicall wrong board
+                    // avrgirl.connection.serialPort.close();
+                    showUploadResult(error + "\n" + stdout, false)
+                } else {
+                    console.info("done correctly.")
+                    showUploadResult(stdout)
+                }
+            })
+        } else if (board == "wemos") {
+            const portFilters = [{ usbVendorId: 0x0403, usbProductId: 0x6001 }]
+            const device = await navigator.serial.requestPort({ filters: portFilters })
+            const transport = new Transport(device, true)
+
+            let uploadOutput = ""
+
+            const loaderOptions = {
+                transport,
+                baudrate: 115200,
+                terminal: {
+                    clean() {
+                        uploadOutput = ""
+                    },
+                    writeLine(data) {
+                        uploadOutput += `${data}\n`
+                        showUploadResult(uploadOutput)
+                    },
+                    write(data) {
+                        uploadOutput += data
+                        showUploadResult(uploadOutput)
+                    },
+                },
+                enableTracing: true,
+                romBaudrate: 115200,
+                debugLogging: true,
             }
-        })
+
+            const esploader = new ESPLoader(loaderOptions)
+            const chip = await esploader.main()
+            console.log(chip)
+            await esploader.flashId()
+
+            const flashOptions = {
+                fileArray: [{ data: atob(bytecodeBase64), address: 0x0000 }],
+                flashSize: "keep",
+                eraseAll: false,
+                compress: true,
+                calculateMD5Hash: image => CryptoJS.MD5(CryptoJS.enc.Latin1.parse(image)).toString(),
+            }
+
+            await esploader.writeFlash(flashOptions)
+            await esploader.hardReset()
+
+            await device.close()
+        }
     } catch (error) {
-        console.error("AVR ERROR:", error)
+        console.error("UPLOAD ERROR:", error)
         showUploadResult(error, false)
     }
 }
