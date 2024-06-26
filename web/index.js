@@ -1,15 +1,12 @@
 import { TypedVariableModal } from "@blockly/plugin-typed-variable-modal"
-// import * as ace from "ace-builds/src-noconflict/ace"
-import * as ace from "ace-builds"
+import ace from "ace-builds"
+import "ace-builds/esm-resolver"
+import "ace-builds/src-noconflict/ext-language_tools"
 import AvrgirlArduino from "avrgirl-arduino/avrgirl-arduino-browser"
 import * as Blockly from "blockly/core"
 import * as localeEn from "blockly/msg/en"
 import { saveAs } from "file-saver"
-import hljs from "highlight.js/lib/core"
-import hlJsCppLib from "highlight.js/lib/languages/cpp"
 import stripAnsi from "strip-ansi"
-
-hljs.registerLanguage("cpp", hlJsCppLib)
 
 import addlTranslations from "./blocklyAddlTranslations.mjs"
 import "./blocks/blocks"
@@ -46,7 +43,12 @@ export const appState = {
      */
     workspace: null,
     serialMonitorPort: null,
-    aceObj: ace.edit("content_editor"),
+    aceObj: ace.edit("content_editor", {
+        theme: "ace/theme/textmate",
+        mode: "ace/mode/c_cpp",
+        showPrintMargin: false,
+        tabSize: 4,
+    }),
     selectedTabId: getEditorType(),
 }
 
@@ -371,12 +373,7 @@ export function attemptCodeGeneration(generator) {
     // content.textContent = '';
     content.value = ""
     if (checkAllGeneratorFunctionsDefined(generator) && checkForBlockRoots()) {
-        console.log("highlightmaxxing")
         const code = generator.workspaceToCode(appState.workspace)
-
-        const highlightedCode = hljs.highlight(code, { language: "cpp" })
-        // content.textContent = code;
-        content.value = highlightedCode
 
         appState.aceObj.setValue(code)
         appState.aceObj.gotoLine(1)
@@ -976,12 +973,6 @@ export function editText() {
 }
 
 export function initEditor() {
-    // Code.selected = Code.EDITOR;
-    appState.aceObj.setTheme("ace/theme/textmate")
-    appState.aceObj.session.setMode("ace/mode/c_cpp")
-    appState.aceObj.setShowPrintMargin(false)
-    // Code.ace.session.setUseSoftTabs(true);
-    appState.aceObj.session.setTabSize(4)
     document.getElementById("content_editor").style.fontSize = "14px"
 
     if (getEditorType() == "editor") {
