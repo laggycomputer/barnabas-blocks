@@ -444,3 +444,7 @@ span select {
 #content_editor {
   border-top: 1px solid black;
 }
+
+#response span {
+  font-size: 48px;
+}

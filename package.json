@@ -34,6 +34,7 @@
     "esptool-js": "^0.4.3",
     "file-saver": "^2.0.5",
     "highlight.js": "^11.9.0",
+    "material-icons": "^1.13.12",
     "md5": "^2.3.0",
     "strip-ansi": "^7.1.0",
     "util": "^0.12.5"

@@ -8,6 +8,7 @@ import * as localeEn from "blockly/msg/en"
 import CryptoJS from "crypto-js"
 import { ESPLoader, Transport } from "esptool-js/lib/index.js"
 import { saveAs } from "file-saver"
+import "material-icons/iconfont/material-icons.css"
 import stripAnsi from "strip-ansi"
 
 import addlTranslations from "./blocklyAddlTranslations.mjs"
@@ -767,10 +768,8 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         return
     }
 
-    let outputStream = ""
-
-    outputStream += "Compiling (don't leave the tab)...\n"
-    showCompileUploadResult(outputStream, false)
+    const feedbackManager = new CompileUploadFeedbackManager()
+    feedbackManager.appendLog("Compiling (don't leave the tab)...\n")
 
     const resp = await fetch(COMPILE_URL + "/compile", {
         method: "POST",
@@ -786,7 +785,8 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         if (resp.stderr.length > 0) {
             const message = resp.stderr.replace(/\/tmp\/chromeduino|waca-(.*?)\/chromeduino|waca-(.*?)\.ino:/ig, "")
             console.error(message)
-            showCompileUploadResult(message, false)
+            feedbackManager.setState("reject")
+            feedbackManager.appendLog(message)
             const rowcol = message.match(/\d+:\d+/g)
             const row = rowcol[0].substring(0, rowcol[0].indexOf(":"))
             appState.aceObj.gotoLine(row)
@@ -802,12 +802,14 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
 
     if (!shouldUpload) {
         console.log("HEX:", bytecodeBase64)
-        showCompileUploadResult(stdout)
+        feedbackManager.setState("resolve")
+        feedbackManager.appendLog("Compiled!\n")
+        feedbackManager.appendLog(stdout)
         return
     }
 
-    outputStream += "Compiled, select port above!\n"
-    showCompileUploadResult(outputStream, false)
+    feedbackManager.appendLog("Compiled, select port above!\n")
+    feedbackManager.setState("uploading")
 
     try {
         if (["nano, uno"].includes(board)) {
@@ -816,19 +818,25 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 debug: true,
             })
 
-            avrgirl.flash(new TextEncoder().encode(atob(bytecodeBase64)).buffer, (error) => {
-                // gear.classList.remove('spinning');
-                // progress.textContent = "done!";
-                if (error) {
-                    console.error("Flash ERROR:", error)
-                    // typicall wrong board
-                    // avrgirl.connection.serialPort.close();
-                    showCompileUploadResult(error + "\n" + stdout, false)
-                } else {
-                    console.info("done correctly.")
-                    showCompileUploadResult(stdout)
-                }
-            })
+            try {
+                avrgirl.flash(new TextEncoder().encode(atob(bytecodeBase64)).buffer, (error) => {
+                    // gear.classList.remove('spinning');
+                    // progress.textContent = "done!";
+                    if (error) {
+                        console.error("Flash ERROR:", error)
+                        // typicall wrong board
+                        // avrgirl.connection.serialPort.close();
+                        feedbackManager.setState("reject")
+                        feedbackManager.appendLog(error + "\n" + stdout)
+                    } else {
+                        console.info("done correctly.")
+                        feedbackManager.setState("resolve")
+                        feedbackManager.appendLog(stdout)
+                    }
+                })
+            } catch (err) {
+                console.error(err)
+            }
         } else if (board == "wemos") {
             const portFilters = [{ usbVendorId: 0x0403, usbProductId: 0x6001 }]
             const device = await navigator.serial.requestPort({ filters: portFilters })
@@ -839,15 +847,13 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 baudrate: 115200,
                 terminal: {
                     clean() {
-                        outputStream = ""
+
                     },
                     writeLine(data) {
-                        outputStream += `${data}\n`
-                        showCompileUploadResult(outputStream, false)
+                        feedbackManager.appendLog(`${data}\n`)
                     },
                     write(data) {
-                        outputStream += data
-                        showCompileUploadResult(outputStream, false)
+                        feedbackManager.appendLog(data)
                     },
                 },
                 enableTracing: true,
@@ -857,7 +863,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
 
             const esploader = new ESPLoader(loaderOptions)
             await esploader.main()
-            await esploader.flashId()
+            // await esploader.flashId()
 
             const flashOptions = {
                 fileArray: [{ data: atob(bytecodeBase64), address: 0x0000 }],
@@ -867,15 +873,17 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 calculateMD5Hash: image => CryptoJS.MD5(CryptoJS.enc.Latin1.parse(image)).toString(),
             }
 
+            await esploader.eraseFlash()
             await esploader.writeFlash(flashOptions)
-            await esploader.hardReset()
+            // await esploader.hardReset()
 
             await device.close()
-            showCompileUploadResult(outputStream.split("\n").slice(-6).join("\n"), true)
+            feedbackManager.setState("resolve")
         }
     } catch (error) {
         console.error("UPLOAD ERROR:", error)
-        showCompileUploadResult(error, false)
+        feedbackManager.setState("reject")
+        feedbackManager.appendLog(error)
     }
 }
 
@@ -923,6 +931,64 @@ export function switchLoopBlockType() {
     }
 }
 
+class CompileUploadFeedbackManager {
+    responseElem = document.getElementById("response")
+    iconElem = document.querySelector("#response span")
+    logElem = document.querySelector("#response pre")
+
+    constructor() {
+        document.getElementById("arduinoOutput").style.display = "block"
+        this.iconElem.textContent = ""
+        this.logElem.textContent = ""
+        this.setState("compiling")
+    }
+
+    setState(state) {
+        this.setIcon(state)
+
+        switch (state) {
+            case "compiling":
+                break
+            case "uploading":
+                break
+            case "resolve":
+                break
+            case "reject":
+                break
+        }
+    }
+
+    setIcon(state) {
+        this.iconElem.textContent = ""
+
+        let color
+        let iconType
+
+        switch (state) {
+            case "compiling":
+            case "uploading":
+                color = "yellow"
+                iconType = "hourglass_empty"
+                break
+            case "resolve":
+                color = "green"
+                iconType = "check_circle"
+                break
+            case "reject":
+                color = "red"
+                iconType = "error"
+                break
+        }
+
+        this.iconElem.textContent = iconType
+        this.iconElem.style = `color: ${color};`
+    }
+
+    appendLog(content) {
+        this.logElem.textContent += stripAnsi(content.toString())
+    }
+}
+
 /**
  *
  * @param {string} msg
@@ -949,11 +1015,11 @@ export function newProject() {
         renderContent()
     } else {
         const defaultCode = `void setup() {
-  
+
 }
 
 void loop() {
-  
+
 }
 `
 
