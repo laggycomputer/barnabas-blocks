@@ -508,10 +508,10 @@ export function init() {
 
         if (this.value == "ezDisplay" || getLesson() == "ezDisplay") {
             document.getElementById("img2hex").classList.remove("hide")
-            document.getElementById("compileButton").classList.add("hide")
+            document.getElementById("uploadButton").classList.add("hide")
         } else {
             document.getElementById("img2hex").classList.add("hide")
-            document.getElementById("compileButton").classList.remove("hide")
+            document.getElementById("uploadButton").classList.remove("hide")
         }
 
         onresize()
@@ -812,7 +812,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
     feedbackManager.setState("uploading")
 
     try {
-        if (["nano, uno"].includes(board)) {
+        if (["nano", "uno"].includes(board)) {
             const avrgirl = new AvrgirlArduino({
                 board: board,
                 debug: true,
