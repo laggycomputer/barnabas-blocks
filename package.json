@@ -1,0 +1,42 @@
+{
+  "name": "barnabas-blocks",
+  "version": "1.0.0",
+  "description": "Barnabas Blocks",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "author": "Barnabas Robotics",
+  "license": "ISC",
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^2.6.1",
+    "@types/file-saver": "^2.0.7",
+    "@types/md5": "^2.3.5",
+    "css-loader": "^7.1.2",
+    "eslint": "^8.57.0",
+    "globals": "^15.9.0",
+    "html-loader": "^5.1.0",
+    "html-webpack-plugin": "^5.6.0",
+    "mini-css-extract-plugin": "^2.9.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^7.18.0",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@blockly/plugin-typed-variable-modal": "^8.0.6",
+    "ace-builds": "^1.35.4",
+    "avrgirl-arduino": "^5.0.1",
+    "blockly": "^11.1.1",
+    "crypto-js": "^4.2.0",
+    "esptool-js": "^0.4.5",
+    "file-saver": "^2.0.5",
+    "highlight.js": "^11.10.0",
+    "material-icons": "^1.13.12",
+    "md5": "^2.3.0",
+    "strip-ansi": "^7.1.0",
+    "util": "^0.12.5"
+  }
+}
