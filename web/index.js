@@ -502,18 +502,13 @@ export function init() {
 
     fileHandling.autoBackupAndRestoreBlocks()
 
+    ezDisplayChangeButtons()
+
     document.getElementById("boardSelect").addEventListener("change", function () {
         localStorage.setItem("board", this.value)
         document.getElementById("board").textContent = document.getElementById("boardSelect").value// MSG['title'];
 
-        if (this.value == "ezDisplay" || getLesson() == "ezDisplay") {
-            document.getElementById("img2hex").classList.remove("hide")
-            document.getElementById("uploadButton").classList.add("hide")
-        } else {
-            document.getElementById("img2hex").classList.add("hide")
-            document.getElementById("uploadButton").classList.remove("hide")
-        }
-
+        ezDisplayChangeButtons()
         onresize()
     })
 
@@ -533,14 +528,7 @@ export function init() {
                 switchLoopBlockType()
             }
 
-            if (this.value == "ezDisplay" || getBoard() == "ezDisplay") {
-                document.getElementById("img2hex").classList.remove("hide")
-                document.getElementById("compileButton").classList.add("hide")
-            } else {
-                document.getElementById("img2hex").classList.add("hide")
-                document.getElementById("compileButton").classList.remove("hide")
-            }
-
+            ezDisplayChangeButtons()
             onresize()
         }
     })
@@ -618,6 +606,16 @@ export function init() {
     appState.workspace.registerToolboxCategoryCallback("CREATE_TYPED_VARIABLE", createFlyout)
     const typedVarModal = new TypedVariableModal(appState.workspace, "callbackName", varTypes)
     typedVarModal.init()
+}
+
+function ezDisplayChangeButtons() {
+    if (getLesson() == "ezDisplay" || getBoard() == "ezDisplay") {
+        document.getElementById("img2hex").classList.remove("hide")
+        document.getElementById("runButton").classList.add("hide")
+    } else {
+        document.getElementById("img2hex").classList.add("hide")
+        document.getElementById("runButton").classList.remove("hide")
+    }
 }
 
 export function createFlyout(workspace) {
