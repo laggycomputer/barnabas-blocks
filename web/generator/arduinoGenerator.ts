@@ -238,6 +238,7 @@ import * as math from "./math"
 import * as sense from "./sense"
 import * as serial from "./serial"
 import * as text from "./text"
+import * as variable from "./variable"
 
 actuate.default(arduinoGenerator)
 controlFlow.default(arduinoGenerator)
@@ -247,5 +248,6 @@ math.default(arduinoGenerator)
 sense.default(arduinoGenerator)
 serial.default(arduinoGenerator)
 text.default(arduinoGenerator)
+variable.default(arduinoGenerator)
 
 export default arduinoGenerator
