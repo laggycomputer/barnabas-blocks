@@ -18,7 +18,7 @@ import arduinoGenerator from "./generator/arduinoGenerator"
 import "./style.css"
 import * as usbSerial from "./usbSerial.mjs"
 
-const COMPILE_URL = "https://compile.barnabasrobotics.com"
+const COMPILE_URL = "http://localhost:8008"
 
 /**
  * Lookup for names of supported languages.  Keys should be in ISO 639 format.
@@ -726,7 +726,8 @@ export function initSelects() {
 }
 
 export function getINO() {
-    if (appState.selectedTabId == "blocks" && checkForBlockRoots() && checkAllGeneratorFunctionsDefined(arduinoGenerator)) {
+    checkForBlockRoots()
+    if (appState.selectedTabId == "blocks" && checkAllGeneratorFunctionsDefined(arduinoGenerator)) {
         return arduinoGenerator.workspaceToCode()
     }
     // return document.getElementById("content_arduino").value;
