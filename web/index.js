@@ -18,7 +18,7 @@ import arduinoGenerator from "./generator/arduinoGenerator"
 import "./style.css"
 import * as usbSerial from "./usbSerial.mjs"
 
-const COMPILE_URL = "http://localhost:8008"
+const COMPILE_URL = "https://compile.barnabasrobotics.com"
 
 /**
  * Lookup for names of supported languages.  Keys should be in ISO 639 format.
