@@ -837,8 +837,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 console.error(err)
             }
         } else if (board == "wemos") {
-            const portFilters = [{ usbVendorId: 0x0403, usbProductId: 0x6001 }]
-            const device = await navigator.serial.requestPort({ filters: portFilters })
+            const device = await navigator.serial.requestPort()
             const transport = new Transport(device, true)
 
             const loaderOptions = {
