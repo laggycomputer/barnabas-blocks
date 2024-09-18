@@ -49,12 +49,12 @@ export default function populate(generator: ArduinoGenerator) {
 
         // where 29979.2458 is c in cm/us
         generator.addDeclaration(block, "ultrasonic", `double ultrasonic() {
-\tdigitalWrite(${trigger}, LOW);
-\tdelayMicroseconds(5);
-\tdigitalWrite(${trigger}, HIGH);
+${generator.INDENT}digitalWrite(${trigger}, LOW);
+${generator.INDENT}delayMicroseconds(5);
+${generator.INDENT}digitalWrite(${trigger}, HIGH);
 
-\tfloat duration_us = pulseIn(${echo}, HIGH);
-\treturn ((double) pulseIn(${echo}, HIGH)) / 29979.2458;
+${generator.INDENT}double duration_us = pulseIn(${echo}, HIGH);
+${generator.INDENT}return ((double) pulseIn(${echo}, HIGH)) / 29979.2458;
 }
 `)
 
