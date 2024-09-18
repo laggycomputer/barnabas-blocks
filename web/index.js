@@ -724,8 +724,8 @@ export function initSelects() {
 }
 
 export function getINO() {
-    checkForBlockRoots()
     if (appState.selectedTabId == "blocks" && checkAllGeneratorFunctionsDefined(arduinoGenerator)) {
+        checkForBlockRoots()
         return arduinoGenerator.workspaceToCode()
     }
     // return document.getElementById("content_arduino").value;
