@@ -53,6 +53,12 @@ export class ArduinoGenerator extends CodeGenerator {
         Number: "double",
         Boolean: "bool",
         String: "String",
+    } as Record<string, string>
+
+    public VAR_DEFAULTS: Record<string, string> = {
+        Number: "0",
+        Boolean: "false",
+        String: "\"\"",
     }
 
     public INDENT = " ".repeat(4)
@@ -90,18 +96,57 @@ export class ArduinoGenerator extends CodeGenerator {
         this.nameDB_.populateVariables(workspace)
         this.nameDB_.populateProcedures(workspace)
 
-        const definedVars = {
-            [Names.NameType.DEVELOPER_VARIABLE]: Variables.allDeveloperVariables(workspace).map(devVar => workspace.getVariable(devVar)),
-            [Names.NameType.VARIABLE]: Variables.allUsedVarModels(workspace),
+        const defvars = []
+        // Add developer Blockly.Variables (not created or named by the user).
+        const devVarList = Variables.allDeveloperVariables(workspace)
+        for (let i = 0; i < devVarList.length; i++) {
+            defvars.push(
+                this.nameDB_.getName(devVarList[i], Names.NameType.DEVELOPER_VARIABLE),
+            )
         }
 
-        this.definitions_["variables"] = ""
-        for (const [nameType, varModels] of Object.entries(definedVars)) {
-            for (const varModel of varModels) {
-                this.definitions_["variables"] += `${this.TYPES[varModel.type as keyof typeof this.TYPES]} ${this.nameDB_.getName(varModel.name, nameType)};\n`
+        // Add user Blockly.Variables, but only ones that are being used.
+        const variables = Variables.allUsedVarModels(workspace)
+        const variableSetters = workspace.getBlocksByType("variables_set")
+        const variableGetters = workspace.getBlocksByType("variables_get")
+        for (let i = 0; i < variables.length; i++) {
+            const setters = variableSetters.filter(
+                block => block.getFieldValue("VAR") === variables[i].getId(),
+            )
+            const types = setters.map((block) => {
+                const output = block.getChildren(true)[0]
+                return {
+                    block,
+                    type: output && output.outputConnection ? output.outputConnection.getCheck()?.[0] : undefined,
+                }
+            })
+            // check for mismatch
+            if (types.some(({ type }) => type !== types[0].type && type !== undefined)) {
+                types.forEach(({ block }) => { block.setWarningText(`Variable has conflicting types: ${types.map(({ type }) => type).join(", ")}`) })
+            } else {
+                types.forEach(({ block }) => { block.setWarningText(null) })
             }
+
+            const type = types[0]?.type || "Number"
+            variableGetters.forEach((block) => {
+                if (block.getFieldValue("VAR") === variables[i].getId()) {
+                    block.outputConnection?.setCheck(type)
+                }
+            })
+
+            const arduinoType = this.TYPES[type]
+            const defaultValue = this.VAR_DEFAULTS[type]
+            const name = this.nameDB_.getName(variables[i].getId(), Names.NameType.VARIABLE)
+
+            defvars.push(`${arduinoType} ${name} = ${defaultValue}`)
         }
 
+        // Declare all of the variables.
+        if (defvars.length) {
+            this.definitions_["variables"] = defvars.join(";\n") + ";\n"
+        }
+
+        // Type inference for procedures
         const definitions = workspace.getBlocksByType("procedures_defreturn")
         const usages = workspace.getBlocksByType("procedures_callreturn")
         const returns = workspace.getBlocksByType("procedures_ifreturn")
@@ -240,6 +285,7 @@ import * as controlFlow from "./controlFlow"
 import * as ezDisplay from "./ezDisplay"
 import * as logic from "./logic"
 import * as math from "./math"
+import * as procedures from "./procedures"
 import * as sense from "./sense"
 import * as serial from "./serial"
 import * as text from "./text"
@@ -250,6 +296,7 @@ controlFlow.default(arduinoGenerator)
 ezDisplay.default(arduinoGenerator)
 logic.default(arduinoGenerator)
 math.default(arduinoGenerator)
+procedures.default(arduinoGenerator)
 sense.default(arduinoGenerator)
 serial.default(arduinoGenerator)
 text.default(arduinoGenerator)
