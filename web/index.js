@@ -54,9 +54,15 @@ export const appState = {
         tabSize: 4,
     }),
     selectedTabId: getEditorType(),
-    codeCache: {
-        hash: localStorage?.codeCache?.hash || "",
-        compiled: localStorage?.codeCache?.compiled,
+    codeCache: (() => {
+        try {
+            return JSON.parse(localStorage.codeCache)
+        } catch (_e) {
+            return undefined
+        }
+    })() || {
+        hash: "",
+        compiled: null,
     },
 }
 
@@ -776,9 +782,6 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
     let bytecodeBase64
     if (codeHash != appState.codeCache.hash) {
         feedbackManager.appendLog("Compiling (don't leave the tab)...\n")
-        if (shouldUpload) {
-            feedbackManager.appendLog("If uploading fails, try compiling first...\n")
-        }
 
         const resp = await fetch(COMPILE_URL + "/compile", {
             method: "POST",
@@ -810,10 +813,12 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         }
 
         feedbackManager.appendLog(resp.stdout)
-        localStorage.codeCache = appState.codeCache = {
+        appState.codeCache = {
             hash: codeHash,
             compiled: bytecodeBase64,
         }
+        localStorage.codeCache = JSON.stringify(appState.codeCache)
+
         feedbackManager.appendLog("Compiled, result cached\n")
     } else {
         feedbackManager.appendLog("Reusing existing compilation...\n")
