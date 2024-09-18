@@ -597,9 +597,7 @@ export function init() {
 
     // prepare for variable types
     const varTypes = [
-        ["Int", "Int"],
-        ["Long", "Long"],
-        ["Float", "Float"],
+        ["Number", "Number"],
         ["Boolean", "Boolean"],
         ["String", "String"],
     ]

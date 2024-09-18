@@ -92,8 +92,12 @@ export class ArduinoGenerator extends CodeGenerator {
         this.definitions_["variables"] = ""
         for (const [nameType, varModels] of Object.entries(definedVars)) {
             for (const varModel of varModels) {
-                this.definitions_["variables"] += `${varModel.type == "String" ? "String" : varModel.type.toLowerCase()} `
-                + `${this.nameDB_.getDistinctName(varModel.name, nameType)};\n`
+                let codeType = {
+                    Number: "float",
+                    Boolean: "bool",
+                    String: "String",
+                }
+                this.definitions_["variables"] += `${codeType[varModel.type as keyof typeof codeType]} ${this.nameDB_.getName(varModel.name, nameType)};\n`
             }
         }
 
