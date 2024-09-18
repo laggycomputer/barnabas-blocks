@@ -49,11 +49,17 @@ export class ArduinoGenerator extends CodeGenerator {
 
     public loop_: string = ""
 
+    public TYPES = {
+        Number: "double",
+        Boolean: "bool",
+        String: "String",
+    }
+
+    public INDENT = " ".repeat(4)
+
     constructor(name = "Arduino") {
         super(name)
         this.isInitialized = false
-
-        this.INDENT = " ".repeat(4)
 
         // source: arduino IDE 1.8.19, see lib/keywords.txt, which is used to determine the IDE's syntax highlighting
         this.addReservedWords(
@@ -92,12 +98,7 @@ export class ArduinoGenerator extends CodeGenerator {
         this.definitions_["variables"] = ""
         for (const [nameType, varModels] of Object.entries(definedVars)) {
             for (const varModel of varModels) {
-                let codeType = {
-                    Number: "float",
-                    Boolean: "bool",
-                    String: "String",
-                }
-                this.definitions_["variables"] += `${codeType[varModel.type as keyof typeof codeType]} ${this.nameDB_.getName(varModel.name, nameType)};\n`
+                this.definitions_["variables"] += `${this.TYPES[varModel.type as keyof typeof this.TYPES]} ${this.nameDB_.getName(varModel.name, nameType)};\n`
             }
         }
 
