@@ -866,7 +866,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 flashSize: "keep",
                 eraseAll: false,
                 compress: true,
-                calculateMD5Hash: md5,
+                calculateMD5Hash: image => MD5(enc.Latin1.parse(image)),
             }
 
             await esploader.eraseFlash()

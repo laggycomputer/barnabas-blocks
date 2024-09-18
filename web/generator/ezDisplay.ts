@@ -1,7 +1,7 @@
 import { Block } from "blockly/core"
-import md5 from "md5"
 
 import { ArduinoGenerator, Order } from "./arduinoGenerator"
+import { MD5 } from "crypto-js"
 
 function ezDisplaySetup(block: Block, generator: ArduinoGenerator) {
     generator.addInclude(block, "Tiny4k", "#include <Wire.h>\n#define TINY4KOLED_QUICK_BEGIN\n#include <Tiny4kOLED.h>\n")
@@ -118,7 +118,7 @@ delay(20);
             view[byte] = parseInt(hex.slice(byte * 2, byte * 2 + 2), 16)
         }
 
-        const hash = md5(view)
+        const hash = MD5(view.toString())
         // 128 pixels or 128 / 8 = 16 bytes
         const chunkSize = 16
         const chunks = []
