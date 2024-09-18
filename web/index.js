@@ -9,6 +9,7 @@ import { ESPLoader, Transport } from "esptool-js/lib/index.js"
 import { saveAs } from "file-saver"
 import "material-icons/iconfont/material-icons.css"
 import stripAnsi from "strip-ansi"
+import { MD5, enc } from "crypto-js"
 
 import addlTranslations from "./blocklyAddlTranslations.mjs"
 import "./blocks/blocks"
@@ -16,7 +17,6 @@ import * as fileHandling from "./fileHandling.mjs"
 import arduinoGenerator from "./generator/arduinoGenerator"
 import "./style.css"
 import * as usbSerial from "./usbSerial.mjs"
-import md5 from "md5"
 
 const COMPILE_URL = "https://compile.barnabasrobotics.com"
 
@@ -54,6 +54,10 @@ export const appState = {
         tabSize: 4,
     }),
     selectedTabId: getEditorType(),
+    codeCache: {
+        hash: localStorage?.codeCache?.hash || "",
+        compiled: localStorage?.codeCache?.compiled,
+    },
 }
 
 /**
@@ -766,42 +770,60 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
     }
 
     const feedbackManager = new CompileUploadFeedbackManager()
-    feedbackManager.appendLog("Compiling (don't leave the tab)...\n")
 
-    const resp = await fetch(COMPILE_URL + "/compile", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ sketch: code, board: boardFQBN }),
-    }).then(response => response.json())
+    const codeHash = MD5(code).toString()
 
-    if (!resp.success) {
-        console.warn(0, resp.msg, true)
-        // can only run below if arduino compile error I can still get response with garbage body
-        if (resp.stderr.length > 0) {
-            const message = resp.stderr.replace(/\/tmp\/chromeduino|waca-(.*?)\/chromeduino|waca-(.*?)\.ino:/ig, "")
-            console.error(message)
-            feedbackManager.setState("reject")
-            feedbackManager.appendLog(message)
-            const rowcol = message.match(/\d+:\d+/g)
-            const row = rowcol[0].substring(0, rowcol[0].indexOf(":"))
-            appState.aceObj.gotoLine(row)
+    let bytecodeBase64
+    if (codeHash != appState.codeCache.hash) {
+        feedbackManager.appendLog("Compiling (don't leave the tab)...\n")
+        if (shouldUpload) {
+            feedbackManager.appendLog("If uploading fails, try compiling first...\n")
         }
-        return
-    }
 
-    const { hex: bytecodeBase64, stdout } = resp
-    if (!bytecodeBase64) {
-        // what?!
-        return
+        const resp = await fetch(COMPILE_URL + "/compile", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sketch: code, board: boardFQBN }),
+        }).then(response => response.json())
+
+        if (!resp.success) {
+            console.warn(0, resp.msg, true)
+            // can only run below if arduino compile error I can still get response with garbage body
+            if (resp.stderr.length > 0) {
+                const message = resp.stderr.replace(/\/tmp\/chromeduino|waca-(.*?)\/chromeduino|waca-(.*?)\.ino:/ig, "")
+                console.error(message)
+                feedbackManager.setState("reject")
+                feedbackManager.appendLog(message)
+                const rowcol = message.match(/\d+:\d+/g)
+                const row = rowcol[0].substring(0, rowcol[0].indexOf(":"))
+                appState.aceObj.gotoLine(row)
+            }
+            return
+        }
+
+        bytecodeBase64 = resp.hex
+        if (!bytecodeBase64) {
+            // what?!
+            return
+        }
+
+        feedbackManager.appendLog(resp.stdout)
+        localStorage.codeCache = appState.codeCache = {
+            hash: codeHash,
+            compiled: bytecodeBase64,
+        }
+        feedbackManager.appendLog("Compiled, result cached\n")
+    } else {
+        feedbackManager.appendLog("Reusing existing compilation...\n")
+        bytecodeBase64 = appState.codeCache.compiled
     }
 
     if (!shouldUpload) {
         console.log("HEX:", bytecodeBase64)
         feedbackManager.setState("resolve")
         feedbackManager.appendLog("Compiled!\n")
-        feedbackManager.appendLog(stdout)
         return
     }
 
@@ -824,18 +846,29 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                         // typicall wrong board
                         // avrgirl.connection.serialPort.close();
                         feedbackManager.setState("reject")
-                        feedbackManager.appendLog(error + "\n" + stdout)
+                        feedbackManager.appendLog(error)
                     } else {
                         console.info("done correctly.")
                         feedbackManager.setState("resolve")
-                        feedbackManager.appendLog(stdout)
                     }
                 })
             } catch (err) {
                 console.error(err)
             }
         } else if (board == "wemos") {
-            const device = await navigator.serial.requestPort()
+            let device
+            try {
+                device = await navigator.serial.requestPort()
+            } catch (error) {
+                feedbackManager.setState("reject")
+                if (error.name == "SecurityError") {
+                    feedbackManager.appendLog("Compilation took too long; try uploading again.\n")
+                } else {
+                    feedbackManager.appendLog(`${error}`)
+                }
+                return
+            }
+
             const transport = new Transport(device, true)
 
             const loaderOptions = {
