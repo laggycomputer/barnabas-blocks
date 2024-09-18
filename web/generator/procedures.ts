@@ -20,10 +20,10 @@ export default function populate(generator: ArduinoGenerator) {
             }
         }
 
-        const args_and_type = []
+        const argsAndType = []
         const { arguments_ } = block as unknown as Record<string, string[]>
         for (let x = 0; x < arguments_.length; x++) {
-            args_and_type[x] = `double ${generator.nameDB_?.getName(arguments_[x], Names.NameType.DEVELOPER_VARIABLE)}`
+            argsAndType[x] = `double ${generator.nameDB_?.getName(arguments_[x], Names.NameType.DEVELOPER_VARIABLE)}`
         }
         let returnType
         if (block.type == "procedures_defreturn") {
@@ -37,7 +37,7 @@ export default function populate(generator: ArduinoGenerator) {
             returnType = "void"
         }
 
-        let code = `${returnType} ${funcName}(${args_and_type.join(", ")}) {
+        let code = `${returnType} ${funcName}(${argsAndType.join(", ")}) {
 ${branch}${returnValue}}`
         code = generator.scrub_(block, code)
         generator.addDeclaration(block, funcName, code, true)
