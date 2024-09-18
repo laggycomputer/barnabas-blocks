@@ -16,7 +16,7 @@ export default function populate(generator: ArduinoGenerator) {
         if (block.type == "procedures_defreturn") {
             returnValue = generator.valueToCode(block, "RETURN", Order.ORDER_NONE) || ""
             if (returnValue) {
-                returnValue = `${this.INDENT}return ${returnValue};\n`
+                returnValue = `${generator.INDENT}return ${returnValue};\n`
             }
         }
 
