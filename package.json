@@ -30,7 +30,6 @@
     "ace-builds": "^1.36.2",
     "avrgirl-arduino": "^5.0.1",
     "blockly": "^11.1.1",
-    "crypto-js": "^4.2.0",
     "esptool-js": "^0.4.5",
     "file-saver": "^2.0.5",
     "highlight.js": "^11.10.0",

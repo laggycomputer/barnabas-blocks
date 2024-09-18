@@ -5,7 +5,6 @@ import "ace-builds/src-noconflict/ext-language_tools"
 import AvrgirlArduino from "avrgirl-arduino/avrgirl-arduino-browser"
 import * as Blockly from "blockly/core"
 import * as localeEn from "blockly/msg/en"
-import CryptoJS from "crypto-js"
 import { ESPLoader, Transport } from "esptool-js/lib/index.js"
 import { saveAs } from "file-saver"
 import "material-icons/iconfont/material-icons.css"
@@ -17,6 +16,7 @@ import * as fileHandling from "./fileHandling.mjs"
 import arduinoGenerator from "./generator/arduinoGenerator"
 import "./style.css"
 import * as usbSerial from "./usbSerial.mjs"
+import md5 from "md5"
 
 const COMPILE_URL = "https://compile.barnabasrobotics.com"
 
@@ -866,7 +866,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
                 flashSize: "keep",
                 eraseAll: false,
                 compress: true,
-                calculateMD5Hash: image => CryptoJS.MD5(CryptoJS.enc.Latin1.parse(image)).toString(),
+                calculateMD5Hash: md5,
             }
 
             await esploader.eraseFlash()
