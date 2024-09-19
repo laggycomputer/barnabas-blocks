@@ -767,7 +767,7 @@ export async function compileAndMaybeUpload(shouldUpload = false) {
         uno: "arduino:avr:uno",
         nano: "arduino:avr:nano:cpu=atmega328",
         ezDisplay: "ATTinyCore:avr:attinyx5",
-        wemos: "esp8266:esp8266:d1",
+        wemos: "esp8266:esp8266:d1_mini",
     }?.[board]
 
     if (!boardFQBN) {
