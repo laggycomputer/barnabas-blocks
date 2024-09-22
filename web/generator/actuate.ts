@@ -35,10 +35,13 @@ export default function populate(generator: ArduinoGenerator) {
 
         const pin = generator.valueToCode(block, "PIN", Order.ORDER_ATOMIC) || "5"
         generator.reservePin(block, pin, "output", "servo")
+
         const angle = generator.valueToCode(block, "DEGREE", Order.ORDER_ATOMIC) || "90"
 
         const servoVarName = `servo_${pin}`
         generator.addDeclaration(block, `servo_${pin}`, `Servo ${servoVarName};`)
+        generator.addSetup(block, `servo:attach:${pin}`, `${servoVarName}.attach(${pin});`)
+
         return `${servoVarName}.write(${angle});\n`
     }
 
