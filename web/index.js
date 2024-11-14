@@ -370,11 +370,16 @@ export function renderContent() {
         "clearMonitor",
         "textToSend",
         "sendButton",
+    ]) {
+        document.getElementById(id).style.display = (content.id == "content_monitor") ? "" : "none"
+    }
+
+    for (const id of [
         "editorFontReset",
         "editorFontUp",
         "editorFontDown",
     ]) {
-        document.getElementById(id).style.display = (content.id == "content_monitor") ? "" : "none"
+        document.getElementById(id).style.display = (content.id == "content_editor") ? "" : "none"
     }
 }
 
